@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.alpharogroup</groupId>
+		<artifactId>mvn-java-parent</artifactId>
+		<version>4.8</version>
+	</parent>
+
+	<artifactId>silly-io</artifactId>
+	<version>1-SNAPSHOT</version>
+
+	<name>${project.artifactId}</name>
+
+	<description>Provides java classes for create In- and OuputStream and Reader or Writer for file operations</description>
+
+	<url>https://github.com/astrapi69/${project.artifactId}</url>
+
+	<properties>
+		<!-- TEST-OBJECTS version -->
+		<test-objects.version>5.0.1</test-objects.version>
+		<!-- COMMONS-IO version -->
+		<commons-io.version>2.6</commons-io.version>
+		<!-- JOBJ-CORE version -->
+		<jobj-core.version>3</jobj-core.version>
+		<!-- VINTAGE-TIME version -->
+		<vintage-time.version>5.1</vintage-time.version>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:git:@github.com:astrapi69/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:git@github.com:astrapi69/${project.artifactId}.git</developerConnection>
+		<url>git:@github.com:astrapi69/${project.artifactId}.git</url>
+	</scm>
+
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/astrapi69/${project.artifactId}/issues</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>travis-ci</system>
+		<url>https://travis-ci.org/astrapi69/${project.artifactId}</url>
+	</ciManagement>
+
+	<dependencyManagement>
+
+		<dependencies>
+
+			<!-- COMMONS-IO DEPENDENCY -->
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
+			</dependency>
+			<!-- TEST-OBJECTS DEPENDENCY -->
+			<dependency>
+				<groupId>de.alpharogroup</groupId>
+				<artifactId>test-objects</artifactId>
+				<version>${test-objects.version}</version>
+			</dependency>
+			<!-- JOBJ-CORE DEPENDENCY -->
+			<dependency>
+				<groupId>de.alpharogroup</groupId>
+				<artifactId>jobj-core</artifactId>
+				<version>${jobj-core.version}</version>
+			</dependency>
+			<!-- VINTAGE-TIME DEPENDENCY -->
+			<dependency>
+				<groupId>de.alpharogroup</groupId>
+				<artifactId>vintage-time</artifactId>
+				<version>${vintage-time.version}</version>
+			</dependency>
+		</dependencies>
+
+	</dependencyManagement>
+
+	<dependencies>
+		<!-- COMMONS-IO DEPENDENCY -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- MEANBEAN DEPENDENCY -->
+		<dependency>
+			<groupId>org.meanbean</groupId>
+			<artifactId>meanbean</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- TEST-OBJECTS DEPENDENCY -->
+		<dependency>
+			<groupId>de.alpharogroup</groupId>
+			<artifactId>test-objects</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- JOBJ-CORE DEPENDENCY -->
+		<dependency>
+			<groupId>de.alpharogroup</groupId>
+			<artifactId>jobj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- VINTAGE-TIME DEPENDENCY -->
+		<dependency>
+			<groupId>de.alpharogroup</groupId>
+			<artifactId>vintage-time</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+
+</project>
