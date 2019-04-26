@@ -83,9 +83,7 @@ public final class SerializedObjectExtensions
 	 */
 	public static <T> byte[] toByteArray(final T object) throws IOException
 	{
-		try (
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(
-				1024);
+		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);)
 		{
 			objectOutputStream.writeObject(object);
