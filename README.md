@@ -2,8 +2,8 @@
 
 <div align="center">
 
-[![Build Status](https://travis-ci.org/astrapi69/silly-io.svg?branch=develop)](https://travis-ci.org/astrapi69/silly-io) 
-[![Coverage Status](https://coveralls.io/repos/github/astrapi69/silly-io/badge.svg?branch=develop)](https://coveralls.io/github/astrapi69/silly-io?branch=develop) 
+[![Build Status](https://travis-ci.org/astrapi69/silly-io.svg?branch=master)](https://travis-ci.org/astrapi69/silly-io) 
+[![Coverage Status](https://coveralls.io/repos/github/astrapi69/silly-io/badge.svg?branch=master)](https://coveralls.io/github/astrapi69/silly-io?branch=master) 
 [![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues) 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.alpharogroup/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.alpharogroup/silly-io)
 [![Javadocs](http://www.javadoc.io/badge/de.alpharogroup/silly-io.svg)](http://www.javadoc.io/doc/de.alpharogroup/silly-io)
@@ -111,7 +111,7 @@ Do not hesitate to contact the silly-io developers with your questions, concerns
 
 |**coveralls.io**|
 |     :---:      |
-|[![Coverage Status](https://coveralls.io/repos/github/astrapi69/silly-io/badge.svg?branch=develop)](https://coveralls.io/github/astrapi69/silly-io?branch=master)|
+|[![Coverage Status](https://coveralls.io/repos/github/astrapi69/silly-io/badge.svg?branch=master)](https://coveralls.io/github/astrapi69/silly-io?branch=master)|
 |Special thanks to [coveralls.io](https://coveralls.io) for providing a free code coverage for open source projects|
 |     <img width=1000/>     |
 
