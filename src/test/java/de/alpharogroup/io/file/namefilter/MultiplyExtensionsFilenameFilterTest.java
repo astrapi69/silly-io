@@ -32,6 +32,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
@@ -153,7 +154,7 @@ public class MultiplyExtensionsFilenameFilterTest
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public final void testConstructorsWithNullValues()
 	{
-		Collection<String> fileExtensions = null;
+		Collection<String> fileExtensions = new ArrayList<>();
 		new MultiplyExtensionsFilenameFilter(fileExtensions);
 	}
 

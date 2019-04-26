@@ -110,7 +110,7 @@ public class SimpleFilenameFilterTest
 	{
 		String filesuffix;
 		boolean acceptDir;
-		filesuffix = null;
+		filesuffix = "";
 		acceptDir = false;
 		new SimpleFilenameFilter(filesuffix, acceptDir);
 	}
