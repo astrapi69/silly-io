@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>silly-io</artifactId>
-	<version>1</version>
+	<version>1.1</version>
 
 	<name>${project.artifactId}</name>
 
@@ -28,6 +28,10 @@
 		<jobj-core.version>3</jobj-core.version>
 		<!-- VINTAGE-TIME version -->
 		<vintage-time.version>5.1</vintage-time.version>
+		<!-- JOBJ-CONTRACT-VERIFIER version -->
+		<jobj-contract-verifier.version>3</jobj-contract-verifier.version>
+		<!-- SILLY-COLLECTIONS version -->
+		<silly-collections.version>5.2</silly-collections.version>
 	</properties>
 
 	<licenses>
@@ -70,6 +74,12 @@
 				<artifactId>test-objects</artifactId>
 				<version>${test-objects.version}</version>
 			</dependency>
+			<!-- JOBJ-CONTRACT-VERIFIER DEPENDENCY -->
+			<dependency>
+				<groupId>de.alpharogroup</groupId>
+				<artifactId>jobj-contract-verifier</artifactId>
+				<version>${jobj-contract-verifier.version}</version>
+			</dependency>
 			<!-- JOBJ-CORE DEPENDENCY -->
 			<dependency>
 				<groupId>de.alpharogroup</groupId>
@@ -82,11 +92,29 @@
 				<artifactId>vintage-time</artifactId>
 				<version>${vintage-time.version}</version>
 			</dependency>
+			<!-- SILLY-COLLECTIONS DEPENDENCY -->
+			<dependency>
+				<groupId>de.alpharogroup</groupId>
+				<artifactId>silly-collections</artifactId>
+				<version>${silly-collections.version}</version>
+			</dependency>
 		</dependencies>
 
 	</dependencyManagement>
 
 	<dependencies>
+		<!-- SILLY-COLLECTIONS DEPENDENCY -->
+		<dependency>
+			<groupId>de.alpharogroup</groupId>
+			<artifactId>silly-collections</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- JOBJ-CONTRACT-VERIFIER DEPENDENCY -->
+		<dependency>
+			<groupId>de.alpharogroup</groupId>
+			<artifactId>jobj-contract-verifier</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<!-- COMMONS-IO DEPENDENCY -->
 		<dependency>
 			<groupId>commons-io</groupId>
