@@ -42,7 +42,7 @@ import de.alpharogroup.date.CreateDateExtensions;
 import de.alpharogroup.test.objects.Person;
 
 /**
- * The unit test class for the class {@link SerializedObjectExtensions}.
+ * The unit test class for the class {@link SerializedObjectExtensions}
  *
  * @version 1.0
  * @author Asterios Raptis
@@ -51,13 +51,13 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 {
 
 	/**
-	 * Test method for {@link SerializedObjectExtensions#readSerializedObjectFromFile(File)} .
+	 * Test method for {@link SerializedObjectExtensions#readSerializedObjectFromFile(File)}
 	 *
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	@Test(enabled = true)
 	public void testReadSerializedObjectFromFile() throws IOException, ClassNotFoundException
@@ -83,13 +83,13 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	}
 
 	/**
-	 * Test method for {@link SerializedObjectExtensions#toByteArray(Object)}.
+	 * Test method for {@link SerializedObjectExtensions#toByteArray(Object)}
 	 *
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	@Test
 	public void testToByteArray() throws IOException, ClassNotFoundException
@@ -107,10 +107,10 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	 * Test method for {@link SerializedObjectExtensions#toObject(byte[])}
 	 *
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	@Test
 	public void testToObject() throws ClassNotFoundException, IOException
@@ -137,10 +137,10 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	 * Test method for {@link SerializedObjectExtensions#writeSerializedObjectToFile(Object, File)}
 	 *
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	@Test(enabled = true)
 	public void testWriteSerializedObjectToFile() throws IOException, ClassNotFoundException

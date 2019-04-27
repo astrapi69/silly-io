@@ -38,16 +38,16 @@ import org.testng.annotations.Test;
 import de.alpharogroup.lang.ClassExtensions;
 
 /**
- * The unit test class for the class {@link FilenameExtensions}.
+ * The unit test class for the class {@link FilenameExtensions}
  */
 public class FilenameExtensionsTest
 {
 
 	/**
-	 * Test method for {@link FilenameExtensions#getFilenamePrefix(File)}.
+	 * Test method for {@link FilenameExtensions#getFilenamePrefix(File)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 */
 	@Test
 	public void testGetFilenamePrefix() throws URISyntaxException
@@ -65,10 +65,10 @@ public class FilenameExtensionsTest
 	}
 
 	/**
-	 * Test method for {@link FilenameExtensions#getFilenamePrefix(File)}.
+	 * Test method for {@link FilenameExtensions#getFilenamePrefix(File)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 */
 	@Test
 	public void testGetFilenamePrefixWithDir() throws URISyntaxException
@@ -89,10 +89,10 @@ public class FilenameExtensionsTest
 	}
 
 	/**
-	 * Test method for {@link FilenameExtensions#getFilenameSuffix(File)}.
+	 * Test method for {@link FilenameExtensions#getFilenameSuffix(File)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 */
 	@Test
 	public void testGetFilenameSuffix() throws URISyntaxException
@@ -110,10 +110,10 @@ public class FilenameExtensionsTest
 	}
 
 	/**
-	 * Test method for {@link FilenameExtensions#getFilenameSuffix(File)}.
+	 * Test method for {@link FilenameExtensions#getFilenameSuffix(File)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 */
 	@Test
 	public void testGetFilenameSuffixNullCase() throws URISyntaxException
@@ -140,7 +140,7 @@ public class FilenameExtensionsTest
 	 * Test method for {@link FilenameExtensions#getFilenameWithoutExtension(File)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 */
 	@Test
 	public void testGetFilenameWithoutExtensionFile() throws URISyntaxException
@@ -158,10 +158,10 @@ public class FilenameExtensionsTest
 	}
 
 	/**
-	 * Test method for {@link FilenameExtensions#getFilenameWithoutExtension(File)}.
+	 * Test method for {@link FilenameExtensions#getFilenameWithoutExtension(File)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 */
 	@Test
 	public void testGetFilenameWithoutExtensionFileNullCase() throws URISyntaxException
@@ -179,7 +179,7 @@ public class FilenameExtensionsTest
 	}
 
 	/**
-	 * Test method for {@link FilenameExtensions#getFilenameWithoutExtension(String)}.
+	 * Test method for {@link FilenameExtensions#getFilenameWithoutExtension(String)}
 	 */
 	@Test
 	public void testGetFilenameWithoutExtensionString()

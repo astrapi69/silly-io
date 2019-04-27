@@ -45,7 +45,7 @@ import java.io.Writer;
 import lombok.experimental.UtilityClass;
 
 /**
- * Utility class for input/output operations.
+ * Utility class for input/output operations
  *
  * @version 1.0
  * @author Asterios Raptis
@@ -55,18 +55,18 @@ public final class StreamExtensions implements Serializable
 {
 
 	/**
-	 * The serialVersionUID.
+	 * The serialVersionUID
 	 */
 	private static final long serialVersionUID = 5042445056004440533L;
 
 	/**
-	 * Returns the given InputStream as a byte array.
+	 * Returns the given InputStream as a byte array
 	 *
 	 * @param in
-	 *            The InputStream.
-	 * @return Returns the given InputStream as a byte array.
+	 *            The InputStream
+	 * @return Returns the given InputStream as a byte array
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 */
 	public static byte[] getByteArray(final InputStream in) throws IOException
 	{
@@ -74,15 +74,15 @@ public final class StreamExtensions implements Serializable
 	}
 
 	/**
-	 * Gets the byte array.
+	 * Gets the byte array
 	 *
 	 * @param in
-	 *            The InputStream.
+	 *            The InputStream
 	 * @param os
-	 *            The ByteArrayOutputStream.
+	 *            The ByteArrayOutputStream
 	 * @return the byte array
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 */
 	public static byte[] getByteArray(final InputStream in, final ByteArrayOutputStream os)
 		throws IOException

@@ -40,7 +40,7 @@ import de.alpharogroup.evaluate.object.evaluators.ToStringEvaluator;
 import de.alpharogroup.lang.ClassExtensions;
 
 /**
- * The unit test class for the class {@link ClassFileFilter}.
+ * The unit test class for the class {@link ClassFileFilter}
  */
 public class ClassFileFilterTest
 {
@@ -49,9 +49,9 @@ public class ClassFileFilterTest
 	 * Test method for {@link ClassFileFilter#accept(File)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 */
 	@Test
 	public final void testAccept() throws URISyntaxException, IOException

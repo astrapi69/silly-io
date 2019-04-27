@@ -8,7 +8,7 @@ import de.alpharogroup.io.file.FileExtension;
 
 /**
  * The class ClassFileFilter accepts File-objects that are directories or end with the suffix
- * '.class'. Accepts directories to allow search files recursive in directories.
+ * '.class'. Accepts directories to allow search files recursive in directories
  *
  * @version 1.0
  * @author Asterios Raptis

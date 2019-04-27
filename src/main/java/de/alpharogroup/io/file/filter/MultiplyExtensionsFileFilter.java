@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * The class {@link MultiplyExtensionsFileFilter} accepts File-objects that are directories or end
  * with one of the extension in the collection. Accepts directories to allow search files recursive
- * in directories.
+ * in directories
  *
  * @version 1.0
  * @author Asterios Raptis
@@ -18,18 +18,18 @@ import java.util.Set;
 public class MultiplyExtensionsFileFilter implements FileFilter
 {
 
-	/** The accept dir. */
+	/** The accept dir */
 	private boolean acceptDir;
 
-	/** The file extensions. */
+	/** The file extensions */
 	private Set<String> fileExtensions;
 
 	/**
-	 * Instantiates a new {@link MultiplyExtensionsFileFilter}.
+	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
 	 *
 	 * @param acceptDir
-	 *            Flag to accept directories.
+	 *            Flag to accept directories
 	 * @param fileExtensions
 	 *            the file extensions
 	 */
@@ -39,7 +39,7 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	}
 
 	/**
-	 * Instantiates a new {@link MultiplyExtensionsFileFilter}.
+	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
 	 * @param fileExtensions
 	 *            the file extensions
@@ -50,12 +50,12 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	}
 
 	/**
-	 * Instantiates a new {@link MultiplyExtensionsFileFilter}.
+	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
 	 * @param fileExtensions
-	 *            the file extensions.
+	 *            the file extensions
 	 * @param acceptDir
-	 *            Flag to accept directories.
+	 *            Flag to accept directories
 	 */
 	public MultiplyExtensionsFileFilter(final Collection<String> fileExtensions,
 		final boolean acceptDir)
@@ -74,7 +74,7 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	}
 
 	/**
-	 * Instantiates a new {@link MultiplyExtensionsFileFilter}.
+	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
 	 * @param fileExtensions
 	 *            the file extensions

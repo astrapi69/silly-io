@@ -36,7 +36,7 @@ import java.io.ObjectOutputStream;
 import lombok.experimental.UtilityClass;
 
 /**
- * Helper-class for read from and write to serialized objects.
+ * Helper-class for read from and write to serialized objects
  *
  * @version 1.0
  * @author Asterios Raptis
@@ -46,16 +46,16 @@ public final class SerializedObjectExtensions
 {
 
 	/**
-	 * Reads the object from the given file.
+	 * Reads the object from the given file
 	 *
 	 * @param file
-	 *            In that file is the object saved.
-	 * @return The object in the file or null.
+	 *            In that file is the object saved
+	 * @return The object in the file or null
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	public static Object readSerializedObjectFromFile(final File file)
 		throws IOException, ClassNotFoundException
@@ -71,15 +71,15 @@ public final class SerializedObjectExtensions
 	}
 
 	/**
-	 * The Method toByteArray() serialize an Object to byte array.
+	 * The Method toByteArray() serialize an Object to byte array
 	 *
 	 * @param <T>
 	 *            the generic type of the given object
 	 * @param object
-	 *            The Object to convert into a byte array.
-	 * @return The byte array from the Object.
+	 *            The Object to convert into a byte array
+	 * @return The byte array from the Object
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 */
 	public static <T> byte[] toByteArray(final T object) throws IOException
 	{
@@ -92,16 +92,16 @@ public final class SerializedObjectExtensions
 	}
 
 	/**
-	 * The Method toObject() converts the given byte array into an Object.
+	 * The Method toObject() converts the given byte array into an Object
 	 *
 	 * @param byteArray
-	 *            The byte array to convert into an Object.
-	 * @return The Object the was converted from the byte array.
+	 *            The byte array to convert into an Object
+	 * @return The Object the was converted from the byte array
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	public static Object toObject(final byte[] byteArray) throws IOException, ClassNotFoundException
 	{
@@ -116,15 +116,15 @@ public final class SerializedObjectExtensions
 	}
 
 	/**
-	 * Writes the given object to the given File.
+	 * Writes the given object to the given File
 	 *
 	 * @param obj
-	 *            The object to write to the File.
+	 *            The object to write to the File
 	 * @param file
-	 *            In this file will be the object saved.
-	 * @return true if the object was written to the file otherwise false.
+	 *            In this file will be the object saved
+	 * @return true if the object was written to the file otherwise false
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 */
 	public static boolean writeSerializedObjectToFile(final Object obj, final File file)
 		throws IOException

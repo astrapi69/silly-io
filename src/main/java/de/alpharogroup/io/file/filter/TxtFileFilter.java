@@ -7,7 +7,7 @@ import de.alpharogroup.io.file.FileExtension;
 
 /**
  * The class {@link TxtFileFilter} accepts File-objects that are directories or end with the suffix
- * '.txt'. Accepts directories to allow search files recursive in directories.
+ * '.txt'. Accepts directories to allow search files recursive in directories
  *
  * @version 1.0
  * @author Asterios Raptis

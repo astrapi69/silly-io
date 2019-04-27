@@ -6,7 +6,7 @@ import java.io.FilenameFilter;
 import lombok.NonNull;
 
 /**
- * The class {@link SimpleFilenameFilter}.
+ * The class {@link SimpleFilenameFilter}
  *
  * @author Asterios Raptis
  * @version 1.0
@@ -14,14 +14,14 @@ import lombok.NonNull;
 public class SimpleFilenameFilter implements FilenameFilter
 {
 
-	/** The accept dir. */
+	/** The accept dir */
 	private boolean acceptDir;
 
-	/** The filesuffix. */
+	/** The filesuffix */
 	private String filesuffix;
 
 	/**
-	 * Instantiates a new {@link SimpleFilenameFilter}.
+	 * Instantiates a new {@link SimpleFilenameFilter}
 	 *
 	 * @param filesuffix
 	 *            the filesuffix

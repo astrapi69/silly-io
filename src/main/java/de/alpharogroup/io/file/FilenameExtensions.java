@@ -5,18 +5,18 @@ import java.io.File;
 import lombok.experimental.UtilityClass;
 
 /**
- * The class {@link FilenameExtensions}.
+ * The class {@link FilenameExtensions}
  */
 @UtilityClass
 public final class FilenameExtensions
 {
 
 	/**
-	 * Gets the filename with the absolute path prefix.
+	 * Gets the filename with the absolute path prefix
 	 *
 	 * @param file
-	 *            the file.
-	 * @return the filename prefix.
+	 *            the file
+	 * @return the filename prefix
 	 */
 	public static String getFilenamePrefix(final File file)
 	{
@@ -35,12 +35,12 @@ public final class FilenameExtensions
 	}
 
 	/**
-	 * Gets the filename suffix or null if no suffix exists or the given file object is a directory.
+	 * Gets the filename suffix or null if no suffix exists or the given file object is a directory
 	 *
 	 * @param file
-	 *            the file.
+	 *            the file
 	 * @return 's the filename suffix or null if no suffix exists or the given file object is a
-	 *         directory.
+	 *         directory
 	 */
 	public static String getFilenameSuffix(final File file)
 	{
@@ -63,11 +63,11 @@ public final class FilenameExtensions
 	}
 
 	/**
-	 * Gets the filename without the extension or null if the given file object is a directory.
+	 * Gets the filename without the extension or null if the given file object is a directory
 	 *
 	 * @param file
-	 *            the file.
-	 * @return the filename without the extension or null if the given file object is a directory.
+	 *            the file
+	 * @return the filename without the extension or null if the given file object is a directory
 	 */
 	public static String getFilenameWithoutExtension(final File file)
 	{
@@ -80,11 +80,11 @@ public final class FilenameExtensions
 	}
 
 	/**
-	 * Gets the filename without the extension or null if the given file object is a directory.
+	 * Gets the filename without the extension or null if the given file object is a directory
 	 *
 	 * @param fileName
-	 *            the file.
-	 * @return the filename without the extension or null if the given file object is a directory.
+	 *            the file
+	 * @return the filename without the extension or null if the given file object is a directory
 	 */
 	public static String getFilenameWithoutExtension(final String fileName)
 	{

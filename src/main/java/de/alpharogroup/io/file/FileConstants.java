@@ -1,10 +1,10 @@
 package de.alpharogroup.io.file;
 
 /**
- * Constant Class for files.
+ * The class {@link FileConstants} is an abstract constant for files
  *
- * @version 1.0
  * @author Asterios Raptis
+ * @version 1.0
  */
 public abstract class FileConstants
 {
@@ -22,7 +22,7 @@ public abstract class FileConstants
 	public static final String DOUBLEDOT = ":";
 
 	/**
-	 * String array with the invalid characters in filenames.
+	 * String array with the invalid characters in filenames
 	 */
 	public static String[] INVALID_CHARS_IN_FILENAME = { "\\", "/", ":", "*", "\"", "<", ">", "|" };
 
@@ -33,7 +33,7 @@ public abstract class FileConstants
 	public static final String SLASH = "/";
 
 	/**
-	 * String array with a few extensions from zip-files.
+	 * String array with a few extensions from zip-files
 	 */
 	public static final String[] ZIP_EXTENSIONS = { ".zip", ".jar", ".war", ".ear", ".tar", ".rar",
 			".7z", ".bz2", ".gz" };

@@ -43,18 +43,18 @@ import de.alpharogroup.evaluate.object.evaluators.ToStringEvaluator;
 import de.alpharogroup.lang.ClassExtensions;
 
 /**
- * The class {@link MultiplyExtensionsFilenameFilter}.
+ * The class {@link MultiplyExtensionsFilenameFilter}
  */
 public class MultiplyExtensionsFilenameFilterTest
 {
 
 	/**
-	 * Test method for {@link MultiplyExtensionsFilenameFilter#accept(File, String)}.
+	 * Test method for {@link MultiplyExtensionsFilenameFilter#accept(File, String)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 */
 	@Test
 	public final void testAccept() throws URISyntaxException, IOException

@@ -9,7 +9,7 @@ import lombok.NonNull;
 
 /**
  * The class {@link MultiplyExtensionsFilenameFilter} accepts File-objects that end with one of the
- * extension in the collection.
+ * extension in the collection
  *
  * @version 1.0
  * @author Asterios Raptis
@@ -17,14 +17,14 @@ import lombok.NonNull;
 public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 {
 
-	/** The accept dir. */
+	/** The accept dir */
 	private boolean acceptDir;
 
-	/** The file extensions. */
+	/** The file extensions */
 	private Collection<String> fileExtensions;
 
 	/**
-	 * Instantiates a new {@link MultiplyExtensionsFilenameFilter}.
+	 * Instantiates a new {@link MultiplyExtensionsFilenameFilter}
 	 *
 	 * @param fileExtensions
 	 *            the file extensions
@@ -35,7 +35,7 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 	}
 
 	/**
-	 * Instantiates a new {@link MultiplyExtensionsFilenameFilter}.
+	 * Instantiates a new {@link MultiplyExtensionsFilenameFilter}
 	 *
 	 * @param fileExtensions
 	 *            the file extensions
