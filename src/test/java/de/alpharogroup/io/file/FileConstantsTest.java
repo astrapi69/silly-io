@@ -1,6 +1,7 @@
 package de.alpharogroup.io.file;
 
-import static org.testng.Assert.assertEqualsNoOrder;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.Test;
@@ -80,7 +81,7 @@ public class FileConstantsTest
 
 		actual = FileConstants.INVALID_CHARS_IN_FILENAME;
 		expected = ArrayFactory.newArray("\\", "/", ":", "*", "\"", "<", ">", "|");
-		assertEqualsNoOrder(actual, expected);
+		assertThat(actual, equalTo(expected));
 	}
 
 	/**
@@ -123,7 +124,7 @@ public class FileConstantsTest
 		actual = FileConstants.ZIP_EXTENSIONS;
 		expected = ArrayFactory.newArray(".zip", ".jar", ".war", ".ear", ".tar", ".rar", ".7z",
 			".bz2", ".gz");
-		assertEqualsNoOrder(actual, expected);
+		assertThat(actual, equalTo(expected));
 	}
 
 }
