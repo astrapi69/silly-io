@@ -41,6 +41,8 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import lombok.experimental.UtilityClass;
 
@@ -107,6 +109,20 @@ public final class StreamExtensions implements Serializable
 	public static InputStream getInputStream(final File file) throws IOException
 	{
 		return getInputStream(file, false);
+	}
+
+	/**
+	 * Gets the input stream from the given filename with the full path
+	 *
+	 * @param fullpathWithFilename
+	 *            the full path with filename
+	 * @return the input stream.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static InputStream getInputStream(final String fullpathWithFilename) throws IOException
+	{
+		return Files.newInputStream(Paths.get(fullpathWithFilename));
 	}
 
 	/**

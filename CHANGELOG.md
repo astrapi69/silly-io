@@ -4,6 +4,10 @@
 Version 1.2-SNAPSHOT
 -------------
 
+ADDED:
+ 
+- new method for get an InputStream from a file path
+
 Version 1.1
 -------------
 
