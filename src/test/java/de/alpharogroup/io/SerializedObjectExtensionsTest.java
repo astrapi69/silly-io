@@ -96,7 +96,10 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	{
 		Person expected;
 		Person actual;
-		expected = Person.builder().build();
+		expected = Person.builder()
+			.name("Albert")
+			.about("science is cool")
+			.build();
 		byte[] byteArray = SerializedObjectExtensions.toByteArray(expected);
 		assertNotNull(byteArray);
 		actual = (Person)SerializedObjectExtensions.toObject(byteArray);

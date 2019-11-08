@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import lombok.experimental.UtilityClass;
 
@@ -81,7 +82,7 @@ public final class SerializedObjectExtensions
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred
 	 */
-	public static <T> byte[] toByteArray(final T object) throws IOException
+	public static <T extends Serializable> byte[] toByteArray(final T object) throws IOException
 	{
 		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);)
@@ -105,14 +106,11 @@ public final class SerializedObjectExtensions
 	 */
 	public static Object toObject(final byte[] byteArray) throws IOException, ClassNotFoundException
 	{
-		Object object = null;
 		try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArray);
 			ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);)
 		{
-			object = objectInputStream.readObject();
-			objectInputStream.close();
+			return objectInputStream.readObject();
 		}
-		return object;
 	}
 
 	/**
