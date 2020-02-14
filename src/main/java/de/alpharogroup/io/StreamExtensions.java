@@ -44,17 +44,15 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import lombok.experimental.UtilityClass;
-
 /**
  * Utility class for input/output operations
  *
  * @version 1.0
  * @author Asterios Raptis
  */
-@UtilityClass
 public final class StreamExtensions implements Serializable
 {
+	private StreamExtensions(){}
 
 	/**
 	 * The serialVersionUID

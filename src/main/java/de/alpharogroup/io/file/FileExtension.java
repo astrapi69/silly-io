@@ -24,8 +24,6 @@
  */
 package de.alpharogroup.io.file;
 
-import lombok.Getter;
-
 /**
  * The enum {@link FileExtension} for file extensions
  */
@@ -56,8 +54,12 @@ public enum FileExtension
 	/** The file extension for velocity template files */
 	VELOCITY_TEMPLATE(".vm");
 
+	public String getExtension()
+	{
+		return extension;
+	}
+
 	/** The file extension */
-	@Getter
 	private final String extension;
 
 	/**

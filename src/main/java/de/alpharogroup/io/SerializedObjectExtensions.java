@@ -34,17 +34,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import lombok.experimental.UtilityClass;
-
 /**
  * Helper-class for read from and write to serialized objects
  *
  * @version 1.0
  * @author Asterios Raptis
  */
-@UtilityClass
 public final class SerializedObjectExtensions
 {
+	private SerializedObjectExtensions(){}
 
 	/**
 	 * Reads the object from the given file

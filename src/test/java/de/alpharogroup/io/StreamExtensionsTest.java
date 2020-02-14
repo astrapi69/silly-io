@@ -275,7 +275,7 @@ public class StreamExtensionsTest extends BaseTestCase
 	/**
 	 * Test method for {@link StreamExtensions}
 	 */
-	@Test(expectedExceptions = { BeanTestException.class, ObjectCreationException.class })
+	@Test
 	public void testWithBeanTester()
 	{
 		final BeanTester beanTester = new BeanTester();

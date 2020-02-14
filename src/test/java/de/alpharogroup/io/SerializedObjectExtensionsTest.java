@@ -129,7 +129,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	/**
 	 * Test method for {@link SerializedObjectExtensions}
 	 */
-	@Test(expectedExceptions = { BeanTestException.class, ObjectCreationException.class })
+	@Test
 	public void testWithBeanTester()
 	{
 		final BeanTester beanTester = new BeanTester();
