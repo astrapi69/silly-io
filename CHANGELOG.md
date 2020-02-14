@@ -6,7 +6,13 @@ Version 1.2-SNAPSHOT
 
 ADDED:
  
-- new method for get an InputStream from a file path
+- new method for get an InputStream from a file path 
+- new build system gradle
+
+CHANGED:
+
+- removed maven build system and all related files
+- removed all lombok dependent imports
 
 Version 1.1
 -------------
