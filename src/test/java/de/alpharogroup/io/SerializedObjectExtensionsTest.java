@@ -32,8 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.meanbean.factories.ObjectCreationException;
-import org.meanbean.test.BeanTestException;
 import org.meanbean.test.BeanTester;
 import org.testng.annotations.Test;
 
@@ -96,10 +94,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	{
 		Person expected;
 		Person actual;
-		expected = Person.builder()
-			.name("Albert")
-			.about("science is cool")
-			.build();
+		expected = Person.builder().name("Albert").about("science is cool").build();
 		byte[] byteArray = SerializedObjectExtensions.toByteArray(expected);
 		assertNotNull(byteArray);
 		actual = (Person)SerializedObjectExtensions.toObject(byteArray);

@@ -56,8 +56,8 @@ public class SimpleFilenameFilter implements FilenameFilter
 		Objects.requireNonNull(filesuffix);
 		if (filesuffix.equals(""))
 		{
-			throw new IllegalArgumentException("Argument filesuffix cant be empty. "
-				+ "Please set the argument filesuffix.");
+			throw new IllegalArgumentException(
+				"Argument filesuffix cant be empty. " + "Please set the argument filesuffix.");
 		}
 		this.filesuffix = filesuffix.toLowerCase();
 		this.acceptDir = acceptDir;

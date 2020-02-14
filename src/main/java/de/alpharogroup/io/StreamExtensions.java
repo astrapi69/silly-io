@@ -52,8 +52,6 @@ import java.nio.file.Paths;
  */
 public final class StreamExtensions implements Serializable
 {
-	private StreamExtensions(){}
-
 	/**
 	 * The serialVersionUID
 	 */
@@ -110,20 +108,6 @@ public final class StreamExtensions implements Serializable
 	}
 
 	/**
-	 * Gets the input stream from the given filename with the full path
-	 *
-	 * @param fullpathWithFilename
-	 *            the full path with filename
-	 * @return the input stream.
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public static InputStream getInputStream(final String fullpathWithFilename) throws IOException
-	{
-		return Files.newInputStream(Paths.get(fullpathWithFilename));
-	}
-
-	/**
 	 * Gets the input stream from a File object.
 	 *
 	 * @param file
@@ -155,6 +139,20 @@ public final class StreamExtensions implements Serializable
 			}
 		}
 		return is;
+	}
+
+	/**
+	 * Gets the input stream from the given filename with the full path
+	 *
+	 * @param fullpathWithFilename
+	 *            the full path with filename
+	 * @return the input stream.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static InputStream getInputStream(final String fullpathWithFilename) throws IOException
+	{
+		return Files.newInputStream(Paths.get(fullpathWithFilename));
 	}
 
 	/**
@@ -366,6 +364,10 @@ public final class StreamExtensions implements Serializable
 		{
 			outputStream.write(byt);
 		}
+	}
+
+	private StreamExtensions()
+	{
 	}
 
 }

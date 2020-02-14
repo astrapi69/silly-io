@@ -54,11 +54,6 @@ public enum FileExtension
 	/** The file extension for velocity template files */
 	VELOCITY_TEMPLATE(".vm");
 
-	public String getExtension()
-	{
-		return extension;
-	}
-
 	/** The file extension */
 	private final String extension;
 
@@ -71,6 +66,11 @@ public enum FileExtension
 	FileExtension(final String extension)
 	{
 		this.extension = extension;
+	}
+
+	public String getExtension()
+	{
+		return extension;
 	}
 
 }

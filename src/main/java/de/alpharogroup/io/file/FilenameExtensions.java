@@ -32,8 +32,6 @@ import java.io.File;
 public final class FilenameExtensions
 {
 
-	private FilenameExtensions(){}
-
 	/**
 	 * Gets the filename with the absolute path prefix
 	 *
@@ -122,6 +120,10 @@ public final class FilenameExtensions
 			fileNamePrefix = fileName;
 		}
 		return fileNamePrefix;
+	}
+
+	private FilenameExtensions()
+	{
 	}
 
 }
