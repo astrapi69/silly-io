@@ -37,16 +37,16 @@ import de.alpharogroup.evaluate.object.evaluators.ToStringEvaluator;
 import de.alpharogroup.lang.ClassExtensions;
 
 /**
- * The unit test class for the class {@link SimpleFilenameFilter}.
+ * The unit test class for the class {@link SimpleFilenameFilter}
  */
 public class SimpleFilenameFilterTest
 {
 
 	/**
-	 * Test method for {@link SimpleFilenameFilter#accept(File, String)}.
+	 * Test method for {@link SimpleFilenameFilter#accept(File, String)}
 	 *
 	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri.
+	 *             occurs by creation of the file with an uri
 	 */
 	@Test
 	public final void testAccept() throws URISyntaxException
@@ -90,7 +90,7 @@ public class SimpleFilenameFilterTest
 	}
 
 	/**
-	 * Test method for {@link SimpleFilenameFilter} with argument of filesuffix as empty string.
+	 * Test method for {@link SimpleFilenameFilter} with argument of filesuffix as empty string
 	 */
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public final void testFileSuffixEmpty()
@@ -103,7 +103,7 @@ public class SimpleFilenameFilterTest
 	}
 
 	/**
-	 * Test method for {@link SimpleFilenameFilter} with argument of filesuffix as null.
+	 * Test method for {@link SimpleFilenameFilter} with argument of filesuffix as null
 	 */
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public final void testFileSuffixNull()

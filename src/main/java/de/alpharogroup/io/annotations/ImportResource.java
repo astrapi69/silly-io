@@ -30,23 +30,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation {@link ImportResource} can be used to import a resource.
+ * The annotation {@link ImportResource} can be used to import a resource
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ImportResource {
 
 	/**
-	 * The index from the resource.
+	 * The index from the resource
 	 *
-	 * @return the index from the resource.
+	 * @return the index from the resource
 	 */
 	int index() default 0;
 
 	/**
-	 * The resource name.
+	 * The resource name
 	 *
-	 * @return the resource name.
+	 * @return the resource name
 	 */
 	String resourceName();
 
@@ -58,9 +58,9 @@ public @interface ImportResource {
 	String resourceType();
 
 	/**
-	 * The "skin" style of the resource.
+	 * The "skin" style of the resource
 	 *
-	 * @return The "skin" style of the resource.
+	 * @return The "skin" style of the resource
 	 */
 	String style() default "";
 }

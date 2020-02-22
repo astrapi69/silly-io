@@ -1,22 +1,43 @@
+/**
+ * The MIT License
+ *
+ * Copyright (C) 2015 Asterios Raptis
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package de.alpharogroup.io.file;
 
 import java.io.File;
 
-import lombok.experimental.UtilityClass;
-
 /**
- * The class {@link FilenameExtensions}.
+ * The class {@link FilenameExtensions}
  */
-@UtilityClass
 public final class FilenameExtensions
 {
 
 	/**
-	 * Gets the filename with the absolute path prefix.
+	 * Gets the filename with the absolute path prefix
 	 *
 	 * @param file
-	 *            the file.
-	 * @return the filename prefix.
+	 *            the file
+	 * @return the filename prefix
 	 */
 	public static String getFilenamePrefix(final File file)
 	{
@@ -35,12 +56,12 @@ public final class FilenameExtensions
 	}
 
 	/**
-	 * Gets the filename suffix or null if no suffix exists or the given file object is a directory.
+	 * Gets the filename suffix or null if no suffix exists or the given file object is a directory
 	 *
 	 * @param file
-	 *            the file.
+	 *            the file
 	 * @return 's the filename suffix or null if no suffix exists or the given file object is a
-	 *         directory.
+	 *         directory
 	 */
 	public static String getFilenameSuffix(final File file)
 	{
@@ -63,11 +84,11 @@ public final class FilenameExtensions
 	}
 
 	/**
-	 * Gets the filename without the extension or null if the given file object is a directory.
+	 * Gets the filename without the extension or null if the given file object is a directory
 	 *
 	 * @param file
-	 *            the file.
-	 * @return the filename without the extension or null if the given file object is a directory.
+	 *            the file
+	 * @return the filename without the extension or null if the given file object is a directory
 	 */
 	public static String getFilenameWithoutExtension(final File file)
 	{
@@ -80,11 +101,11 @@ public final class FilenameExtensions
 	}
 
 	/**
-	 * Gets the filename without the extension or null if the given file object is a directory.
+	 * Gets the filename without the extension or null if the given file object is a directory
 	 *
 	 * @param fileName
-	 *            the file.
-	 * @return the filename without the extension or null if the given file object is a directory.
+	 *            the file
+	 * @return the filename without the extension or null if the given file object is a directory
 	 */
 	public static String getFilenameWithoutExtension(final String fileName)
 	{
@@ -99,6 +120,10 @@ public final class FilenameExtensions
 			fileNamePrefix = fileName;
 		}
 		return fileNamePrefix;
+	}
+
+	private FilenameExtensions()
+	{
 	}
 
 }

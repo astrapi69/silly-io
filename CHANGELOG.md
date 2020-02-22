@@ -1,6 +1,19 @@
 ## Change log
 ----------------------
 
+Version 1.2
+-------------
+
+ADDED:
+ 
+- new method for get an InputStream from a file path 
+- new build system gradle
+
+CHANGED:
+
+- removed maven build system and all related files
+- removed all lombok dependent imports
+
 Version 1.1
 -------------
 

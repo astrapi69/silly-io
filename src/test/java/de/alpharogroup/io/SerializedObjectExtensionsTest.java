@@ -32,8 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.meanbean.factories.ObjectCreationException;
-import org.meanbean.test.BeanTestException;
 import org.meanbean.test.BeanTester;
 import org.testng.annotations.Test;
 
@@ -42,7 +40,7 @@ import de.alpharogroup.date.CreateDateExtensions;
 import de.alpharogroup.test.objects.Person;
 
 /**
- * The unit test class for the class {@link SerializedObjectExtensions}.
+ * The unit test class for the class {@link SerializedObjectExtensions}
  *
  * @version 1.0
  * @author Asterios Raptis
@@ -51,13 +49,13 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 {
 
 	/**
-	 * Test method for {@link SerializedObjectExtensions#readSerializedObjectFromFile(File)} .
+	 * Test method for {@link SerializedObjectExtensions#readSerializedObjectFromFile(File)}
 	 *
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	@Test(enabled = true)
 	public void testReadSerializedObjectFromFile() throws IOException, ClassNotFoundException
@@ -83,20 +81,20 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	}
 
 	/**
-	 * Test method for {@link SerializedObjectExtensions#toByteArray(Object)}.
+	 * Test method for {@link SerializedObjectExtensions#toByteArray(Object)}
 	 *
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	@Test
 	public void testToByteArray() throws IOException, ClassNotFoundException
 	{
 		Person expected;
 		Person actual;
-		expected = Person.builder().build();
+		expected = Person.builder().name("Albert").about("science is cool").build();
 		byte[] byteArray = SerializedObjectExtensions.toByteArray(expected);
 		assertNotNull(byteArray);
 		actual = (Person)SerializedObjectExtensions.toObject(byteArray);
@@ -107,10 +105,10 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	 * Test method for {@link SerializedObjectExtensions#toObject(byte[])}
 	 *
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	@Test
 	public void testToObject() throws ClassNotFoundException, IOException
@@ -126,7 +124,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	/**
 	 * Test method for {@link SerializedObjectExtensions}
 	 */
-	@Test(expectedExceptions = { BeanTestException.class, ObjectCreationException.class })
+	@Test
 	public void testWithBeanTester()
 	{
 		final BeanTester beanTester = new BeanTester();
@@ -137,10 +135,10 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	 * Test method for {@link SerializedObjectExtensions#writeSerializedObjectToFile(Object, File)}
 	 *
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 * @throws ClassNotFoundException
 	 *             is thrown when a class is not found in the classloader or no definition for the
-	 *             class with the specified name could be found.
+	 *             class with the specified name could be found
 	 */
 	@Test(enabled = true)
 	public void testWriteSerializedObjectToFile() throws IOException, ClassNotFoundException
