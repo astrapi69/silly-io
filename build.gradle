@@ -21,14 +21,14 @@ repositories {
 }
 
 dependencies {
+    testCompile "commons-io:commons-io:$commonsIoVersion"
     testCompile "de.alpharogroup:silly-collections:$sillyCollectionsVersion"
     testCompile "de.alpharogroup:jobj-contract-verifier:$jobjContractVerifierVersion"
-    testCompile "commons-io:commons-io:$commonsIoVersion"
-    testCompile "de.alpharogroup:test-objects:$testObjectsVersion"
     testCompile "de.alpharogroup:jobj-core:$jobjCoreVersion"
+    testCompile "de.alpharogroup:test-objects:$testObjectsVersion"
     testCompile "de.alpharogroup:vintage-time:$vintageTimeVersion"
-    testCompile "org.testng:testng:$testngVersion"
     testCompile "org.meanbean:meanbean:$meanbeanVersion"
+    testCompile "org.testng:testng:$testngVersion"
 }
 
 license {
