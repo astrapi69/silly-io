@@ -57,18 +57,17 @@ public final class SerializedObjectExtensions
 	public static Object readSerializedObjectFromFile(final File file)
 		throws IOException, ClassNotFoundException
 	{
-		Object object = null;
+		Object object;
 		try (FileInputStream fis = new FileInputStream(file);
-			ObjectInputStream in = new ObjectInputStream(fis);)
+			ObjectInputStream in = new ObjectInputStream(fis))
 		{
 			object = in.readObject();
-			in.close();
 		}
 		return object;
 	}
 
 	/**
-	 * The Method toByteArray() serialize an Object to byte array
+	 * Copies(serialize) the given object to a byte array
 	 *
 	 * @param <T>
 	 *            the generic type of the given object
@@ -81,7 +80,7 @@ public final class SerializedObjectExtensions
 	public static <T extends Serializable> byte[] toByteArray(final T object) throws IOException
 	{
 		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);)
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream))
 		{
 			objectOutputStream.writeObject(object);
 			return byteArrayOutputStream.toByteArray();
@@ -103,7 +102,7 @@ public final class SerializedObjectExtensions
 	public static Object toObject(final byte[] byteArray) throws IOException, ClassNotFoundException
 	{
 		try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArray);
-			ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);)
+			ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream))
 		{
 			return objectInputStream.readObject();
 		}
@@ -125,7 +124,7 @@ public final class SerializedObjectExtensions
 	{
 		boolean written = false;
 		try (FileOutputStream fos = new FileOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);)
+			ObjectOutputStream oos = new ObjectOutputStream(fos))
 		{
 			oos.writeObject(obj);
 			oos.flush();
