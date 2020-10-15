@@ -30,6 +30,7 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Date;
 
 import org.meanbean.test.BeanTester;
@@ -81,7 +82,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	}
 
 	/**
-	 * Test method for {@link SerializedObjectExtensions#toByteArray(Object)}
+	 * Test method for {@link SerializedObjectExtensions#toByteArray(Serializable)} 
 	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred

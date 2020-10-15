@@ -56,7 +56,7 @@ Than you can add the dependency to your dependencies:
 	<properties>
 			...
 		<!-- SILLY-IO version -->
-		<silly-io.version>1.1</silly-io.version>
+		<silly-io.version>1.3</silly-io.version>
 			...
 	</properties>
 			...
@@ -70,6 +70,24 @@ Than you can add the dependency to your dependencies:
 			</dependency>
 			...
 		</dependencies>
+	
+			
+## gradle dependency
+
+You can first define the version in the ext section and add than the following gradle dependency to your project `build.gradle` if you want to import the core functionality of silly-io:
+
+```
+ext {
+			...
+    sillyIoVersion = "1.3"
+			...
+}
+dependencies {
+			...
+compile "de.alpharogroup:silly-io:$sillyIoVersion"
+			...
+}
+```
 
 ## Semantic Versioning
 

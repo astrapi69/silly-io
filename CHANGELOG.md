@@ -1,6 +1,21 @@
 ## Change log
 ----------------------
 
+Version 1.3
+-------------
+
+ADDED:
+ 
+- new class Serializer that reflects the SerializedObjectExtensions and throws only decorated RuntimeExceptions
+
+CHANGED:
+
+- update of gradle to new version 6.7
+- update of test dependency jobj-core in new version 3.6
+- update of test dependency silly-collections in new version 8.3
+- update of test dependency commons-io in new version 2.8.0
+- update of test dependency testng to new version 7.3.0
+
 Version 1.2
 -------------
 
