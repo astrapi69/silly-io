@@ -39,20 +39,41 @@ import de.alpharogroup.io.file.FileExtension;
 public class TxtFileFilter implements FileFilter
 {
 
+	/** The recursive flag */
+	private final boolean recursive;
+
+	/**
+	 * Instantiates a new {@link TxtFileFilter} with the given flag for
+	 * recursion
+	 *
+	 * @param recursive
+	 *            if this flag is true the filter will be executed recursively
+	 */
+	public TxtFileFilter(final boolean recursive) {
+		this.recursive = recursive;
+	}
+
+	/**
+	 * Instantiates a new {@link TxtFileFilter} with the given flag for
+	 * recursion
+	 */
+	public TxtFileFilter() {
+		this(true);
+	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean accept(final File pathname)
+	public boolean accept(final File file)
 	{
-		// To allow recursive search we use file.isDirectory()-method.
-		if (pathname.isDirectory())
+		// if recursive flag true and file is a directory allow recursive search
+		if (recursive && file.isDirectory())
 		{
 			return true;
 		}
 		else
 		{
-			final String fileName = pathname.getName().toLowerCase();
+			final String fileName = file.getName().toLowerCase();
 			if (fileName.endsWith(FileExtension.TXT.getExtension()))
 			{
 				return true;

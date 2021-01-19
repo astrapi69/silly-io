@@ -24,40 +24,49 @@
  */
 package de.alpharogroup.io.file.filter;
 
+import de.alpharogroup.io.file.FileExtension;
+import de.alpharogroup.io.file.namefilter.MultiplyExtensionsFilenameFilter;
+
 import java.io.File;
 import java.io.FileFilter;
 
-import de.alpharogroup.io.file.FileExtension;
-
 /**
- * The class ClassFileFilter accepts File-objects that are directories or end with the suffix
- * '.class'. Accepts directories to allow search files recursive in directories
+ * The class {@link PrefixFileFilter} accepts File-objects that match to the given prefix.
  *
  * @version 1.0
  * @author Asterios Raptis
  */
-public class ClassFileFilter implements FileFilter
+public class PrefixFileFilter implements FileFilter
 {
+	private final String prefix;
+
 	/** The recursive flag */
 	private final boolean recursive;
 
 	/**
-	 * Instantiates a new {@link ClassFileFilter} with the given flag for
+	 * Instantiates a new {@link PrefixFileFilter} with the given prefix and the given flag for
 	 * recursion
 	 *
+	 * @param prefix
+	 *            the prefix
 	 * @param recursive
 	 *            if this flag is true the filter will be executed recursively
 	 */
-	public ClassFileFilter(final boolean recursive) {
+	public PrefixFileFilter(final String prefix, final boolean recursive) {
+		this.prefix = prefix;
 		this.recursive = recursive;
 	}
 
 	/**
-	 * Instantiates a new {@link ClassFileFilter} with the given flag for
-	 * recursion
+	 * Instantiates a new {@link PrefixFileFilter} with the given prefix and the recursive flag is
+	 * true
+	 *
+	 * @param prefix
+	 *            the prefix
 	 */
-	public ClassFileFilter() {
-		this(true);
+	public PrefixFileFilter(final String prefix) {
+		this.prefix = prefix;
+		this.recursive = true;
 	}
 
 	/**
@@ -71,28 +80,7 @@ public class ClassFileFilter implements FileFilter
 		{
 			return true;
 		}
-		else
-		{
-			final String fileName = file.getName().toLowerCase();
-			if (fileName.endsWith(FileExtension.CLASS.getExtension()))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString()
-	{
-		final StringBuilder buffer = new StringBuilder();
-		buffer.append("[ClassFileFilter:");
-		buffer.append(FileExtension.CLASS.getExtension());
-		buffer.append("]");
-		return buffer.toString();
+		return file.getName().startsWith(prefix);
 	}
 
 }

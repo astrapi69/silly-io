@@ -38,7 +38,7 @@ public class SimpleFilenameFilter implements FilenameFilter
 {
 
 	/** The accept dir */
-	private boolean acceptDir;
+	private boolean recursive;
 
 	/** The filesuffix */
 	private String filesuffix;
@@ -48,10 +48,10 @@ public class SimpleFilenameFilter implements FilenameFilter
 	 *
 	 * @param filesuffix
 	 *            the filesuffix
-	 * @param acceptDir
+	 * @param recursive
 	 *            the accept dir
 	 */
-	public SimpleFilenameFilter(final String filesuffix, final boolean acceptDir)
+	public SimpleFilenameFilter(final String filesuffix, final boolean recursive)
 	{
 		Objects.requireNonNull(filesuffix);
 		if (filesuffix.equals(""))
@@ -60,7 +60,7 @@ public class SimpleFilenameFilter implements FilenameFilter
 				"Argument filesuffix cant be empty. " + "Please set the argument filesuffix.");
 		}
 		this.filesuffix = filesuffix.toLowerCase();
-		this.acceptDir = acceptDir;
+		this.recursive = recursive;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class SimpleFilenameFilter implements FilenameFilter
 	public boolean accept(final File dir, final String name)
 	{
 		final File currentFile = new File(dir, name);
-		if (acceptDir)
+		if (recursive)
 		{
 			if (currentFile.isDirectory())
 			{
@@ -91,7 +91,7 @@ public class SimpleFilenameFilter implements FilenameFilter
 		buffer.append(" filesuffix: ");
 		buffer.append(filesuffix);
 		buffer.append(" acceptDir: ");
-		buffer.append(acceptDir);
+		buffer.append(recursive);
 		buffer.append("]");
 		return buffer.toString();
 	}

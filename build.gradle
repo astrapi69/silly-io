@@ -30,17 +30,6 @@ repositories {
     jcenter()
 }
 
-dependencies {
-    testImplementation("commons-io:commons-io:$commonsIoVersion")
-    testImplementation("de.alpharogroup:silly-collections:$sillyCollectionsVersion")
-    testImplementation("de.alpharogroup:jobj-contract-verifier:$jobjContractVerifierVersion")
-    testImplementation("de.alpharogroup:jobj-core:$jobjCoreVersion")
-    testImplementation("de.alpharogroup:test-objects:$testObjectsVersion")
-    testImplementation("de.alpharogroup:vintage-time:$vintageTimeVersion")
-    testImplementation("org.meanbean:meanbean:$meanbeanVersion")
-    testImplementation("org.testng:testng:$testngVersion")
-}
-
 license {
     ext.year="$projectInceptionYear"
     ext.owner="$projectLeaderName"
@@ -189,3 +178,14 @@ jacocoTestReport {
 }
 
 check.dependsOn jacocoTestReport
+
+dependencies {
+    testImplementation("commons-io:commons-io:$commonsIoVersion")
+    testImplementation("de.alpharogroup:silly-collections:$sillyCollectionsVersion")
+    testImplementation("de.alpharogroup:jobj-contract-verifier:$jobjContractVerifierVersion")
+    testImplementation("de.alpharogroup:jobj-core:$jobjCoreVersion")
+    testImplementation("de.alpharogroup:test-objects:$testObjectsVersion")
+    testImplementation("de.alpharogroup:vintage-time:$vintageTimeVersion")
+    testImplementation("org.meanbean:meanbean:$meanbeanVersion")
+    testImplementation("org.testng:testng:$testngVersion")
+}

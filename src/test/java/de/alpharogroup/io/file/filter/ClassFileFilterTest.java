@@ -58,13 +58,15 @@ public class ClassFileFilterTest
 	{
 		boolean expected;
 		boolean actual;
+		boolean recursive;
 		FileFilter fileFilter;
 		String filename;
 		String filepath;
 		File file;
 		File dir;
 
-		fileFilter = new ClassFileFilter();
+		recursive = true;
+		fileFilter = new ClassFileFilter(recursive);
 		assertNotNull(fileFilter);
 
 		filename = "resources.properties";

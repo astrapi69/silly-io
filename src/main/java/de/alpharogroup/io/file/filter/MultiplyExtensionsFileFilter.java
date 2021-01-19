@@ -42,8 +42,8 @@ import java.util.Set;
 public class MultiplyExtensionsFileFilter implements FileFilter
 {
 
-	/** The accept dir */
-	private boolean acceptDir;
+	/** The recursive flag */
+	private boolean recursive;
 
 	/** The file extensions */
 	private Set<String> fileExtensions;
@@ -52,14 +52,14 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
 	 *
-	 * @param acceptDir
+	 * @param recursive
 	 *            Flag to accept directories
 	 * @param fileExtensions
 	 *            the file extensions
 	 */
-	public MultiplyExtensionsFileFilter(final boolean acceptDir, final String... fileExtensions)
+	public MultiplyExtensionsFileFilter(final boolean recursive, final String... fileExtensions)
 	{
-		this(Arrays.asList(fileExtensions), acceptDir);
+		this(Arrays.asList(fileExtensions), recursive);
 	}
 
 	/**
@@ -78,18 +78,18 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	 *
 	 * @param fileExtensions
 	 *            the file extensions
-	 * @param acceptDir
-	 *            Flag to accept directories
+	 * @param recursive
+	 *            Flag to accept directories and allows recursive search
 	 */
 	public MultiplyExtensionsFileFilter(final Collection<String> fileExtensions,
-		final boolean acceptDir)
+		final boolean recursive)
 	{
 		if (null == fileExtensions || fileExtensions.isEmpty())
 		{
 			throw new IllegalArgumentException("Argument fileExtensions cant be null or empty. "
 				+ "Please set the argument fileExtensions appropriate.");
 		}
-		this.acceptDir = acceptDir;
+		this.recursive = recursive;
 		this.fileExtensions = new LinkedHashSet<>();
 		for (final String extension : fileExtensions)
 		{
@@ -114,7 +114,7 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	@Override
 	public boolean accept(final File pathname)
 	{
-		if (acceptDir && pathname.isDirectory())
+		if (recursive && pathname.isDirectory())
 		{
 			return true;
 		}
@@ -140,7 +140,7 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 		buffer.append(" fileExtensions: ");
 		buffer.append(fileExtensions);
 		buffer.append(" acceptDir: ");
-		buffer.append(acceptDir);
+		buffer.append(recursive);
 		buffer.append("]");
 		return buffer.toString();
 	}

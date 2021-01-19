@@ -40,8 +40,8 @@ import java.util.Objects;
 public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 {
 
-	/** The accept dir */
-	private boolean acceptDir;
+	/** The recursive flag */
+	private boolean recursive;
 
 	/** The file extensions */
 	private Collection<String> fileExtensions;
@@ -62,11 +62,11 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 	 *
 	 * @param fileExtensions
 	 *            the file extensions
-	 * @param acceptDir
+	 * @param recursive
 	 *            the accept dir
 	 */
 	public MultiplyExtensionsFilenameFilter(final Collection<String> fileExtensions,
-		final boolean acceptDir)
+		final boolean recursive)
 	{
 		Objects.requireNonNull(fileExtensions);
 		if (fileExtensions.isEmpty())
@@ -75,7 +75,7 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 				+ "Please set the argument fileExtensions appropriate.");
 		}
 		this.fileExtensions = new ArrayList<>(fileExtensions.size());
-		this.acceptDir = acceptDir;
+		this.recursive = recursive;
 		for (final String extension : fileExtensions)
 		{
 			this.fileExtensions.add(extension.toLowerCase());
@@ -89,7 +89,7 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 	public boolean accept(final File dir, final String name)
 	{
 		final File currentFile = new File(dir, name);
-		if (acceptDir && currentFile.isDirectory())
+		if (recursive && currentFile.isDirectory())
 		{
 			return true;
 		}
@@ -114,7 +114,7 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 		buffer.append(" fileExtensions: ");
 		buffer.append(fileExtensions);
 		buffer.append(" acceptDir: ");
-		buffer.append(acceptDir);
+		buffer.append(recursive);
 		buffer.append("]");
 		return buffer.toString();
 	}
