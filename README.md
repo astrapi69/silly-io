@@ -5,8 +5,8 @@
 [![Build Status](https://travis-ci.org/astrapi69/silly-io.svg?branch=develop)](https://travis-ci.org/astrapi69/silly-io) 
 [![Coverage Status](https://coveralls.io/repos/github/astrapi69/silly-io/badge.svg?branch=develop)](https://coveralls.io/github/astrapi69/silly-io?branch=develop) 
 [![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues) 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.alpharogroup/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.alpharogroup/silly-io)
-[![Javadocs](http://www.javadoc.io/badge/de.alpharogroup/silly-io.svg)](http://www.javadoc.io/doc/de.alpharogroup/silly-io)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io)
+[![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
 [![Donate](https://img.shields.io/badge/donate-❤-ff2244.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GVBTWLRAZ7HB8)
 
@@ -47,7 +47,7 @@ The source code comes under the liberal MIT License, making silly-io great for a
 ## Maven dependency
 
 Maven dependency is now on sonatype.
-Check out [sonatype repository](https://oss.sonatype.org/index.html#nexus-search;gav~de.alpharogroup~silly-io~~~) for latest snapshots and releases.
+Check out [sonatype repository](https://oss.sonatype.org/index.html#nexus-search;gav~io.github.astrapi69~silly-io~~~) for latest snapshots and releases.
 
 Add the following maven dependency to your project `pom.xml` if you want to import the core functionality of silly-io:
 
@@ -56,7 +56,7 @@ Than you can add the dependency to your dependencies:
 	<properties>
 			...
 		<!-- SILLY-IO version -->
-		<silly-io.version>1.3</silly-io.version>
+		<silly-io.version>1.4</silly-io.version>
 			...
 	</properties>
 			...
@@ -64,7 +64,7 @@ Than you can add the dependency to your dependencies:
 			...
 			<!-- SILLY-IO DEPENDENCY -->
 			<dependency>
-				<groupId>de.alpharogroup</groupId>
+				<groupId>io.github.astrapi69</groupId>
 				<artifactId>silly-io</artifactId>
 				<version>${silly-io.version}</version>
 			</dependency>
@@ -80,7 +80,7 @@ to your project `build.gradle` if you want to import the core functionality of s
 ```
 define version in file gradle.properties
 
-sillyIoVersion=1.3
+sillyIoVersion=1.4
 ```
 
 or in build.gradle ext area
@@ -88,7 +88,7 @@ or in build.gradle ext area
 ```
 ext {
 			...
-    sillyIoVersion = "1.3"
+    sillyIoVersion = "1.4"
 			...
 }
 ```
@@ -98,7 +98,7 @@ and than add the dependency to the dependencies area
 ```
 dependencies {
 			...
-implementation("de.alpharogroup:silly-io:$sillyIoVersion")
+implementation("io.github.astrapi69:silly-io:$sillyIoVersion")
 			...
 }
 ```
@@ -137,7 +137,7 @@ Do not hesitate to contact the silly-io developers with your questions, concerns
 
 |**Nexus Sonatype repositories**|
 |     :---:      |
-|[![sonatype repository](https://img.shields.io/nexus/r/https/oss.sonatype.org/de.alpharogroup/silly-io.svg?style=for-the-badge)](https://oss.sonatype.org/index.html#nexus-search;gav~de.alpharogroup~silly-io~~~)|
+|[![sonatype repository](https://img.shields.io/nexus/r/https/oss.sonatype.org/io.github.astrapi69/silly-io.svg?style=for-the-badge)](https://oss.sonatype.org/index.html#nexus-search;gav~io.github.astrapi69~silly-io~~~)|
 |Special thanks to [sonatype repository](https://www.sonatype.com) for providing a free maven repository service for open source projects|
 |     <img width=1000/>     |
 
@@ -149,6 +149,6 @@ Do not hesitate to contact the silly-io developers with your questions, concerns
 
 |**javadoc.io**|
 |     :---:      |
-|[![Javadocs](http://www.javadoc.io/badge/de.alpharogroup/silly-io.svg)](http://www.javadoc.io/doc/de.alpharogroup/silly-io)|
+|[![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)|
 |Special thanks to [javadoc.io](http://www.javadoc.io) for providing a free javadoc documentation for open source projects|
 |     <img width=1000/>     |
