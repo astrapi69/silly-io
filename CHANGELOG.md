@@ -11,6 +11,7 @@ ADDED:
 CHANGED:
 
 - update of gradle to new version 6.8
+- to new package io.github.astrapi69
 - update of com.github.ben-manes.versions.gradle.plugin to new version 0.36.0
 - update of test dependency silly-collections in new version 8.3
 - all FileFilter and FilenameFilter classes have a recursive flag for recursive search
