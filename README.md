@@ -98,7 +98,7 @@ and than add the dependency to the dependencies area
 ```
 dependencies {
 			...
-implementation("io.github.astrapi69:silly-io:$sillyIoVersion")
+    implementation("io.github.astrapi69:silly-io:$sillyIoVersion")
 			...
 }
 ```
