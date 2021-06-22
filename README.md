@@ -2,7 +2,7 @@
 
 <div style="text-align: center">
 
-[![Build Status](https://travis-ci.org/astrapi69/silly-io.svg?branch=develop)](https://travis-ci.org/astrapi69/silly-io) 
+[![Build Status](https://api.travis-ci.com/astrapi69/silly-io.svg?branch=develop)](https://travis-ci.com/github/astrapi69/silly-io) 
 [![Coverage Status](https://coveralls.io/repos/github/astrapi69/silly-io/badge.svg?branch=develop)](https://coveralls.io/github/astrapi69/silly-io?branch=develop) 
 [![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues) 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io)
@@ -14,7 +14,12 @@
 
 Utility library that provides java classes for create In- and OuputStream and Reader or Writer for file operations
 
-If you like this project put a ⭐ and donate
+> Please support this project by simply putting a Github <!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/astrapi69/silly-io" data-icon="octicon-star" aria-label="Star astrapi69/silly-io on GitHub">Star ⭐</a>
+>
+> Share this library with friends on Twitter and everywhere else you can
+>
+> If you love this project [![donation](https://img.shields.io/badge/donate-❤-ff2244.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GVBTWLRAZ7HB8)
 
 # Donations
 
@@ -115,8 +120,9 @@ Than you can add the dependency to your dependencies:
 You can first define the version in the ext section and add than the following gradle dependency 
 to your project `build.gradle` if you want to import the core functionality of silly-io:
 
-```
 define version in file gradle.properties
+
+```
 
 sillyIoVersion=1.4
 ```
@@ -148,7 +154,8 @@ Release version numbers will be incremented in the following format:
 
 `<major>.<minor>.<patch>`
 
-For detailed information on versioning for this project you can visit this [wiki page](https://github.com/lightblueseas/mvn-parent-projects/wiki/Simplified-Semantic-Versioning).
+For detailed information on versioning for this project you can visit this 
+[wiki page](https://github.com/lightblueseas/mvn-parent-projects/wiki/Simplified-Semantic-Versioning).
 
 ## Want to Help and improve it? ###
 
@@ -169,8 +176,8 @@ Do not hesitate to contact the silly-io developers with your questions, concerns
 
 |**Travis CI**|
 |     :---:      |
-|[![Travis CI](https://travis-ci.com/images/logos/TravisCI-Full-Color.png)](https://coveralls.io/github/astrapi69/silly-io?branch=master)|
-|Special thanks to [Travis CI](https://travis-ci.org) for providing a free continuous integration service for open source projects|
+|[![Travis CI](https://travis-ci.com/images/logos/TravisCI-Full-Color.png)](https://travis-ci.com)|
+|Special thanks to [Travis CI](https://travis-ci.com) for providing a free continuous integration service for open source projects|
 |     <img width=1000/>     |
 
 |**Nexus Sonatype repositories**|
