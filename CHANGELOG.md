@@ -8,6 +8,7 @@ ADDED:
 
 - new comparator for the annotation ImportResource
 - new extension class for the annotation ImportResource and ImportResources
+- new extension class for execute commands on shell
   
 CHANGED:
 
