@@ -7,6 +7,7 @@ Version 1.5-SNAPSHOT
 ADDED:
 
 - new comparator for the annotation ImportResource
+- new extension class for the annotation ImportResource and ImportResources
   
 CHANGED:
 
