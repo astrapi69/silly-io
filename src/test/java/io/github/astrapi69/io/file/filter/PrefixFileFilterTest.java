@@ -24,15 +24,16 @@
  */
 package io.github.astrapi69.io.file.filter;
 
-import io.github.astrapi69.lang.ClassExtensions;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.net.URISyntaxException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
+
+import io.github.astrapi69.lang.ClassExtensions;
 
 /**
  * The unit test class for the class {@link PrefixFileFilter}
@@ -40,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PrefixFileFilterTest
 {
 
-	@Test public void testAccept() throws URISyntaxException
+	@Test
+	public void testAccept() throws URISyntaxException
 	{
 		boolean expected;
 		boolean actual;

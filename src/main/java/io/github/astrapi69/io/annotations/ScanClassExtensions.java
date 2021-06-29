@@ -88,8 +88,7 @@ public final class ScanClassExtensions
 		String result = className;
 		if (className.endsWith(FileExtension.CLASS.getExtension()))
 		{
-			result = replaceLast(className, FileExtension.CLASS.getExtension(),
-				"");
+			result = replaceLast(className, FileExtension.CLASS.getExtension(), "");
 		}
 		final int lastIndexOf$ = result.lastIndexOf("$");
 		if (lastIndexOf$ != -1)
@@ -104,11 +103,15 @@ public final class ScanClassExtensions
 		return result;
 	}
 
-	private static final String replaceLast(String original, String findString, String replacement) {
+	private static final String replaceLast(String original, String findString, String replacement)
+	{
 		int index = original.lastIndexOf(findString);
-		if (index == -1) {
+		if (index == -1)
+		{
 			return original;
-		} else {
+		}
+		else
+		{
 			StringBuffer originalFiltered = new StringBuffer();
 			originalFiltered.append(original.substring(0, index));
 			originalFiltered.append(replacement);
@@ -118,13 +121,17 @@ public final class ScanClassExtensions
 		}
 	}
 
-	private static boolean isNumeric(final CharSequence cs) {
-		if (cs == null || cs.length() == 0) {
+	private static boolean isNumeric(final CharSequence cs)
+	{
+		if (cs == null || cs.length() == 0)
+		{
 			return false;
 		}
 		final int sz = cs.length();
-		for (int i = 0; i < sz; i++) {
-			if (!Character.isDigit(cs.charAt(i))) {
+		for (int i = 0; i < sz; i++)
+		{
+			if (!Character.isDigit(cs.charAt(i)))
+			{
 				return false;
 			}
 		}

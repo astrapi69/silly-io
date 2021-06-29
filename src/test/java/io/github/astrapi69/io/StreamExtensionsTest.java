@@ -24,8 +24,9 @@
  */
 package io.github.astrapi69.io;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -41,8 +42,8 @@ import java.net.URL;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
-import org.meanbean.test.BeanTester;
 import org.junit.jupiter.api.Test;
+import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.BaseTestCase;
 import io.github.astrapi69.date.CreateDateExtensions;
@@ -157,9 +158,8 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetInputStreamFileBooleanFalse() throws IOException
 	{
-		assertThrows(FileNotFoundException.class,
-			()->StreamExtensions.getInputStream(new File(".", "testGetInputStreamFileBooleanFalse.dat"),
-				false));
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions
+			.getInputStream(new File(".", "testGetInputStreamFileBooleanFalse.dat"), false));
 	}
 
 	/**
@@ -187,9 +187,8 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetOutputStreamFileBooleanFalse() throws IOException
 	{
-		assertThrows(FileNotFoundException.class,
-			()->StreamExtensions.getOutputStream(new File(".", "testGetOutputStreamFileBooleanFalse.dat"),
-				false));
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions
+			.getOutputStream(new File(".", "testGetOutputStreamFileBooleanFalse.dat"), false));
 	}
 
 	/**
@@ -220,9 +219,8 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetReaderFileStringBooleanFalse() throws IOException
 	{
-		assertThrows(FileNotFoundException.class,
-			()->StreamExtensions.getReader(new File(".", "testGetReaderFileStringBooleanFalse.out"), null,
-				false));
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions
+			.getReader(new File(".", "testGetReaderFileStringBooleanFalse.out"), null, false));
 	}
 
 	/**
@@ -268,9 +266,8 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetWriterFileStringBooleanFalse() throws IOException
 	{
-		assertThrows(FileNotFoundException.class,
-			()->StreamExtensions.getWriter(new File(".", "testGetWriterFileStringBooleanFalse.out"), null,
-				false));
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions
+			.getWriter(new File(".", "testGetWriterFileStringBooleanFalse.out"), null, false));
 	}
 
 

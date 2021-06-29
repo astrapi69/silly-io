@@ -37,7 +37,9 @@ import java.util.List;
  */
 public final class LinuxShellExecutor
 {
-	private LinuxShellExecutor(){}
+	private LinuxShellExecutor()
+	{
+	}
 
 	/**
 	 * Execute the given commands and return the result.

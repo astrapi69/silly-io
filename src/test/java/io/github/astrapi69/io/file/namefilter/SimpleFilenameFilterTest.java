@@ -24,7 +24,9 @@
  */
 package io.github.astrapi69.io.file.namefilter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -99,7 +101,7 @@ public class SimpleFilenameFilterTest
 		filesuffix = "";
 		acceptDir = false;
 		assertThrows(IllegalArgumentException.class,
-			()->new SimpleFilenameFilter(filesuffix, acceptDir));
+			() -> new SimpleFilenameFilter(filesuffix, acceptDir));
 	}
 
 	/**
@@ -113,7 +115,7 @@ public class SimpleFilenameFilterTest
 		filesuffix = "";
 		acceptDir = false;
 		assertThrows(IllegalArgumentException.class,
-			()->new SimpleFilenameFilter(filesuffix, acceptDir));
+			() -> new SimpleFilenameFilter(filesuffix, acceptDir));
 	}
 
 	/**

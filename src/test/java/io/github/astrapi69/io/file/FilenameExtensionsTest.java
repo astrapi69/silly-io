@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.net.URISyntaxException;
 
-import org.meanbean.test.BeanTester;
 import org.junit.jupiter.api.Test;
+import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.lang.ClassExtensions;
 

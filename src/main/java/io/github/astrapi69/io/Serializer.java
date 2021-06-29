@@ -24,7 +24,8 @@
  */
 package io.github.astrapi69.io;
 
-import java.io.*;
+import java.io.File;
+import java.io.Serializable;
 
 /**
  * Utility class for read from and write to serialized objects without checked exceptions

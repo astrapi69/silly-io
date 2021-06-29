@@ -24,20 +24,20 @@
  */
 package io.github.astrapi69.io;
 
-import io.github.astrapi69.BaseTestCase;
-import io.github.astrapi69.collections.array.ArrayFactory;
-import io.github.astrapi69.date.CreateDateExtensions;
-import io.github.astrapi69.test.objects.Person;
-import org.meanbean.test.BeanTester;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.meanbean.test.BeanTester;
+
+import io.github.astrapi69.BaseTestCase;
+import io.github.astrapi69.date.CreateDateExtensions;
+import io.github.astrapi69.test.objects.Person;
 
 /**
  * The unit test class for the class {@link Serializer}
@@ -48,15 +48,14 @@ public class SerializerTest extends BaseTestCase
 	/**
 	 * Test method for {@link SerializedObjectExtensions#readSerializedObjectFromFile(File)}
 	 */
-	@Test public void testReadSerializedObjectFromFile()
+	@Test
+	public void testReadSerializedObjectFromFile()
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
 		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
-		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko,
-			writeInMe);
+		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
 		assertTrue(actual);
-		final Object readedObjectFromFile = Serializer
-			.readSerializedObjectFromFile(writeInMe);
+		final Object readedObjectFromFile = Serializer.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
 		assertTrue(actual);
@@ -73,7 +72,8 @@ public class SerializerTest extends BaseTestCase
 	/**
 	 * Test method for {@link Serializer#toByteArray(Serializable)}
 	 */
-	@Test public void testToByteArray()
+	@Test
+	public void testToByteArray()
 	{
 		Person expected;
 		Person actual;
@@ -87,7 +87,8 @@ public class SerializerTest extends BaseTestCase
 	/**
 	 * Test method for {@link Serializer#toObject(byte[])}
 	 */
-	@Test public void testToObject()
+	@Test
+	public void testToObject()
 	{
 		String expected;
 		String actual;
@@ -100,15 +101,14 @@ public class SerializerTest extends BaseTestCase
 	/**
 	 * Test method for {@link Serializer#writeSerializedObjectToFile(Object, File)}
 	 */
-	@Test public void testWriteSerializedObjectToFile()
+	@Test
+	public void testWriteSerializedObjectToFile()
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
 		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
-		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko,
-			writeInMe);
+		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
 		assertTrue(actual);
-		final Object readedObjectFromFile = Serializer
-			.readSerializedObjectFromFile(writeInMe);
+		final Object readedObjectFromFile = Serializer.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
 		assertTrue(actual);

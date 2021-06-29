@@ -86,37 +86,44 @@ public final class ImportResourcesExtensions
 				importResourceArray = new ImportResource[1];
 				importResourceArray[0] = importResource;
 			}
-			final ImportResource[] array = join(importResourceArray,
-				importResourcesArray);
+			final ImportResource[] array = join(importResourceArray, importResourcesArray);
 			Arrays.sort(array, new ImportResourceComparator());
 			resourcesMap.put(annotatedClass, array);
 
 		}
 		return resourcesMap;
 	}
-	public static <T> T[] join(final T[] array1, final T... array2) {
-		if (array1 == null) {
+
+	public static <T> T[] join(final T[] array1, final T... array2)
+	{
+		if (array1 == null)
+		{
 			return array2;
-		} else if (array2 == null) {
+		}
+		else if (array2 == null)
+		{
 			return array1;
 		}
 		final Class<?> type1 = array1.getClass().getComponentType();
 		@SuppressWarnings("unchecked") // OK, because array is of type T
-		final T[] joinedArray = (T[]) Array.newInstance(type1, array1.length + array2.length);
+		final T[] joinedArray = (T[])Array.newInstance(type1, array1.length + array2.length);
 		System.arraycopy(array1, 0, joinedArray, 0, array1.length);
-		try {
+		try
+		{
 			System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
-		} catch (final ArrayStoreException ase) {
+		}
+		catch (final ArrayStoreException ase)
+		{
 			// Check if problem was due to incompatible types
 			/*
-			 * We do this here, rather than before the copy because:
-			 * - it would be a wasted check most of the time
-			 * - safer, in case check turns out to be too strict
+			 * We do this here, rather than before the copy because: - it would be a wasted check
+			 * most of the time - safer, in case check turns out to be too strict
 			 */
 			final Class<?> type2 = array2.getClass().getComponentType();
-			if (!type1.isAssignableFrom(type2)) {
-				throw new IllegalArgumentException("Cannot store " + type2.getName() + " in an array of "
-					+ type1.getName(), ase);
+			if (!type1.isAssignableFrom(type2))
+			{
+				throw new IllegalArgumentException(
+					"Cannot store " + type2.getName() + " in an array of " + type1.getName(), ase);
 			}
 			throw ase; // No, so rethrow original
 		}

@@ -42,21 +42,21 @@ public class ClassFileFilter implements FileFilter
 	private final boolean recursive;
 
 	/**
-	 * Instantiates a new {@link ClassFileFilter} with the given flag for
-	 * recursion
+	 * Instantiates a new {@link ClassFileFilter} with the given flag for recursion
 	 *
 	 * @param recursive
 	 *            if this flag is true the filter will be executed recursively
 	 */
-	public ClassFileFilter(final boolean recursive) {
+	public ClassFileFilter(final boolean recursive)
+	{
 		this.recursive = recursive;
 	}
 
 	/**
-	 * Instantiates a new {@link ClassFileFilter} with the given flag for
-	 * recursion
+	 * Instantiates a new {@link ClassFileFilter} with the given flag for recursion
 	 */
-	public ClassFileFilter() {
+	public ClassFileFilter()
+	{
 		this(true);
 	}
 

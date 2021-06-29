@@ -49,7 +49,8 @@ public class PrefixFileFilter implements FileFilter
 	 * @param recursive
 	 *            if this flag is true the filter will be executed recursively
 	 */
-	public PrefixFileFilter(final String prefix, final boolean recursive) {
+	public PrefixFileFilter(final String prefix, final boolean recursive)
+	{
 		this.prefix = prefix;
 		this.recursive = recursive;
 	}
@@ -61,7 +62,8 @@ public class PrefixFileFilter implements FileFilter
 	 * @param prefix
 	 *            the prefix
 	 */
-	public PrefixFileFilter(final String prefix) {
+	public PrefixFileFilter(final String prefix)
+	{
 		this.prefix = prefix;
 		this.recursive = true;
 	}

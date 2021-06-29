@@ -24,9 +24,6 @@
  */
 package io.github.astrapi69.io.annotations;
 
-import io.github.astrapi69.io.file.FilenameExtensions;
-import io.github.astrapi69.io.file.filter.ClassFileFilter;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -37,6 +34,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import io.github.astrapi69.io.file.FilenameExtensions;
+import io.github.astrapi69.io.file.filter.ClassFileFilter;
 
 /**
  * The class {@link ScanPackageExtensions} provides extension methods for the scan packages

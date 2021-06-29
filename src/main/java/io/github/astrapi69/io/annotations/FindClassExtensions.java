@@ -87,8 +87,8 @@ public class FindClassExtensions
 	 * @throws URISyntaxException
 	 *             is thrown if a string could not be parsed as a URI reference.
 	 */
-	public static List<File> getDirectoriesFromResources(String path,
-		final boolean isPackage) throws IOException, URISyntaxException
+	public static List<File> getDirectoriesFromResources(String path, final boolean isPackage)
+		throws IOException, URISyntaxException
 	{
 		if (isPackage)
 		{

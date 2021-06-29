@@ -24,14 +24,15 @@
  */
 package io.github.astrapi69.io.file.namefilter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
@@ -145,7 +146,7 @@ public class MultiplyExtensionsFilenameFilterTest
 	public final void testConstructorsWithEmptyList()
 	{
 		assertThrows(IllegalArgumentException.class,
-			()->new MultiplyExtensionsFilenameFilter(ListFactory.newArrayList()));
+			() -> new MultiplyExtensionsFilenameFilter(ListFactory.newArrayList()));
 	}
 
 	/**
@@ -156,7 +157,7 @@ public class MultiplyExtensionsFilenameFilterTest
 	{
 		Collection<String> fileExtensions = null;
 		assertThrows(IllegalArgumentException.class,
-			()->new MultiplyExtensionsFilenameFilter(ListFactory.newArrayList()));
+			() -> new MultiplyExtensionsFilenameFilter(ListFactory.newArrayList()));
 	}
 
 	/**

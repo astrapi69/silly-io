@@ -146,7 +146,7 @@ public class MultiplyExtensionsFileFilterTest
 	public final void testConstructorsWithEmptyList()
 	{
 		assertThrows(IllegalArgumentException.class,
-			()->new MultiplyExtensionsFileFilter(ListFactory.newArrayList()));
+			() -> new MultiplyExtensionsFileFilter(ListFactory.newArrayList()));
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class MultiplyExtensionsFileFilterTest
 	{
 		Collection<String> fileExtensions = null;
 		assertThrows(IllegalArgumentException.class,
-			()->new MultiplyExtensionsFileFilter(fileExtensions));
+			() -> new MultiplyExtensionsFileFilter(fileExtensions));
 	}
 
 	/**

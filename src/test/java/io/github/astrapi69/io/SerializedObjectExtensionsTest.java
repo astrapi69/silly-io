@@ -33,8 +33,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.meanbean.test.BeanTester;
 import org.junit.jupiter.api.Test;
+import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.BaseTestCase;
 import io.github.astrapi69.date.CreateDateExtensions;
@@ -82,7 +82,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	}
 
 	/**
-	 * Test method for {@link SerializedObjectExtensions#toByteArray(Serializable)} 
+	 * Test method for {@link SerializedObjectExtensions#toByteArray(Serializable)}
 	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred

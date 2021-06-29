@@ -40,20 +40,6 @@ public class ImportResourceComparator implements Comparator<ImportResource>, Ser
 	private static final long serialVersionUID = 6972397205717174979L;
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int compare(final ImportResource object, final ImportResource compareWithObject)
-	{
-		final Integer nullCheck = nullCheck(object, compareWithObject, false);
-		if (nullCheck != null)
-		{
-			return nullCheck;
-		}
-		return compare(object.index(), compareWithObject.index());
-	}
-
-	/**
 	 * Compares the given objects and returns the int value.
 	 *
 	 * @param <T>
@@ -115,6 +101,20 @@ public class ImportResourceComparator implements Comparator<ImportResource>, Ser
 			return 1;// compareWithObject is null so its bigger
 		}
 		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compare(final ImportResource object, final ImportResource compareWithObject)
+	{
+		final Integer nullCheck = nullCheck(object, compareWithObject, false);
+		if (nullCheck != null)
+		{
+			return nullCheck;
+		}
+		return compare(object.index(), compareWithObject.index());
 	}
 
 }

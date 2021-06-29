@@ -24,15 +24,16 @@
  */
 package io.github.astrapi69.io.annotations;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
 /**
  * The unit test class for the class {@link ImportResourceComparator}.
  */
@@ -52,8 +53,8 @@ public class ImportResourceComparatorTest
 		int expected;
 		final Map<Class<?>, ImportResource[]> resources = ImportResourcesExtensions
 			.getImportResources("io.github.astrapi69.io");
-		final ImportResource[] somePageResources = resources.get(
-			io.github.astrapi69.io.annotations.TestPage.class);
+		final ImportResource[] somePageResources = resources
+			.get(io.github.astrapi69.io.annotations.TestPage.class);
 		assertNotNull(somePageResources);
 
 		expected = 3;

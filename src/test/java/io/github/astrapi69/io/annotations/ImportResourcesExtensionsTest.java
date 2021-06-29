@@ -24,17 +24,18 @@
  */
 package io.github.astrapi69.io.annotations;
 
-import io.github.astrapi69.io.OtherPage;
-import org.junit.jupiter.api.Test;
-import org.meanbean.test.BeanTester;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.meanbean.test.BeanTester;
+
+import io.github.astrapi69.io.OtherPage;
 
 /**
  * The unit test class for the class {@link ImportResourcesExtensions}.
@@ -51,7 +52,8 @@ public class ImportResourcesExtensionsTest
 	 * @throws URISyntaxException
 	 *             is thrown if a string could not be parsed as a URI reference.
 	 */
-	@Test public void testGetImportResources()
+	@Test
+	public void testGetImportResources()
 		throws IOException, ClassNotFoundException, URISyntaxException
 	{
 		int expectedLength;
@@ -123,7 +125,8 @@ public class ImportResourcesExtensionsTest
 	/**
 	 * Test method for {@link ImportResourcesExtensions}
 	 */
-	@Test public void testWithBeanTester()
+	@Test
+	public void testWithBeanTester()
 	{
 		final BeanTester beanTester = new BeanTester();
 		beanTester.testBean(ImportResourcesExtensions.class);

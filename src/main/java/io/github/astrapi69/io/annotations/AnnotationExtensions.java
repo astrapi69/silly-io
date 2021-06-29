@@ -24,9 +24,6 @@
  */
 package io.github.astrapi69.io.annotations;
 
-import io.github.astrapi69.io.file.FilenameExtensions;
-import io.github.astrapi69.io.file.filter.ClassFileFilter;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -38,6 +35,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import io.github.astrapi69.io.file.FilenameExtensions;
+import io.github.astrapi69.io.file.filter.ClassFileFilter;
 
 /**
  * The class {@link AnnotationExtensions} provides methods for scan and resolve annotations in
