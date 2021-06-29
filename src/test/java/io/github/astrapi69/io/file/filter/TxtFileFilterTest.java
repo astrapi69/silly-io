@@ -24,8 +24,8 @@
  */
 package io.github.astrapi69.io.file.filter;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -34,10 +34,10 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
-import de.alpharogroup.evaluate.object.evaluators.ToStringEvaluator;
-import de.alpharogroup.lang.ClassExtensions;
+import io.github.astrapi69.evaluate.object.evaluators.ToStringEvaluator;
+import io.github.astrapi69.lang.ClassExtensions;
 
 /**
  * The unit test class for the class {@link TxtFileFilter}

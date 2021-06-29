@@ -4,6 +4,15 @@
 Version 1.5-SNAPSHOT
 -------------
 
+ADDED:
+
+- new comparator for the annotation ImportResource
+  
+CHANGED:
+
+- update of gradle to new version 6.9
+- changed unit test framework from testng to junit5
+
 Version 1.4
 -------------
 

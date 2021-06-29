@@ -24,19 +24,20 @@
  */
 package io.github.astrapi69.io;
 
-import de.alpharogroup.BaseTestCase;
-import de.alpharogroup.date.CreateDateExtensions;
-import de.alpharogroup.test.objects.Person;
+import io.github.astrapi69.BaseTestCase;
+import io.github.astrapi69.collections.array.ArrayFactory;
+import io.github.astrapi69.date.CreateDateExtensions;
+import io.github.astrapi69.test.objects.Person;
 import org.meanbean.test.BeanTester;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The unit test class for the class {@link Serializer}
@@ -53,12 +54,12 @@ public class SerializerTest extends BaseTestCase
 		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
 		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko,
 			writeInMe);
-		assertTrue("", actual);
+		assertTrue(actual);
 		final Object readedObjectFromFile = Serializer
 			.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
-		assertTrue("", actual);
+		assertTrue(actual);
 		try
 		{
 			writeInMe.deleteOnExit();
@@ -105,12 +106,12 @@ public class SerializerTest extends BaseTestCase
 		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
 		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko,
 			writeInMe);
-		assertTrue("", actual);
+		assertTrue(actual);
 		final Object readedObjectFromFile = Serializer
 			.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
-		assertTrue("", actual);
+		assertTrue(actual);
 	}
 
 	/**

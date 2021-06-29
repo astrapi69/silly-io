@@ -24,8 +24,7 @@
  */
 package io.github.astrapi69.io.file.namefilter;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -36,11 +35,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
-import de.alpharogroup.collections.list.ListFactory;
-import de.alpharogroup.evaluate.object.evaluators.ToStringEvaluator;
-import de.alpharogroup.lang.ClassExtensions;
+import io.github.astrapi69.collections.list.ListFactory;
+import io.github.astrapi69.evaluate.object.evaluators.ToStringEvaluator;
+import io.github.astrapi69.lang.ClassExtensions;
 
 /**
  * The class {@link MultiplyExtensionsFilenameFilter}
@@ -142,20 +141,22 @@ public class MultiplyExtensionsFilenameFilterTest
 	/**
 	 * Test method for {@link MultiplyExtensionsFilenameFilter} constructors with empty list
 	 */
-	@Test(expectedExceptions = IllegalArgumentException.class)
+	@Test
 	public final void testConstructorsWithEmptyList()
 	{
-		new MultiplyExtensionsFilenameFilter(ListFactory.newArrayList());
+		assertThrows(IllegalArgumentException.class,
+			()->new MultiplyExtensionsFilenameFilter(ListFactory.newArrayList()));
 	}
 
 	/**
 	 * Test method for {@link MultiplyExtensionsFilenameFilter} constructors with null values
 	 */
-	@Test(expectedExceptions = IllegalArgumentException.class)
+	@Test
 	public final void testConstructorsWithNullValues()
 	{
-		Collection<String> fileExtensions = new ArrayList<>();
-		new MultiplyExtensionsFilenameFilter(fileExtensions);
+		Collection<String> fileExtensions = null;
+		assertThrows(IllegalArgumentException.class,
+			()->new MultiplyExtensionsFilenameFilter(ListFactory.newArrayList()));
 	}
 
 	/**

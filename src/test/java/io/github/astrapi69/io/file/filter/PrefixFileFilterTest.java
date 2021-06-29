@@ -24,15 +24,15 @@
  */
 package io.github.astrapi69.io.file.filter;
 
-import de.alpharogroup.lang.ClassExtensions;
-import org.testng.annotations.Test;
+import io.github.astrapi69.lang.ClassExtensions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.net.URISyntaxException;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * The unit test class for the class {@link PrefixFileFilter}

@@ -24,17 +24,16 @@
  */
 package io.github.astrapi69.io.file.namefilter;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URISyntaxException;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
-import de.alpharogroup.evaluate.object.evaluators.ToStringEvaluator;
-import de.alpharogroup.lang.ClassExtensions;
+import io.github.astrapi69.evaluate.object.evaluators.ToStringEvaluator;
+import io.github.astrapi69.lang.ClassExtensions;
 
 /**
  * The unit test class for the class {@link SimpleFilenameFilter}
@@ -92,27 +91,29 @@ public class SimpleFilenameFilterTest
 	/**
 	 * Test method for {@link SimpleFilenameFilter} with argument of filesuffix as empty string
 	 */
-	@Test(expectedExceptions = IllegalArgumentException.class)
+	@Test
 	public final void testFileSuffixEmpty()
 	{
 		String filesuffix;
 		boolean acceptDir;
 		filesuffix = "";
 		acceptDir = false;
-		new SimpleFilenameFilter(filesuffix, acceptDir);
+		assertThrows(IllegalArgumentException.class,
+			()->new SimpleFilenameFilter(filesuffix, acceptDir));
 	}
 
 	/**
 	 * Test method for {@link SimpleFilenameFilter} with argument of filesuffix as null
 	 */
-	@Test(expectedExceptions = IllegalArgumentException.class)
+	@Test
 	public final void testFileSuffixNull()
 	{
 		String filesuffix;
 		boolean acceptDir;
 		filesuffix = "";
 		acceptDir = false;
-		new SimpleFilenameFilter(filesuffix, acceptDir);
+		assertThrows(IllegalArgumentException.class,
+			()->new SimpleFilenameFilter(filesuffix, acceptDir));
 	}
 
 	/**
