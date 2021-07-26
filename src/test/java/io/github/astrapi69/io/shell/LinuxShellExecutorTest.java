@@ -22,64 +22,61 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.astrapi69.io.file.filter;
+package io.github.astrapi69.io.shell;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.net.URISyntaxException;
+import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
-
-import io.github.astrapi69.lang.ClassExtensions;
+import org.meanbean.test.BeanTester;
 
 /**
- * The unit test class for the class {@link PrefixFileFilter}
+ * The unit test class for the class {@link LinuxShellExecutor}.
  */
-public class PrefixFileFilterTest
+public class LinuxShellExecutorTest
 {
 
+	/**
+	 * Test method for {@link LinuxShellExecutor#execute(boolean, String...)}
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	@Test
-	public void testAccept() throws URISyntaxException
+	public void testExecute() throws IOException, InterruptedException
 	{
-		boolean expected;
-		boolean actual;
-		String prefix;
-		boolean recursive;
-		FileFilter prefixFileFilter;
-		String filename;
-		String filepath;
-		File file;
-		File dir;
-
-		prefix = "resourc";
-		prefixFileFilter = new PrefixFileFilter(prefix);
-		assertNotNull(prefixFileFilter);
-
-		filename = "resources.properties";
-
-		filepath = "de/alpharogroup/lang/" + filename;
-
-		file = ClassExtensions.getResourceAsFile(filepath);
-		dir = file.getParentFile();
-
-		actual = prefixFileFilter.accept(file);
-		expected = true;
-		assertEquals(expected, actual);
-
-		prefix = "resourc";
-		recursive = true;
-		prefixFileFilter = new PrefixFileFilter(prefix, true);
-		assertNotNull(prefixFileFilter);
-
-		actual = prefixFileFilter.accept(file);
-		expected = true;
-		assertEquals(expected, actual);
-
-		actual = prefixFileFilter.accept(dir);
-		expected = true;
-		assertEquals(expected, actual);
+		String actual;
+		actual = LinuxShellExecutor.execute(true, "ls -al");
+		assertNotNull(actual);
 	}
+
+	/**
+	 * Test method for {@link LinuxShellExecutor#toString(java.io.InputStream)}
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testToString() throws IOException
+	{
+		String expected;
+		String actual;
+		expected = "";
+		actual = LinuxShellExecutor.toString(null);
+		assertEquals(actual, expected);
+	}
+
+	/**
+	 * Test method for {@link LinuxShellExecutor}
+	 */
+	@Test
+	public void testWithBeanTester()
+	{
+		final BeanTester beanTester = new BeanTester();
+		beanTester.testBean(LinuxShellExecutor.class);
+	}
+
 }
+

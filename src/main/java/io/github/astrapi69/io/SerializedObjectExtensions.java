@@ -42,6 +42,10 @@ import java.io.Serializable;
  */
 public final class SerializedObjectExtensions
 {
+	private SerializedObjectExtensions()
+	{
+	}
+
 	/**
 	 * Reads the object from the given file
 	 *
@@ -132,10 +136,6 @@ public final class SerializedObjectExtensions
 			written = true;
 		}
 		return written;
-	}
-
-	private SerializedObjectExtensions()
-	{
 	}
 
 }

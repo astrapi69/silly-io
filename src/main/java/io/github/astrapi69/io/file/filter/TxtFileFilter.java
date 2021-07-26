@@ -43,23 +43,24 @@ public class TxtFileFilter implements FileFilter
 	private final boolean recursive;
 
 	/**
-	 * Instantiates a new {@link TxtFileFilter} with the given flag for
-	 * recursion
+	 * Instantiates a new {@link TxtFileFilter} with the given flag for recursion
 	 *
 	 * @param recursive
 	 *            if this flag is true the filter will be executed recursively
 	 */
-	public TxtFileFilter(final boolean recursive) {
+	public TxtFileFilter(final boolean recursive)
+	{
 		this.recursive = recursive;
 	}
 
 	/**
-	 * Instantiates a new {@link TxtFileFilter} with the given flag for
-	 * recursion
+	 * Instantiates a new {@link TxtFileFilter} with the given flag for recursion
 	 */
-	public TxtFileFilter() {
+	public TxtFileFilter()
+	{
 		this(true);
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */

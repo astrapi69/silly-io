@@ -57,6 +57,10 @@ public final class StreamExtensions implements Serializable
 	 */
 	private static final long serialVersionUID = 5042445056004440533L;
 
+	private StreamExtensions()
+	{
+	}
+
 	/**
 	 * Returns the given InputStream as a byte array
 	 *
@@ -364,10 +368,6 @@ public final class StreamExtensions implements Serializable
 		{
 			outputStream.write(byt);
 		}
-	}
-
-	private StreamExtensions()
-	{
 	}
 
 }

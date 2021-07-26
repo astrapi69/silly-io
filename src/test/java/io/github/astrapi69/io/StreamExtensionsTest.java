@@ -24,9 +24,10 @@
  */
 package io.github.astrapi69.io;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,13 +42,13 @@ import java.net.URL;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Test;
 import org.meanbean.test.BeanTester;
-import org.testng.annotations.Test;
 
-import de.alpharogroup.BaseTestCase;
-import de.alpharogroup.date.CreateDateExtensions;
-import de.alpharogroup.lang.ClassExtensions;
-import de.alpharogroup.test.objects.Person;
+import io.github.astrapi69.BaseTestCase;
+import io.github.astrapi69.date.CreateDateExtensions;
+import io.github.astrapi69.lang.ClassExtensions;
+import io.github.astrapi69.test.objects.Person;
 
 /**
  * The unit test class for the class {@link StreamExtensions}.
@@ -66,14 +67,14 @@ public class StreamExtensionsTest extends BaseTestCase
 	 *             is thrown when a class is not found in the classloader or no definition for the
 	 *             class with the specified name could be found.
 	 */
-	@Test(enabled = true)
+	@Test
 	public void testGetByteArrayInputStream() throws IOException, ClassNotFoundException
 	{
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
 		final File writeInMe = new File(".", "testGetByteArrayInputStream.dat");
 		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
 			writeInMe);
-		assertTrue("", actual);
+		assertTrue(actual);
 		final InputStream is = writeInMe.toURI().toURL().openStream();
 		final byte[] ba = StreamExtensions.getByteArray(is);
 		assertTrue(ba.length > 0);
@@ -91,7 +92,7 @@ public class StreamExtensionsTest extends BaseTestCase
 	 * @throws ClassNotFoundException
 	 *             Signals that an ClassNotFoundException has occurred. if a class was not found.
 	 */
-	@Test(enabled = true)
+	@Test
 	public void testGetByteArrayInputStreamByteArrayOutputStream()
 		throws IOException, ClassNotFoundException
 	{
@@ -100,7 +101,7 @@ public class StreamExtensionsTest extends BaseTestCase
 			"testGetByteArrayInputStreamByteArrayOutputStream.dat");
 		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
 			writeInMe);
-		assertTrue("", actual);
+		assertTrue(actual);
 		final InputStream is = writeInMe.toURI().toURL().openStream();
 		final byte[] ba = StreamExtensions.getByteArray(is,
 			new ByteArrayOutputStream(is.available()));
@@ -124,7 +125,7 @@ public class StreamExtensionsTest extends BaseTestCase
 		final File writeInMe = new File(".", "testGetInputStreamFile.dat");
 		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
 			writeInMe);
-		assertTrue("", actual);
+		assertTrue(actual);
 		InputStream inputStream = StreamExtensions.getInputStream(writeInMe);
 		assertNotNull(inputStream);
 		FileUtils.deleteQuietly(writeInMe);
@@ -154,11 +155,11 @@ public class StreamExtensionsTest extends BaseTestCase
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	@Test(expectedExceptions = FileNotFoundException.class)
+	@Test
 	public void testGetInputStreamFileBooleanFalse() throws IOException
 	{
-		StreamExtensions.getInputStream(new File(".", "testGetInputStreamFileBooleanFalse.dat"),
-			false);
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions
+			.getInputStream(new File(".", "testGetInputStreamFileBooleanFalse.dat"), false));
 	}
 
 	/**
@@ -183,11 +184,11 @@ public class StreamExtensionsTest extends BaseTestCase
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	@Test(expectedExceptions = FileNotFoundException.class)
+	@Test
 	public void testGetOutputStreamFileBooleanFalse() throws IOException
 	{
-		StreamExtensions.getOutputStream(new File(".", "testGetOutputStreamFileBooleanFalse.dat"),
-			false);
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions
+			.getOutputStream(new File(".", "testGetOutputStreamFileBooleanFalse.dat"), false));
 	}
 
 	/**
@@ -215,23 +216,23 @@ public class StreamExtensionsTest extends BaseTestCase
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	@Test(expectedExceptions = FileNotFoundException.class)
+	@Test
 	public void testGetReaderFileStringBooleanFalse() throws IOException
 	{
-		StreamExtensions.getReader(new File(".", "testGetReaderFileStringBooleanFalse.out"), null,
-			false);
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions
+			.getReader(new File(".", "testGetReaderFileStringBooleanFalse.out"), null, false));
 	}
 
 	/**
 	 * Test get serial version uid.
 	 */
 	@SuppressWarnings("unchecked")
-	@Test(enabled = true)
+	@Test
 	public void testGetSerialVersionUID()
 	{
 		final Class<Person> personClass = (Class<Person>)new Person().getClass();
 		final long serialVersionUID = StreamExtensions.getSerialVersionUID(personClass);
-		assertTrue("serialVersionUID should be 1L.", serialVersionUID == 1L);
+		assertTrue(serialVersionUID == 1L);
 	}
 
 	/**
@@ -262,11 +263,11 @@ public class StreamExtensionsTest extends BaseTestCase
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	@Test(expectedExceptions = FileNotFoundException.class)
+	@Test
 	public void testGetWriterFileStringBooleanFalse() throws IOException
 	{
-		StreamExtensions.getWriter(new File(".", "testGetWriterFileStringBooleanFalse.out"), null,
-			false);
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions
+			.getWriter(new File(".", "testGetWriterFileStringBooleanFalse.out"), null, false));
 	}
 
 

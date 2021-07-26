@@ -26,11 +26,11 @@ package io.github.astrapi69.io.file;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.testng.AssertJUnit.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
-import de.alpharogroup.collections.array.ArrayFactory;
+import io.github.astrapi69.collections.array.ArrayFactory;
 
 /**
  * The unit test class for the class {@link FileConstants}

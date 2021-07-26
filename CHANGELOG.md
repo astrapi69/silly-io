@@ -1,6 +1,26 @@
 ## Change log
 ----------------------
 
+Version 1.5
+-------------
+
+ADDED:
+
+- new comparator for the annotation ImportResource
+- new extension class for the annotation ImportResource and ImportResources
+- new extension class for execute commands on shell
+- new package io.github.astrapi69.io.annotations created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
+- new package io.github.astrapi69.io.shell created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
+  
+CHANGED:
+
+- changed unit test framework from testng to junit5
+- update gradle to new version 7.1
+- update gradle-plugin dependency of gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin to new version 0.16.1
+- update of test dependency silly-collections in new version 8.7
+- update of test dependency jobj-core in new version 3.8
+- update of test dependency test-objects in new version 5.5
+
 Version 1.4
 -------------
 

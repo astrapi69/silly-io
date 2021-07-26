@@ -24,21 +24,21 @@
  */
 package io.github.astrapi69.io;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.junit.jupiter.api.Test;
 import org.meanbean.test.BeanTester;
-import org.testng.annotations.Test;
 
-import de.alpharogroup.BaseTestCase;
-import de.alpharogroup.date.CreateDateExtensions;
-import de.alpharogroup.test.objects.Person;
+import io.github.astrapi69.BaseTestCase;
+import io.github.astrapi69.date.CreateDateExtensions;
+import io.github.astrapi69.test.objects.Person;
 
 /**
  * The unit test class for the class {@link SerializedObjectExtensions}
@@ -58,19 +58,19 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	 *             is thrown when a class is not found in the classloader or no definition for the
 	 *             class with the specified name could be found
 	 */
-	@Test(enabled = true)
+	@Test
 	public void testReadSerializedObjectFromFile() throws IOException, ClassNotFoundException
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
 		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
 		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromNiko,
 			writeInMe);
-		assertTrue("", actual);
+		assertTrue(actual);
 		final Object readedObjectFromFile = SerializedObjectExtensions
 			.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
-		assertTrue("", actual);
+		assertTrue(actual);
 		try
 		{
 			writeInMe.deleteOnExit();
@@ -82,7 +82,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	}
 
 	/**
-	 * Test method for {@link SerializedObjectExtensions#toByteArray(Serializable)} 
+	 * Test method for {@link SerializedObjectExtensions#toByteArray(Serializable)}
 	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred
@@ -141,7 +141,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	 *             is thrown when a class is not found in the classloader or no definition for the
 	 *             class with the specified name could be found
 	 */
-	@Test(enabled = true)
+	@Test
 	public void testWriteSerializedObjectToFile() throws IOException, ClassNotFoundException
 	{
 
@@ -149,12 +149,12 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
 		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromNiko,
 			writeInMe);
-		assertTrue("", actual);
+		assertTrue(actual);
 		final Object readedObjectFromFile = SerializedObjectExtensions
 			.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
-		assertTrue("", actual);
+		assertTrue(actual);
 
 	}
 

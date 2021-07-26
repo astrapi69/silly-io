@@ -1,4 +1,4 @@
-/**
+/*
  * The MIT License
  *
  * Copyright (C) 2015 Asterios Raptis
@@ -22,40 +22,4 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.astrapi69.io.file;
-
-/**
- * The class {@link FileConstants} is an abstract constant for files
- *
- * @author Asterios Raptis
- * @version 1.0
- */
-public abstract class FileConstants
-{
-
-	/** Constant for the slash. current value:"\" */
-	public static final String BACKSLASH = "\\";
-
-	/** Constant for the blocksize. current value:8192 */
-	public static final int BLOCKSIZE = 8192;
-
-	/** Constant for the dot. current value:"." */
-	public static final String DOT = ".";
-
-	/** Constant for the dot. current value:":" */
-	public static final String DOUBLEDOT = ":";
-	/** Constant for the kilobyte. current value:1024 */
-	public static final int KILOBYTE = 1024;
-	/** Constant for the slash. current value:"/" */
-	public static final String SLASH = "/";
-	/**
-	 * String array with a few extensions from zip-files
-	 */
-	public static final String[] ZIP_EXTENSIONS = { ".zip", ".jar", ".war", ".ear", ".tar", ".rar",
-			".7z", ".bz2", ".gz" };
-	/**
-	 * String array with the invalid characters in filenames
-	 */
-	public static String[] INVALID_CHARS_IN_FILENAME = { "\\", "/", ":", "*", "\"", "<", ">", "|" };
-
-}
+function xy(){}
