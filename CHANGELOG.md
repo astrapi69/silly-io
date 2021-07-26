@@ -12,8 +12,12 @@ ADDED:
   
 CHANGED:
 
-- update of gradle to new version 6.9
 - changed unit test framework from testng to junit5
+- update gradle to new version 7.1
+- update gradle-plugin dependency of gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin to new version 0.16.1
+- update of test dependency silly-collections in new version 8.7
+- update of test dependency jobj-core in new version 3.8
+- update of test dependency test-objects in new version 5.5
 
 Version 1.4
 -------------
