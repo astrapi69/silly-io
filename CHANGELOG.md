@@ -9,6 +9,8 @@ ADDED:
 - new comparator for the annotation ImportResource
 - new extension class for the annotation ImportResource and ImportResources
 - new extension class for execute commands on shell
+- new package io.github.astrapi69.io.annotations created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
+- new package io.github.astrapi69.io.shell created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
   
 CHANGED:
 
