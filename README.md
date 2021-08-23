@@ -99,7 +99,7 @@ Than you can add the dependency to your dependencies:
 	<properties>
 			...
 		<!-- SILLY-IO version -->
-		<silly-io.version>1.5</silly-io.version>
+		<silly-io.version>1.6</silly-io.version>
 			...
 	</properties>
 			...
@@ -124,7 +124,7 @@ define version in file gradle.properties
 
 ```
 
-sillyIoVersion=1.5
+sillyIoVersion=1.6
 ```
 
 or in build.gradle ext area
@@ -132,7 +132,7 @@ or in build.gradle ext area
 ```
 ext {
 			...
-    sillyIoVersion = "1.5"
+    sillyIoVersion = "1.6~~~~"
 			...
 }
 ```
