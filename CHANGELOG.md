@@ -7,6 +7,7 @@ Version 1.6-SNAPSHOT
 ADDED:
 
 - new class SuffixFileFilter for a generic FileFilter implementation
+- new file extension '.mcrdb' in enum FileExtension
 
 CHANGED:
 
