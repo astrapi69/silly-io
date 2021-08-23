@@ -71,7 +71,7 @@ public class ClassFileFilterTest
 
 		filename = "resources.properties";
 
-		filepath = "de/alpharogroup/lang/" + filename;
+		filepath = "io/github/astrapi69/lang/" + filename;
 
 		file = ClassExtensions.getResourceAsFile(filepath);
 		dir = file.getParentFile();

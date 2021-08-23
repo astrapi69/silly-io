@@ -29,43 +29,34 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
-import io.github.astrapi69.evaluate.object.evaluators.ToStringEvaluator;
 import io.github.astrapi69.lang.ClassExtensions;
 
 /**
- * The unit test class for the class {@link TxtFileFilter}
+ * The unit test class for the class {@link SuffixFileFilter}
  */
-public class TxtFileFilterTest
+public class SuffixFileFilterTest
 {
 
-	/**
-	 * Test method for {@link TxtFileFilter#accept(File)}
-	 *
-	 * @throws URISyntaxException
-	 *             occurs by creation of the file with an uri
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred
-	 */
 	@Test
-	public final void testAccept() throws URISyntaxException, IOException
+	public void testAccept() throws URISyntaxException
 	{
 		boolean expected;
 		boolean actual;
-		FileFilter fileFilter;
+		String suffix;
+		boolean recursive;
+		FileFilter suffixFileFilter;
 		String filename;
 		String filepath;
 		File file;
 		File dir;
 
-		fileFilter = new TxtFileFilter();
-		assertNotNull(fileFilter);
+		suffix = ".properties";
+		suffixFileFilter = new SuffixFileFilter(suffix);
+		assertNotNull(suffixFileFilter);
 
 		filename = "resources.properties";
 
@@ -74,42 +65,21 @@ public class TxtFileFilterTest
 		file = ClassExtensions.getResourceAsFile(filepath);
 		dir = file.getParentFile();
 
-		actual = fileFilter.accept(file);
-		expected = false;
-		assertEquals(expected, actual);
-
-		actual = fileFilter.accept(dir);
+		actual = suffixFileFilter.accept(file);
 		expected = true;
 		assertEquals(expected, actual);
 
-		file = new File(".", "TestFind.txt");
-		FileUtils.writeStringToFile(file, "", Charset.defaultCharset());
+		suffix = ".properties";
+		recursive = true;
+		suffixFileFilter = new SuffixFileFilter(suffix, true);
+		assertNotNull(suffixFileFilter);
 
-		actual = fileFilter.accept(file);
+		actual = suffixFileFilter.accept(file);
 		expected = true;
 		assertEquals(expected, actual);
-		try
-		{
-			file.deleteOnExit();
-		}
-		catch (final Exception e)
-		{
-			// ignore...
-		}
-	}
 
-	/**
-	 * Test method for {@link TxtFileFilter#toString()}
-	 */
-	@Test
-	public final void testToString()
-	{
-		boolean expected;
-		boolean actual;
-
-		actual = ToStringEvaluator.evaluateConsistency(new TxtFileFilter());
+		actual = suffixFileFilter.accept(dir);
 		expected = true;
 		assertEquals(expected, actual);
 	}
-
 }

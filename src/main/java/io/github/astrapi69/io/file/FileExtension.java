@@ -42,6 +42,9 @@ public enum FileExtension
 	/** The file extension for encrypted files */
 	ENCRYPTED(".enc"),
 
+	/** The file extension for mystic-crypt encrypted files */
+	MYSTIC_CRYPT_ENCRYPTED(".mcrdb"),
+
 	/** The file extension for java files */
 	JAVA(".java"),
 

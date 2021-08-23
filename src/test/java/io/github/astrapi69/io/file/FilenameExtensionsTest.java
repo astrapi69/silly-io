@@ -53,11 +53,11 @@ public class FilenameExtensionsTest
 		String expected;
 		String actual;
 		actual = null;
-		final String propertiesFilename = "de/alpharogroup/lang/resources.properties";
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
-		expected = "de/alpharogroup/lang/resources";
+		expected = "io/github/astrapi69/lang/resources";
 		actual = FilenameExtensions.getFilenamePrefix(file);
 		assertTrue(actual.endsWith(expected));
 	}
@@ -74,14 +74,14 @@ public class FilenameExtensionsTest
 		String expected;
 		String actual;
 		actual = null;
-		final String propertiesFilename = "de/alpharogroup/lang/resources.properties";
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
 		File dir = file.getParentFile();
 		expected = null;
 
-		expected = "de/alpharogroup/lang";
+		expected = "io/github/astrapi69/lang";
 		actual = FilenameExtensions.getFilenamePrefix(dir);
 		assertTrue(actual.endsWith(expected));
 	}
@@ -98,7 +98,7 @@ public class FilenameExtensionsTest
 		String expected;
 		String actual;
 		actual = null;
-		final String propertiesFilename = "de/alpharogroup/lang/resources.properties";
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
@@ -119,7 +119,7 @@ public class FilenameExtensionsTest
 		String expected;
 		String actual;
 		actual = null;
-		final String propertiesFilename = "de/alpharogroup/lang/resources.properties";
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
@@ -146,7 +146,7 @@ public class FilenameExtensionsTest
 		String expected;
 		String actual;
 		actual = null;
-		final String propertiesFilename = "de/alpharogroup/lang/resources.properties";
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
@@ -167,7 +167,7 @@ public class FilenameExtensionsTest
 		String expected;
 		String actual;
 		actual = null;
-		final String propertiesFilename = "de/alpharogroup/lang/resources.properties";
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 		File dir = file.getParentFile();
@@ -184,7 +184,7 @@ public class FilenameExtensionsTest
 	{
 		String expected;
 		String actual;
-		final String fileName = "de/alpharogroup/lang/resources";
+		final String fileName = "io/github/astrapi69/lang/resources";
 		actual = FilenameExtensions.getFilenameWithoutExtension(fileName);
 		expected = fileName;
 		assertEquals(expected, actual);

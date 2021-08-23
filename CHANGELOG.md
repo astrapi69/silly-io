@@ -1,6 +1,17 @@
 ## Change log
 ----------------------
 
+Version 1.6-SNAPSHOT
+-------------
+
+ADDED:
+
+- new class SuffixFileFilter for a generic FileFilter implementation
+
+CHANGED:
+
+- update gradle to new version 7.2
+
 Version 1.5
 -------------
 
