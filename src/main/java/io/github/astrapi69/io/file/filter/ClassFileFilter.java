@@ -24,9 +24,6 @@
  */
 package io.github.astrapi69.io.file.filter;
 
-import java.io.File;
-import java.io.FileFilter;
-
 import io.github.astrapi69.io.file.FileExtension;
 
 /**
@@ -36,10 +33,8 @@ import io.github.astrapi69.io.file.FileExtension;
  * @version 1.0
  * @author Asterios Raptis
  */
-public class ClassFileFilter implements FileFilter
+public class ClassFileFilter extends SuffixFileFilter
 {
-	/** The recursive flag */
-	private final boolean recursive;
 
 	/**
 	 * Instantiates a new {@link ClassFileFilter} with the given flag for recursion
@@ -49,7 +44,7 @@ public class ClassFileFilter implements FileFilter
 	 */
 	public ClassFileFilter(final boolean recursive)
 	{
-		this.recursive = recursive;
+		super(FileExtension.CLASS.getExtension(), recursive);
 	}
 
 	/**
@@ -58,28 +53,6 @@ public class ClassFileFilter implements FileFilter
 	public ClassFileFilter()
 	{
 		this(true);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean accept(final File file)
-	{
-		// if recursive flag true and file is a directory allow recursive search
-		if (recursive && file.isDirectory())
-		{
-			return true;
-		}
-		else
-		{
-			final String fileName = file.getName().toLowerCase();
-			if (fileName.endsWith(FileExtension.CLASS.getExtension()))
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

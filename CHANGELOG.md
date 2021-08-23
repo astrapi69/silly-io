@@ -1,6 +1,18 @@
 ## Change log
 ----------------------
 
+Version 1.6
+-------------
+
+ADDED:
+
+- new class SuffixFileFilter for a generic FileFilter implementation
+- new file extension '.mcrdb' in enum FileExtension
+
+CHANGED:
+
+- update gradle to new version 7.2
+
 Version 1.5
 -------------
 

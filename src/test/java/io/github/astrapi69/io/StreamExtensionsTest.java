@@ -56,7 +56,7 @@ import io.github.astrapi69.test.objects.Person;
 public class StreamExtensionsTest extends BaseTestCase
 {
 	/** The file. */
-	final String propertiesFilename = "de/alpharogroup/lang/resources.properties";
+	final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 	/**
 	 * Test get byte array input stream.

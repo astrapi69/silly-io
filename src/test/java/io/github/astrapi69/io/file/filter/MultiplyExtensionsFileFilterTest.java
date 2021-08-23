@@ -79,7 +79,7 @@ public class MultiplyExtensionsFileFilterTest
 
 		filename = "resources.properties";
 
-		propertiesFilename = "de/alpharogroup/lang/" + filename;
+		propertiesFilename = "io/github/astrapi69/lang/" + filename;
 
 		file = ClassExtensions.getResourceAsFile(propertiesFilename);
 		dir = file.getParentFile();
