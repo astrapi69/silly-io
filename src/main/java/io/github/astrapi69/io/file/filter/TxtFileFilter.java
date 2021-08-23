@@ -24,9 +24,6 @@
  */
 package io.github.astrapi69.io.file.filter;
 
-import java.io.File;
-import java.io.FileFilter;
-
 import io.github.astrapi69.io.file.FileExtension;
 
 /**

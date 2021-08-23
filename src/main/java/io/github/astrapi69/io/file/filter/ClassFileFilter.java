@@ -24,9 +24,6 @@
  */
 package io.github.astrapi69.io.file.filter;
 
-import java.io.File;
-import java.io.FileFilter;
-
 import io.github.astrapi69.io.file.FileExtension;
 
 /**
@@ -36,7 +33,7 @@ import io.github.astrapi69.io.file.FileExtension;
  * @version 1.0
  * @author Asterios Raptis
  */
-public class ClassFileFilter  extends SuffixFileFilter
+public class ClassFileFilter extends SuffixFileFilter
 {
 
 	/**
