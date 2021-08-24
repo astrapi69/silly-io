@@ -78,9 +78,21 @@ public class SuffixFileFilter implements FileFilter
 	 *            if this flag is true the filter will be executed recursively
 	 * @return the new created {@link SuffixFileFilter} object
 	 */
-	public static FileFilter newSuffixFileFilter(final String suffix, final boolean recursive)
+	public static FileFilter of(final String suffix, final boolean recursive)
 	{
 		return new SuffixFileFilter(suffix, recursive);
+	}
+
+	/**
+	 * Factory method for create a new {@link SuffixFileFilter} with the given suffix
+	 *
+	 * @param suffix
+	 *            the suffix
+	 * @return the new created {@link SuffixFileFilter} object
+	 */
+	public static FileFilter of(final String suffix)
+	{
+		return new SuffixFileFilter(suffix);
 	}
 
 	/**
