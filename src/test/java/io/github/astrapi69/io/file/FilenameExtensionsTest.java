@@ -52,7 +52,7 @@ public class FilenameExtensionsTest
 	{
 		String expected;
 		String actual;
-		actual = null;
+
 		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
@@ -73,13 +73,12 @@ public class FilenameExtensionsTest
 	{
 		String expected;
 		String actual;
-		actual = null;
+
 		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
 		File dir = file.getParentFile();
-		expected = null;
 
 		expected = "io/github/astrapi69/lang";
 		actual = FilenameExtensions.getFilenamePrefix(dir);
@@ -97,13 +96,61 @@ public class FilenameExtensionsTest
 	{
 		String expected;
 		String actual;
-		actual = null;
+
 		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
 		expected = ".properties";
 		actual = FilenameExtensions.getFilenameSuffix(file);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Test method for {@link FilenameExtensions#getFileExtension(File)}
+	 *
+	 * @throws URISyntaxException
+	 *             occurs by creation of the file with an uri
+	 */
+	@Test
+	public void testGetFileExtension() throws URISyntaxException
+	{
+		String expected;
+		String actual;
+
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
+
+		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
+
+		expected = "properties";
+		actual = FilenameExtensions.getFileExtension(file);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Test method for {@link FilenameExtensions#getFileExtension(File)}
+	 *
+	 * @throws URISyntaxException
+	 *             occurs by creation of the file with an uri
+	 */
+	@Test
+	public void testGetFileExtensionEmptyStringCase() throws URISyntaxException
+	{
+		String expected;
+		String actual;
+
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
+
+		File file = ClassExtensions.getResourceAsFile(propertiesFilename);
+
+		File dir = file.getParentFile();
+		expected = "";
+		actual = FilenameExtensions.getFileExtension(dir);
+		assertEquals(expected, actual);
+
+		file = new File(dir, "noextensionfile");
+		expected = "";
+		actual = FilenameExtensions.getFileExtension(file);
 		assertEquals(expected, actual);
 	}
 
@@ -118,7 +165,7 @@ public class FilenameExtensionsTest
 	{
 		String expected;
 		String actual;
-		actual = null;
+
 		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		File file = ClassExtensions.getResourceAsFile(propertiesFilename);
@@ -166,7 +213,7 @@ public class FilenameExtensionsTest
 	{
 		String expected;
 		String actual;
-		actual = null;
+
 		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);

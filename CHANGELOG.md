@@ -4,7 +4,12 @@
 Version 1.7-SNAPSHOT
 -------------
 
-Version 1.6
+ADDED:
+
+- new method for get the file extension in class FilenameExtensions
+
+
+  Version 1.6
 -------------
 
 ADDED:
