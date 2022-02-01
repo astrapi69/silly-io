@@ -128,6 +128,27 @@ public class FilenameExtensionsTest
 	}
 
 	/**
+	 * Test method for {@link FilenameExtensions#getFileExtension(File, boolean)}
+	 *
+	 * @throws URISyntaxException
+	 *             occurs by creation of the file with an uri
+	 */
+	@Test
+	public void testGetFileExtensionWithDot() throws URISyntaxException
+	{
+		String expected;
+		String actual;
+
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
+
+		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
+
+		expected = ".properties";
+		actual = FilenameExtensions.getFileExtension(file, true);
+		assertEquals(expected, actual);
+	}
+
+	/**
 	 * Test method for {@link FilenameExtensions#getFileExtension(File)}
 	 *
 	 * @throws URISyntaxException

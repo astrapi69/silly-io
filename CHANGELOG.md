@@ -7,7 +7,8 @@ Version 1.7-SNAPSHOT
 ADDED:
 
 - new method for get the file extension in class FilenameExtensions
-- new file extension for zip files in enum FileExtension
+- new file extensions for zip files in enum FileExtension
+- new methods for check if a file is of given file extension
 
 CHANGED:
 

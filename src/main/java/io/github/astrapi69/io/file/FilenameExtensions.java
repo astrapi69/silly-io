@@ -59,7 +59,6 @@ public final class FilenameExtensions
 		return fileNamePrefix;
 	}
 
-
 	/**
 	 * Gets the file extension or an empty String if no file extension exists or the given file
 	 * object is a directory
@@ -71,6 +70,22 @@ public final class FilenameExtensions
 	 */
 	public static String getFileExtension(final File file)
 	{
+		return getFileExtension(file, false);
+	}
+
+	/**
+	 * Gets the file extension or an empty String if no file extension exists or the given file
+	 * object is a directory
+	 *
+	 * @param file
+	 *            the file
+	 * @param withDot
+	 *            the flag that indicates if the extension shell have a dot at the start
+	 * @return 's the file extension or an empty String if no file extension exists or the given
+	 *         file object is a directory
+	 */
+	public static String getFileExtension(final File file, boolean withDot)
+	{
 		String fileNameSuffix = "";
 		if (!file.isDirectory())
 		{
@@ -79,7 +94,8 @@ public final class FilenameExtensions
 
 			if (filenameEndIndex != -1)
 			{
-				fileNameSuffix = fileName.substring(filenameEndIndex + 1, fileName.length());
+				int beginIndex = withDot ? filenameEndIndex : filenameEndIndex + 1;
+				fileNameSuffix = fileName.substring(beginIndex);
 			}
 		}
 		return fileNameSuffix;
