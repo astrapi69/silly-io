@@ -31,7 +31,6 @@ to your project `build.gradle` if you want to import the core functionality of s
 define version in file gradle.properties
 
 ```
-
 sillyIoVersion=1.7
 ```
 
