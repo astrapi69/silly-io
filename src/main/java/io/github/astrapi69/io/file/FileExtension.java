@@ -48,6 +48,33 @@ public enum FileExtension
 	/** The file extension for java files */
 	JAVA(".java"),
 
+	/** The file extension for java archive files */
+	JAR(".jar"),
+
+	/** The file extension for archive files created by tar unix utility program */
+	TAR(".tar"),
+
+	/** The file extension for archive files created with RAR compression */
+	RAR(".rar"),
+
+	/** The file extension for java web archive files */
+	WAR(".war"),
+
+	/** The file extension for java enterprise archive files */
+	EAR(".ear"),
+
+	/** The file extension for archive files created with zip compression */
+	ZIP(".zip"),
+
+	/** The file extension for archive files created with bzip2 unix compression program */
+	BZ2(".bz2"),
+
+	/** The file extension for archive files created with gzip compression algorithm */
+	GZ(".gz"),
+
+	/** The file extension for archive files created with 7z compression */
+	SEVEN_ZIP(".7z"),
+
 	/** The file extension for properties files */
 	PROPERTIES(".properties"),
 

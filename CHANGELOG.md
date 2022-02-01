@@ -7,9 +7,21 @@ Version 1.7-SNAPSHOT
 ADDED:
 
 - new method for get the file extension in class FilenameExtensions
+- new file extension for zip files in enum FileExtension
 
+CHANGED:
 
-  Version 1.6
+- update gradle to new version 7.3.3
+- update of com.github.ben-manes.versions.gradle.plugin to new version 0.41.0
+- update of test dependency commons-io in new version 2.11.0
+- update of test dependency silly-collections in new version 18
+- update of test dependency jobj-contract-verifier in new version 3.5
+- update of test dependency jobj-core in new version 5.2
+- update of test dependency test-objects in new version 5.7
+- update of test dependency vintage-time in new version 5.4
+- update of test dependency junit-jupiter-api and junit-jupiter-engine in new version 5.8.2
+
+Version 1.6
 -------------
 
 ADDED:
