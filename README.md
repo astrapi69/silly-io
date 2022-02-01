@@ -9,6 +9,8 @@
 [![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
 [![Donate](https://img.shields.io/badge/donate-❤-ff2244.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GVBTWLRAZ7HB8)
+[![Hits Of Code](https://hitsofcode.com/github/astrapi69/silly-io?branch=main)](https://hitsofcode.com/github/astrapi69/silly-io/view?branch=main)
+[![Lines Of Code](https://tokei.rs/b1/github/astrapi69/silly-io)](https://github.com/astrapi69/silly-io)
 
 </div>
 
@@ -20,6 +22,57 @@ Utility library that provides java classes for create In- and OuputStream and Re
 > Share this library with friends on Twitter and everywhere else you can
 >
 > If you love this project [![donation](https://img.shields.io/badge/donate-❤-ff2244.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GVBTWLRAZ7HB8)
+
+## gradle dependency
+
+You can first define the version in the ext section and add than the following gradle dependency
+to your project `build.gradle` if you want to import the core functionality of silly-io:
+
+define version in file gradle.properties
+
+```
+
+sillyIoVersion=1.7
+```
+
+or in build.gradle ext area
+
+```
+    sillyIoVersion = "1.7"
+```
+
+and then add the dependency to the dependencies area
+
+```
+    implementation("io.github.astrapi69:silly-io:$sillyIoVersion")
+```
+
+## Maven dependency
+
+Maven dependency is now on sonatype.
+Check out [sonatype repository](https://oss.sonatype.org/index.html#nexus-search;gav~io.github.astrapi69~silly-io~~~) for latest snapshots and releases.
+
+Add the following maven dependency to your project `pom.xml` if you want to import the core functionality of silly-io:
+
+Than you can add the dependency to your dependencies:
+
+	<properties>
+			...
+		<!-- SILLY-IO version -->
+		<silly-io.version>1.7</silly-io.version>
+			...
+	</properties>
+			...
+		<dependencies>
+			...
+			<!-- SILLY-IO DEPENDENCY -->
+			<dependency>
+				<groupId>io.github.astrapi69</groupId>
+				<artifactId>silly-io</artifactId>
+				<version>${silly-io.version}</version>
+			</dependency>
+			...
+		</dependencies>
 
 # Donations
 
@@ -87,65 +140,6 @@ No animals were harmed in the making of this library.
 
 The source code comes under the liberal MIT License, making silly-io great for all types of applications.
 
-## Maven dependency
-
-Maven dependency is now on sonatype.
-Check out [sonatype repository](https://oss.sonatype.org/index.html#nexus-search;gav~io.github.astrapi69~silly-io~~~) for latest snapshots and releases.
-
-Add the following maven dependency to your project `pom.xml` if you want to import the core functionality of silly-io:
-
-Than you can add the dependency to your dependencies:
-
-	<properties>
-			...
-		<!-- SILLY-IO version -->
-		<silly-io.version>1.6</silly-io.version>
-			...
-	</properties>
-			...
-		<dependencies>
-			...
-			<!-- SILLY-IO DEPENDENCY -->
-			<dependency>
-				<groupId>io.github.astrapi69</groupId>
-				<artifactId>silly-io</artifactId>
-				<version>${silly-io.version}</version>
-			</dependency>
-			...
-		</dependencies>
-	
-			
-## gradle dependency
-
-You can first define the version in the ext section and add than the following gradle dependency 
-to your project `build.gradle` if you want to import the core functionality of silly-io:
-
-define version in file gradle.properties
-
-```
-
-sillyIoVersion=1.6
-```
-
-or in build.gradle ext area
-
-```
-ext {
-			...
-    sillyIoVersion = "1.6~~~~"
-			...
-}
-```
-
-and then add the dependency to the dependencies area
- 
-```
-dependencies {
-			...
-    implementation("io.github.astrapi69:silly-io:$sillyIoVersion")
-			...
-}
-```
 ## Semantic Versioning
 
 The versions of silly-io are maintained with the Simplified Semantic Versioning guidelines.
