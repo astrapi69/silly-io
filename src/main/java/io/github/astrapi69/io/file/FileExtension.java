@@ -101,14 +101,9 @@ public enum FileExtension
 		this.extension = extension;
 	}
 
-	public String getExtension()
-	{
-		return extension;
-	}
-
 	/**
 	 * Checks if the given file is from the given {@link FileExtension} object
-	 * 
+	 *
 	 * @param file
 	 *            the file to check
 	 * @param fileExtension
@@ -124,7 +119,7 @@ public enum FileExtension
 
 	/**
 	 * Checks if the given file is from the given file extension as {@link String} object
-	 * 
+	 *
 	 * @param file
 	 *            the file to check
 	 * @param fileExtension
@@ -138,6 +133,11 @@ public enum FileExtension
 		return fileExtension.startsWith(".")
 			? FilenameExtensions.getFileExtension(file, true).equals(fileExtension)
 			: FilenameExtensions.getFileExtension(file, false).equals(fileExtension);
+	}
+
+	public String getExtension()
+	{
+		return extension;
 	}
 
 }

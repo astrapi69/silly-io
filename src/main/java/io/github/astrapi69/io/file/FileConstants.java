@@ -30,7 +30,8 @@ package io.github.astrapi69.io.file;
  * @author Asterios Raptis
  * @version 1.0
  */
-public abstract class FileConstants {
+public abstract class FileConstants
+{
 
 	/**
 	 * Constant for the slash. current value:"\"
@@ -65,21 +66,15 @@ public abstract class FileConstants {
 	/**
 	 * String array with a few extensions from zip-files
 	 */
-	public static final String[] ZIP_EXTENSIONS = {
-			FileExtension.ZIP.getExtension(),
-			FileExtension.JAR.getExtension(),
-			FileExtension.WAR.getExtension(),
-			FileExtension.EAR.getExtension(),
-			FileExtension.TAR.getExtension(),
-			FileExtension.RAR.getExtension(),
-			FileExtension.SEVEN_ZIP.getExtension(),
-			FileExtension.BZ2.getExtension(),
-			FileExtension.GZ.getExtension()
-	};
+	public static final String[] ZIP_EXTENSIONS = { FileExtension.ZIP.getExtension(),
+			FileExtension.JAR.getExtension(), FileExtension.WAR.getExtension(),
+			FileExtension.EAR.getExtension(), FileExtension.TAR.getExtension(),
+			FileExtension.RAR.getExtension(), FileExtension.SEVEN_ZIP.getExtension(),
+			FileExtension.BZ2.getExtension(), FileExtension.GZ.getExtension() };
 
 	/**
 	 * String array with the invalid characters in filenames
 	 */
-	public static String[] INVALID_CHARS_IN_FILENAME = {"\\", "/", ":", "*", "\"", "<", ">", "|"};
+	public static String[] INVALID_CHARS_IN_FILENAME = { "\\", "/", ":", "*", "\"", "<", ">", "|" };
 
 }
