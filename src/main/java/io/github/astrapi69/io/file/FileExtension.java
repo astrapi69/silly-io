@@ -84,6 +84,24 @@ public enum FileExtension
 	/** The file extension for txt files */
 	TXT(".txt"),
 
+	/** The file extension for xml files */
+	XML(".xml"),
+
+	/** The file extension for json files */
+	JSON(".json"),
+
+	/** The file extension for javascript files */
+	JS(".js"),
+
+	/** The file extension for sql files */
+	SQL(".sql"),
+
+	/** The file extension for log files */
+	LOG(".log"),
+
+	/** The file extension for csv files */
+	CSV(".csv"),
+
 	/** The file extension for velocity template files */
 	VELOCITY_TEMPLATE(".vm");
 

@@ -4,7 +4,9 @@
 Version 1.8-SNAPSHOT
 -------------
 
+ADDED:
 
+- new file extensions for xml, json, js, sql, log and csv files in enum FileExtension
 
 Version 1.7
 -------------
