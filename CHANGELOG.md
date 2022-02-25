@@ -7,6 +7,7 @@ Version 1.8-SNAPSHOT
 ADDED:
 
 - new file extensions for xml, json, js, sql, log and csv files in enum FileExtension
+- new github-action workflow for 'Java CI with Gradle'
 
 Version 1.7
 -------------
