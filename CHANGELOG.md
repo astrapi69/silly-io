@@ -6,7 +6,7 @@ Version 1.8-SNAPSHOT
 
 ADDED:
 
-- new file extensions for xml, json, js, sql, log and csv files in enum FileExtension
+- new file extensions for several files in enum FileExtension
 - new github-action workflow for 'Java CI with Gradle'
 - new gradle plugin dependency of 'com.diffplug.spotless:spotless-plugin-gradle' to minor version 6.3.0
 
