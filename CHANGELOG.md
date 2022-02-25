@@ -9,6 +9,7 @@ ADDED:
 - new file extensions for several files in enum FileExtension
 - new github-action workflow for 'Java CI with Gradle'
 - new gradle plugin dependency of 'com.diffplug.spotless:spotless-plugin-gradle' to minor version 6.3.0
+- new method that checks if a given file extension is known from a file object
 
 CHANGED:
 

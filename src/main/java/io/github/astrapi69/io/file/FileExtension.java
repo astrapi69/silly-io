@@ -293,8 +293,32 @@ public enum FileExtension
 	public static boolean is(File file, FileExtension fileExtension)
 	{
 		Objects.requireNonNull(file, "File must not be null");
-		Objects.requireNonNull(file, "FileExtension must not be null");
+		Objects.requireNonNull(fileExtension, "FileExtension must not be null");
 		return is(file, fileExtension.getExtension());
+	}
+
+	/**
+	 * Checks if the given file has a known file extension that exist in the enum
+	 * {@link FileExtension}
+	 *
+	 * @param file
+	 *            the file to check
+	 * @return true if the given file has a known file extension that exist in the enum
+	 *         {@link FileExtension} otherwise false
+	 */
+	public static boolean isKnown(File file)
+	{
+		Objects.requireNonNull(file, "File must not be null");
+		Objects.requireNonNull(file, "FileExtension must not be null");
+		FileExtension[] fileExtensions = FileExtension.values();
+		for (FileExtension fileExtension : fileExtensions)
+		{
+			if (file.getName().endsWith(fileExtension.getExtension()))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -309,7 +333,7 @@ public enum FileExtension
 	public static boolean is(File file, String fileExtension)
 	{
 		Objects.requireNonNull(file, "File must not be null");
-		Objects.requireNonNull(file, "String for the file extension must not be null");
+		Objects.requireNonNull(fileExtension, "String for the file extension must not be null");
 		return fileExtension.startsWith(".")
 			? FilenameExtensions.getFileExtension(file, true).equals(fileExtension)
 			: FilenameExtensions.getFileExtension(file, false).equals(fileExtension);
