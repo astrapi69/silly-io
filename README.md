@@ -2,14 +2,14 @@
 
 <div style="text-align: center">
 
-[![Build Status](https://api.travis-ci.com/astrapi69/silly-io.svg?branch=develop)](https://travis-ci.com/github/astrapi69/silly-io) 
-[![Coverage Status](https://coveralls.io/repos/github/astrapi69/silly-io/badge.svg?branch=develop)](https://coveralls.io/github/astrapi69/silly-io?branch=develop) 
+[![Java CI with Gradle](https://github.com/astrapi69/silly-io/actions/workflows/gradle.yml/badge.svg)](https://github.com/astrapi69/silly-io/actions/workflows/gradle.yml)
+[![Coverage Status](https://codecov.io/gh/astrapi69/silly-io/branch/develop/graph/badge.svg)](https://codecov.io/gh/astrapi69/silly-io)
 [![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues) 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io)
 [![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
 [![Donate](https://img.shields.io/badge/donate-❤-ff2244.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GVBTWLRAZ7HB8)
-[![Hits Of Code](https://hitsofcode.com/github/astrapi69/silly-io?branch=main)](https://hitsofcode.com/github/astrapi69/silly-io/view?branch=main)
+[![Hits Of Code](https://hitsofcode.com/github/astrapi69/silly-io?branch=develop)](https://hitsofcode.com/github/astrapi69/silly-io/view?branch=develop)
 [![Lines Of Code](https://tokei.rs/b1/github/astrapi69/silly-io)](https://github.com/astrapi69/silly-io)
 
 </div>
