@@ -4,7 +4,7 @@
 
 [![Java CI with Gradle](https://github.com/astrapi69/silly-io/actions/workflows/gradle.yml/badge.svg)](https://github.com/astrapi69/silly-io/actions/workflows/gradle.yml)
 [![Coverage Status](https://codecov.io/gh/astrapi69/silly-io/branch/develop/graph/badge.svg)](https://codecov.io/gh/astrapi69/silly-io)
-[![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues) 
+[![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io)
 [![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
@@ -55,23 +55,23 @@ Add the following maven dependency to your project `pom.xml` if you want to impo
 
 Than you can add the dependency to your dependencies:
 
-	<properties>
-			...
-		<!-- SILLY-IO version -->
-		<silly-io.version>1.7</silly-io.version>
-			...
-	</properties>
-			...
-		<dependencies>
-			...
-			<!-- SILLY-IO DEPENDENCY -->
-			<dependency>
-				<groupId>io.github.astrapi69</groupId>
-				<artifactId>silly-io</artifactId>
-				<version>${silly-io.version}</version>
-			</dependency>
-			...
-		</dependencies>
+    <properties>
+            ...
+        <!-- SILLY-IO version -->
+        <silly-io.version>1.7</silly-io.version>
+            ...
+    </properties>
+            ...
+        <dependencies>
+            ...
+            <!-- SILLY-IO DEPENDENCY -->
+            <dependency>
+                <groupId>io.github.astrapi69</groupId>
+                <artifactId>silly-io</artifactId>
+                <version>${silly-io.version}</version>
+            </dependency>
+            ...
+        </dependencies>
 
 # Donations
 
@@ -126,7 +126,7 @@ or over Monero(XMR) with:
 alt="Donation Monero Wallet" width="250"/>
 
 or over flattr:
-  
+
 <a href="http://flattr.com/thing/4067696/astrapi69silly-io-on-GitHub" target="_blank">
 <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" style="border: none" />
 </a>
@@ -147,7 +147,7 @@ Release version numbers will be incremented in the following format:
 
 `<major>.<minor>.<patch>`
 
-For detailed information on versioning for this project you can visit this 
+For detailed information on versioning for this project you can visit this
 [wiki page](https://github.com/lightblueseas/mvn-parent-projects/wiki/Simplified-Semantic-Versioning).
 
 ## Want to Help and improve it? ###

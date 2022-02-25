@@ -48,7 +48,7 @@ import org.meanbean.test.BeanTester;
 import io.github.astrapi69.BaseTestCase;
 import io.github.astrapi69.date.CreateDateExtensions;
 import io.github.astrapi69.lang.ClassExtensions;
-import io.github.astrapi69.test.objects.Person;
+import io.github.astrapi69.test.object.Person;
 
 /**
  * The unit test class for the class {@link StreamExtensions}.

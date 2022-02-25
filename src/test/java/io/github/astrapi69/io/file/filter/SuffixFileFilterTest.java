@@ -42,7 +42,8 @@ public class SuffixFileFilterTest
 {
 
 	@Test
-	public void testFactoryMethods() throws URISyntaxException{
+	public void testFactoryMethods() throws URISyntaxException
+	{
 
 		boolean expected;
 		boolean actual;
