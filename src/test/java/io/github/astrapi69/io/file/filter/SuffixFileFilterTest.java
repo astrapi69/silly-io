@@ -42,6 +42,49 @@ public class SuffixFileFilterTest
 {
 
 	@Test
+	public void testFactoryMethods() throws URISyntaxException
+	{
+
+		boolean expected;
+		boolean actual;
+		String suffix;
+		boolean recursive;
+		FileFilter suffixFileFilter;
+		String filename;
+		String filepath;
+		File file;
+		File dir;
+
+		suffix = ".properties";
+		suffixFileFilter = SuffixFileFilter.of(suffix);
+		assertNotNull(suffixFileFilter);
+
+		filename = "resources.properties";
+
+		filepath = "io/github/astrapi69/lang/" + filename;
+
+		file = ClassExtensions.getResourceAsFile(filepath);
+		dir = file.getParentFile();
+
+		actual = suffixFileFilter.accept(file);
+		expected = true;
+		assertEquals(expected, actual);
+
+		suffix = ".properties";
+		recursive = true;
+		suffixFileFilter = SuffixFileFilter.of(suffix, true);
+		assertNotNull(suffixFileFilter);
+
+		actual = suffixFileFilter.accept(file);
+		expected = true;
+		assertEquals(expected, actual);
+
+		actual = suffixFileFilter.accept(dir);
+		expected = true;
+		assertEquals(expected, actual);
+	}
+
+	@Test
 	public void testAccept() throws URISyntaxException
 	{
 		boolean expected;

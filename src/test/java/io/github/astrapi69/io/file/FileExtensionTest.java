@@ -24,6 +24,7 @@
  */
 package io.github.astrapi69.io.file;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -44,6 +45,21 @@ class FileExtensionTest
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
 		assertTrue(FileExtension.is(file, FileExtension.PROPERTIES));
+	}
+
+	@Test
+	void isKnown() throws URISyntaxException
+	{
+		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
+
+		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
+
+		assertTrue(FileExtension.isKnown(file));
+
+		File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+		File notKnown = new File(tmpDir, "foo.xxx");
+
+		assertFalse(FileExtension.isKnown(notKnown));
 	}
 
 	@Test

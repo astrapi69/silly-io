@@ -25,7 +25,7 @@
 package io.github.astrapi69.io.file;
 
 /**
- * The class {@link FileConstants} is an abstract constant for files
+ * The class {@link FileConstants} provides constant values relevant for file operations
  *
  * @author Asterios Raptis
  * @version 1.0
