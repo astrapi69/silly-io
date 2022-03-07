@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Base64;
 
 /**
  * Helper-class for read from and write to serialized objects
@@ -89,6 +90,41 @@ public final class SerializedObjectExtensions
 			objectOutputStream.writeObject(object);
 			return byteArrayOutputStream.toByteArray();
 		}
+	}
+
+	/**
+	 * Copies(serialize) the given object to a base64 encoded {@link String} object.
+	 *
+	 * @param <T>
+	 *            the generic type of the given object that have to extend {@link Serializable}
+	 * @param object
+	 *            The Object to convert into a base64 encoded {@link String} object
+	 * @return The base64 encoded {@link String} object
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred
+	 */
+	public static <T extends Serializable> String toBase64EncodedString(final T object)
+		throws IOException
+	{
+		return Base64.getEncoder().encodeToString(toByteArray(object));
+	}
+
+	/**
+	 * Transforms the given base64 encoded {@link String} object into an object
+	 *
+	 * @param base64EncodedString
+	 *            The base64 encoded {@link String} object
+	 * @return The object the was converted from the base64 encoded {@link String} object
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred
+	 * @throws ClassNotFoundException
+	 *             is thrown when a class is not found in the classloader or no definition for the
+	 *             class with the specified name could be found
+	 */
+	public static Object toObject(String base64EncodedString)
+		throws IOException, ClassNotFoundException
+	{
+		return toObject(Base64.getDecoder().decode(base64EncodedString));
 	}
 
 	/**

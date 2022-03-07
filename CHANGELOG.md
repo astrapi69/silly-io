@@ -1,6 +1,16 @@
 ## Change log
 ----------------------
 
+Version 1.9
+-------------
+
+ADDED:
+
+- new method in class SerializedObjectExtensions for convert an object to a base64 encoded String object
+- new method in class Serializer for convert an object to a base64 encoded String object
+- new method in class SerializedObjectExtensions for convert a base64 encoded String object back to an object
+- new method in class Serializer for convert a base64 encoded String object back to an object
+
 Version 1.8
 -------------
 

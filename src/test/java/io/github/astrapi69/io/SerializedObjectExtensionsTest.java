@@ -103,6 +103,28 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	}
 
 	/**
+	 * Test method for {@link SerializedObjectExtensions#toBase64EncodedString(Serializable)}
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred
+	 * @throws ClassNotFoundException
+	 *             is thrown when a class is not found in the classloader or no definition for the
+	 *             class with the specified name could be found
+	 */
+	@Test
+	public void testToBase64EncodedString() throws IOException, ClassNotFoundException
+	{
+		String expected;
+		String actual;
+		Person person;
+		expected = "rO0ABXNyACZpby5naXRodWIuYXN0cmFwaTY5LnRlc3Qub2JqZWN0LlBlcnNvbgAAAAAAAAABAgAFTAAFYWJvdXR0ABJMamF2YS9sYW5nL1N0cmluZztMAAZnZW5kZXJ0ADFMaW8vZ2l0aHViL2FzdHJhcGk2OS90ZXN0L29iamVjdC9lbnVtdHlwZS9HZW5kZXI7TAAHbWFycmllZHQAE0xqYXZhL2xhbmcvQm9vbGVhbjtMAARuYW1lcQB+AAFMAAhuaWNrbmFtZXEAfgABeHB0AA9zY2llbmNlIGlzIGNvb2x+cgAvaW8uZ2l0aHViLmFzdHJhcGk2OS50ZXN0Lm9iamVjdC5lbnVtdHlwZS5HZW5kZXIAAAAAAAAAABIAAHhyAA5qYXZhLmxhbmcuRW51bQAAAAAAAAAAEgAAeHB0AAlVTkRFRklORURzcgARamF2YS5sYW5nLkJvb2xlYW7NIHKA1Zz67gIAAVoABXZhbHVleHAAdAAGQWxiZXJ0dAAA";
+
+		person = Person.builder().name("Albert").about("science is cool").build();
+		actual = SerializedObjectExtensions.toBase64EncodedString(person);
+		assertEquals(expected, actual);
+	}
+
+	/**
 	 * Test method for {@link SerializedObjectExtensions#toObject(byte[])}
 	 *
 	 * @throws IOException
@@ -119,6 +141,28 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 		final byte[] byteArray = { -84, -19, 0, 5, 116, 0, 7, 70, 111, 111, 32, 98, 97, 114 };
 		expected = "Foo bar";
 		actual = (String)SerializedObjectExtensions.toObject(byteArray);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Test method for {@link SerializedObjectExtensions#toObject(String)}
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred
+	 * @throws ClassNotFoundException
+	 *             is thrown when a class is not found in the classloader or no definition for the
+	 *             class with the specified name could be found
+	 */
+	@Test
+	public void testToObjectFromBase64EncodedString() throws ClassNotFoundException, IOException
+	{
+		Person expected;
+		Person actual;
+		String base64EncodedString;
+
+		base64EncodedString = "rO0ABXNyACZpby5naXRodWIuYXN0cmFwaTY5LnRlc3Qub2JqZWN0LlBlcnNvbgAAAAAAAAABAgAFTAAFYWJvdXR0ABJMamF2YS9sYW5nL1N0cmluZztMAAZnZW5kZXJ0ADFMaW8vZ2l0aHViL2FzdHJhcGk2OS90ZXN0L29iamVjdC9lbnVtdHlwZS9HZW5kZXI7TAAHbWFycmllZHQAE0xqYXZhL2xhbmcvQm9vbGVhbjtMAARuYW1lcQB+AAFMAAhuaWNrbmFtZXEAfgABeHB0AA9zY2llbmNlIGlzIGNvb2x+cgAvaW8uZ2l0aHViLmFzdHJhcGk2OS50ZXN0Lm9iamVjdC5lbnVtdHlwZS5HZW5kZXIAAAAAAAAAABIAAHhyAA5qYXZhLmxhbmcuRW51bQAAAAAAAAAAEgAAeHB0AAlVTkRFRklORURzcgARamF2YS5sYW5nLkJvb2xlYW7NIHKA1Zz67gIAAVoABXZhbHVleHAAdAAGQWxiZXJ0dAAA";
+		expected = Person.builder().name("Albert").about("science is cool").build();
+		actual = (Person)SerializedObjectExtensions.toObject(base64EncodedString);
 		assertEquals(expected, actual);
 	}
 
