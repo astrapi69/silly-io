@@ -46,7 +46,39 @@ public class SerializerTest extends BaseTestCase
 {
 
 	/**
-	 * Test method for {@link SerializedObjectExtensions#readSerializedObjectFromFile(File)}
+	 * Test method for {@link Serializer#toObject(String)}
+	 */
+	@Test
+	public void testToObjectFromBase64EncodedString()
+	{
+		Person expected;
+		Person actual;
+		String base64EncodedString;
+
+		base64EncodedString = "rO0ABXNyACZpby5naXRodWIuYXN0cmFwaTY5LnRlc3Qub2JqZWN0LlBlcnNvbgAAAAAAAAABAgAFTAAFYWJvdXR0ABJMamF2YS9sYW5nL1N0cmluZztMAAZnZW5kZXJ0ADFMaW8vZ2l0aHViL2FzdHJhcGk2OS90ZXN0L29iamVjdC9lbnVtdHlwZS9HZW5kZXI7TAAHbWFycmllZHQAE0xqYXZhL2xhbmcvQm9vbGVhbjtMAARuYW1lcQB+AAFMAAhuaWNrbmFtZXEAfgABeHB0AA9zY2llbmNlIGlzIGNvb2x+cgAvaW8uZ2l0aHViLmFzdHJhcGk2OS50ZXN0Lm9iamVjdC5lbnVtdHlwZS5HZW5kZXIAAAAAAAAAABIAAHhyAA5qYXZhLmxhbmcuRW51bQAAAAAAAAAAEgAAeHB0AAlVTkRFRklORURzcgARamF2YS5sYW5nLkJvb2xlYW7NIHKA1Zz67gIAAVoABXZhbHVleHAAdAAGQWxiZXJ0dAAA";
+		expected = Person.builder().name("Albert").about("science is cool").build();
+		actual = (Person)Serializer.toObject(base64EncodedString);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Test method for {@link Serializer#toBase64EncodedString(Serializable)}
+	 */
+	@Test
+	public void testToBase64EncodedString()
+	{
+		String expected;
+		String actual;
+		Person person;
+		expected = "rO0ABXNyACZpby5naXRodWIuYXN0cmFwaTY5LnRlc3Qub2JqZWN0LlBlcnNvbgAAAAAAAAABAgAFTAAFYWJvdXR0ABJMamF2YS9sYW5nL1N0cmluZztMAAZnZW5kZXJ0ADFMaW8vZ2l0aHViL2FzdHJhcGk2OS90ZXN0L29iamVjdC9lbnVtdHlwZS9HZW5kZXI7TAAHbWFycmllZHQAE0xqYXZhL2xhbmcvQm9vbGVhbjtMAARuYW1lcQB+AAFMAAhuaWNrbmFtZXEAfgABeHB0AA9zY2llbmNlIGlzIGNvb2x+cgAvaW8uZ2l0aHViLmFzdHJhcGk2OS50ZXN0Lm9iamVjdC5lbnVtdHlwZS5HZW5kZXIAAAAAAAAAABIAAHhyAA5qYXZhLmxhbmcuRW51bQAAAAAAAAAAEgAAeHB0AAlVTkRFRklORURzcgARamF2YS5sYW5nLkJvb2xlYW7NIHKA1Zz67gIAAVoABXZhbHVleHAAdAAGQWxiZXJ0dAAA";
+
+		person = Person.builder().name("Albert").about("science is cool").build();
+		actual = Serializer.toBase64EncodedString(person);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Test method for {@link Serializer#readSerializedObjectFromFile(File)}
 	 */
 	@Test
 	public void testReadSerializedObjectFromFile()

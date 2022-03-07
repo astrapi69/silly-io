@@ -115,4 +115,44 @@ public final class Serializer
 		}
 	}
 
+	/**
+	 * Copies(serialize) the given object to a Base64 encoded {@link String} object. Note: use this
+	 * method for binary data
+	 *
+	 * @param <T>
+	 *            the generic type of the given object that have to extend {@link Serializable}
+	 * @param object
+	 *            The Object to convert into a Base64 encoded {@link String} object
+	 * @return The Base64 encoded {@link String} object
+	 */
+	public static <T extends Serializable> String toBase64EncodedString(final T object)
+	{
+		try
+		{
+			return SerializedObjectExtensions.toBase64EncodedString(object);
+		}
+		catch (Exception exception)
+		{
+			throw new RuntimeException(exception);
+		}
+	}
+
+	/**
+	 * Transforms the given Base64 encoded {@link String} object into an object
+	 *
+	 * @param base64EncodedString
+	 *            The byte array to convert into an Object
+	 * @return The object the was converted from the Base64 encoded {@link String} object
+	 */
+	public static Object toObject(String base64EncodedString)
+	{
+		try
+		{
+			return SerializedObjectExtensions.toObject(base64EncodedString);
+		}
+		catch (Exception exception)
+		{
+			throw new RuntimeException(exception);
+		}
+	}
 }
