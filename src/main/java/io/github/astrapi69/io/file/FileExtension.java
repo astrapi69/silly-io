@@ -135,7 +135,7 @@ public enum FileExtension
 	/** The file extension for macOS X disk image files */
 	DMG(".dmg"),
 
-	/** The file extension for package archive files */
+	/** The file extension for package archive files for apple macintosh OSX installer packages */
 	PKG(".pkg"),
 
 	/** The file extension for Debian software package files */
