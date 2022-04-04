@@ -35,9 +35,11 @@ import java.io.FileFilter;
  */
 public class PrefixFileFilter implements FileFilter
 {
+
+	/** The file prefix */
 	private final String prefix;
 
-	/** The recursive flag */
+	/** The recursive flag, if the recursive flag is true the filter will be executed recursively */
 	private final boolean recursive;
 
 	/**
@@ -47,12 +49,39 @@ public class PrefixFileFilter implements FileFilter
 	 * @param prefix
 	 *            the prefix
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
+	 *            if the recursive flag is true the filter will be executed recursively
 	 */
 	public PrefixFileFilter(final String prefix, final boolean recursive)
 	{
 		this.prefix = prefix;
 		this.recursive = recursive;
+	}
+
+	/**
+	 * Factory method for create a new {@link PrefixFileFilter} with the given prefix
+	 *
+	 * @param prefix
+	 *            the prefix
+	 * @return the new created {@link PrefixFileFilter} object
+	 */
+	public static FileFilter of(final String prefix)
+	{
+		return new PrefixFileFilter(prefix);
+	}
+
+	/**
+	 * Factory method for create a new {@link PrefixFileFilter} with the given prefix and the given
+	 * flag for recursion
+	 *
+	 * @param prefix
+	 *            the prefix
+	 * @param recursive
+	 *            if the recursive flag is true the filter will be executed recursively
+	 * @return the new created {@link PrefixFileFilter} object
+	 */
+	public static FileFilter of(final String prefix, final boolean recursive)
+	{
+		return new PrefixFileFilter(prefix, recursive);
 	}
 
 	/**

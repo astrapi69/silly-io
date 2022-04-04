@@ -24,6 +24,8 @@
  */
 package io.github.astrapi69.io.file.filter;
 
+import java.io.FileFilter;
+
 import io.github.astrapi69.io.file.FileExtension;
 
 /**
@@ -40,7 +42,7 @@ public class ClassFileFilter extends SuffixFileFilter
 	 * Instantiates a new {@link ClassFileFilter} with the given flag for recursion
 	 *
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
+	 *            if the recursive flag is true the filter will be executed recursively
 	 */
 	public ClassFileFilter(final boolean recursive)
 	{
@@ -48,11 +50,34 @@ public class ClassFileFilter extends SuffixFileFilter
 	}
 
 	/**
-	 * Instantiates a new {@link ClassFileFilter} with the given flag for recursion
+	 * Instantiates a new {@link ClassFileFilter}
 	 */
 	public ClassFileFilter()
 	{
 		this(true);
+	}
+
+	/**
+	 * Factory method for create a new {@link ClassFileFilter} for the class file extension
+	 *
+	 * @return the new created {@link ClassFileFilter} object
+	 */
+	public static FileFilter of()
+	{
+		return new ClassFileFilter();
+	}
+
+	/**
+	 * Factory method for create a new {@link ClassFileFilter} for the class file extension with the
+	 * given flag for recursion
+	 *
+	 * @param recursive
+	 *            if the recursive flag is true the filter will be executed recursively
+	 * @return the new created {@link ClassFileFilter} object
+	 */
+	public static FileFilter of(final boolean recursive)
+	{
+		return new ClassFileFilter(recursive);
 	}
 
 	/**
@@ -61,11 +86,7 @@ public class ClassFileFilter extends SuffixFileFilter
 	@Override
 	public String toString()
 	{
-		final StringBuilder buffer = new StringBuilder();
-		buffer.append("[ClassFileFilter:");
-		buffer.append(FileExtension.CLASS.getExtension());
-		buffer.append("]");
-		return buffer.toString();
+		return "[ClassFileFilter:" + FileExtension.CLASS.getExtension() + "]";
 	}
 
 }

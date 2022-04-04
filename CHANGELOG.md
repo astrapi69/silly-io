@@ -8,6 +8,7 @@ ADDED:
 
 - new constructor in class SimpleFilenameFilter with only the file extension
 - new factory methods in class SimpleFilenameFilter for both constructors created
+- new factory methods for all classes that implements the FileFilter interface
 
 Version 1.9
 -------------

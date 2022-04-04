@@ -37,7 +37,7 @@ import java.util.Objects;
 public class SimpleFilenameFilter implements FilenameFilter
 {
 
-	/** if this flag is true the filter will be executed recursively */
+	/** The recursive flag, if the recursive flag is true the filter will be executed recursively */
 	private final boolean recursive;
 
 	/** The file suffix */
@@ -56,17 +56,23 @@ public class SimpleFilenameFilter implements FilenameFilter
 	}
 
 	/**
-	 * Factory method for create a new {@link FilenameFilter} with the given suffix
+	 * Instantiates a new {@link SimpleFilenameFilter} object
 	 *
-	 * @param suffix
-	 *            the suffix
+	 * @param fileSuffix
+	 *            the file suffix
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
-	 * @return the new created {@link FilenameFilter} object
+	 *            if the recursive flag is true the filter will be executed recursively
 	 */
-	public static FilenameFilter of(final String suffix, final boolean recursive)
+	public SimpleFilenameFilter(final String fileSuffix, final boolean recursive)
 	{
-		return new SimpleFilenameFilter(suffix, recursive);
+		Objects.requireNonNull(fileSuffix);
+		if (fileSuffix.equals(""))
+		{
+			throw new IllegalArgumentException(
+				"Argument fileSuffix cant be empty. " + "Please set the argument fileSuffix.");
+		}
+		this.fileSuffix = fileSuffix.toLowerCase();
+		this.recursive = recursive;
 	}
 
 	/**
@@ -81,23 +87,17 @@ public class SimpleFilenameFilter implements FilenameFilter
 	}
 
 	/**
-	 * Instantiates a new {@link SimpleFilenameFilter} object
+	 * Factory method for create a new {@link FilenameFilter} with the given suffix
 	 *
-	 * @param fileSuffix
-	 *            the file suffix
+	 * @param suffix
+	 *            the suffix
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
+	 *            if the recursive flag is true the filter will be executed recursively
+	 * @return the new created {@link FilenameFilter} object
 	 */
-	public SimpleFilenameFilter(final String fileSuffix, final boolean recursive)
+	public static FilenameFilter of(final String suffix, final boolean recursive)
 	{
-		Objects.requireNonNull(fileSuffix);
-		if (fileSuffix.equals(""))
-		{
-			throw new IllegalArgumentException(
-				"Argument fileSuffix cant be empty. " + "Please set the argument fileSuffix.");
-		}
-		this.fileSuffix = fileSuffix.toLowerCase();
-		this.recursive = recursive;
+		return new SimpleFilenameFilter(suffix, recursive);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class SimpleFilenameFilter implements FilenameFilter
 	@Override
 	public String toString()
 	{
-		return "[SimpleFilenameFilter:" + " fileSuffix: " + fileSuffix + " acceptDir: " + recursive
+		return "[SimpleFilenameFilter:" + " fileSuffix: " + fileSuffix + " recursive: " + recursive
 			+ "]";
 	}
 

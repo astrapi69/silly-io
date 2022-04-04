@@ -38,7 +38,7 @@ public class SuffixFileFilter implements FileFilter
 	/** The suffix of the file name */
 	private final String suffix;
 
-	/** The recursive flag */
+	/** The recursive flag, if the recursive flag is true the filter will be executed recursively */
 	private final boolean recursive;
 
 	/**
@@ -48,7 +48,7 @@ public class SuffixFileFilter implements FileFilter
 	 * @param suffix
 	 *            the suffix
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
+	 *            if the recursive flag is true the filter will be executed recursively
 	 */
 	public SuffixFileFilter(final String suffix, final boolean recursive)
 	{
@@ -75,7 +75,7 @@ public class SuffixFileFilter implements FileFilter
 	 * @param suffix
 	 *            the suffix
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
+	 *            if the recursive flag is true the filter will be executed recursively
 	 * @return the new created {@link SuffixFileFilter} object
 	 */
 	public static FileFilter of(final String suffix, final boolean recursive)
@@ -101,7 +101,7 @@ public class SuffixFileFilter implements FileFilter
 	@Override
 	public boolean accept(final File file)
 	{
-		// if recursive flag true and file is a directory allow recursive search
+		// if the recursive flag is true and the file is a directory allow recursive search
 		if (recursive && file.isDirectory())
 		{
 			return true;
