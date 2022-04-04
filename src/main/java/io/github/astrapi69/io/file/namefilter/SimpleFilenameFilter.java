@@ -44,18 +44,6 @@ public class SimpleFilenameFilter implements FilenameFilter
 	private final String fileSuffix;
 
 	/**
-	 * Factory method for create a new {@link FilenameFilter} with the given suffix
-	 *
-	 * @param suffix
-	 *            the suffix
-	 * @return the new created {@link FilenameFilter} object
-	 */
-	public static FilenameFilter of(final String suffix)
-	{
-		return new SimpleFilenameFilter(suffix);
-	}
-
-	/**
 	 * Instantiates a new {@link SimpleFilenameFilter} object
 	 *
 	 * @param fileSuffix
@@ -84,6 +72,18 @@ public class SimpleFilenameFilter implements FilenameFilter
 	public SimpleFilenameFilter(final String fileSuffix)
 	{
 		this(fileSuffix, false);
+	}
+
+	/**
+	 * Factory method for create a new {@link FilenameFilter} with the given suffix
+	 *
+	 * @param suffix
+	 *            the suffix
+	 * @return the new created {@link FilenameFilter} object
+	 */
+	public static FilenameFilter of(final String suffix)
+	{
+		return new SimpleFilenameFilter(suffix);
 	}
 
 	/**

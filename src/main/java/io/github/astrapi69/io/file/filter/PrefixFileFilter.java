@@ -58,6 +58,19 @@ public class PrefixFileFilter implements FileFilter
 	}
 
 	/**
+	 * Instantiates a new {@link PrefixFileFilter} with the given prefix and the recursive flag is
+	 * true
+	 *
+	 * @param prefix
+	 *            the prefix
+	 */
+	public PrefixFileFilter(final String prefix)
+	{
+		this.prefix = prefix;
+		this.recursive = true;
+	}
+
+	/**
 	 * Factory method for create a new {@link PrefixFileFilter} with the given prefix
 	 *
 	 * @param prefix
@@ -82,19 +95,6 @@ public class PrefixFileFilter implements FileFilter
 	public static FileFilter of(final String prefix, final boolean recursive)
 	{
 		return new PrefixFileFilter(prefix, recursive);
-	}
-
-	/**
-	 * Instantiates a new {@link PrefixFileFilter} with the given prefix and the recursive flag is
-	 * true
-	 *
-	 * @param prefix
-	 *            the prefix
-	 */
-	public PrefixFileFilter(final String prefix)
-	{
-		this.prefix = prefix;
-		this.recursive = true;
 	}
 
 	/**
