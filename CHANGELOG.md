@@ -4,7 +4,10 @@
 Version 1.10-SNAPSHOT
 -------------
 
+ADDED:
 
+- new constructor in class SimpleFilenameFilter with only the file extension
+- new factory methods in class SimpleFilenameFilter for both constructors created
 
 Version 1.9
 -------------
