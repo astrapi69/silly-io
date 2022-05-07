@@ -38,6 +38,9 @@ public class SuffixFileFilter implements FileFilter
 	/** The suffix of the file name */
 	private final String suffix;
 
+	/** The description of this filter */
+	private final String description;
+
 	/** The recursive flag, if the recursive flag is true the filter will be executed recursively */
 	private final boolean recursive;
 
@@ -52,8 +55,7 @@ public class SuffixFileFilter implements FileFilter
 	 */
 	public SuffixFileFilter(final String suffix, final boolean recursive)
 	{
-		this.suffix = suffix;
-		this.recursive = recursive;
+		this(suffix, "", recursive);
 	}
 
 	/**
@@ -66,6 +68,23 @@ public class SuffixFileFilter implements FileFilter
 	public SuffixFileFilter(final String suffix)
 	{
 		this(suffix, true);
+	}
+
+	/**
+	 * Instantiates a new {@link SuffixFileFilter} with the given suffix and the given description
+	 *
+	 * @param suffix
+	 *            the suffix
+	 * @param description
+	 *            The description of this filter
+	 * @param recursive
+	 *            if the recursive flag is true the filter will be executed recursively
+	 */
+	public SuffixFileFilter(final String suffix, final String description, final boolean recursive)
+	{
+		this.suffix = suffix;
+		this.recursive = recursive;
+		this.description = description;
 	}
 
 	/**
@@ -108,5 +127,10 @@ public class SuffixFileFilter implements FileFilter
 		}
 		final String fileName = file.getName().toLowerCase();
 		return fileName.endsWith(suffix);
+	}
+
+	public String getDescription()
+	{
+		return description;
 	}
 }
