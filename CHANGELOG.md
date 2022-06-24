@@ -4,6 +4,9 @@
 Version 2.1-SNAPSHOT
 -------------
 
+ADDED:
+
+- new class StringOutputStream
 
 Version 2
 -------------
