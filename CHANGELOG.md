@@ -1,7 +1,7 @@
 ## Change log
 ----------------------
 
-Version 1.10-SNAPSHOT
+Version 2-SNAPSHOT
 -------------
 
 ADDED:
@@ -9,6 +9,12 @@ ADDED:
 - new constructor in class SimpleFilenameFilter with only the file extension
 - new factory methods in class SimpleFilenameFilter for both constructors created
 - new factory methods for all classes that implements the FileFilter interface
+
+CHANGED:
+
+- update of jdk to version 11
+- update of gradle to new version 7.5-rc-2
+- update of gradle-plugin dependency of 'com.diffplug.spotless:spotless-plugin-gradle' in version 6.7.2
 
 Version 1.9
 -------------
