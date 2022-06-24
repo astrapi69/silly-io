@@ -38,7 +38,10 @@ public class SuffixFileFilter implements FileFilter
 	/** The suffix of the file name */
 	private final String suffix;
 
-	/** The recursive flag */
+	/** The description of this filter */
+	private final String description;
+
+	/** The recursive flag, if the recursive flag is true the filter will be executed recursively */
 	private final boolean recursive;
 
 	/**
@@ -48,12 +51,11 @@ public class SuffixFileFilter implements FileFilter
 	 * @param suffix
 	 *            the suffix
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
+	 *            if the recursive flag is true the filter will be executed recursively
 	 */
 	public SuffixFileFilter(final String suffix, final boolean recursive)
 	{
-		this.suffix = suffix;
-		this.recursive = recursive;
+		this(suffix, "", recursive);
 	}
 
 	/**
@@ -69,13 +71,30 @@ public class SuffixFileFilter implements FileFilter
 	}
 
 	/**
+	 * Instantiates a new {@link SuffixFileFilter} with the given suffix and the given description
+	 *
+	 * @param suffix
+	 *            the suffix
+	 * @param description
+	 *            The description of this filter
+	 * @param recursive
+	 *            if the recursive flag is true the filter will be executed recursively
+	 */
+	public SuffixFileFilter(final String suffix, final String description, final boolean recursive)
+	{
+		this.suffix = suffix;
+		this.recursive = recursive;
+		this.description = description;
+	}
+
+	/**
 	 * Factory method for create a new {@link SuffixFileFilter} with the given suffix and the given
 	 * flag for recursion
 	 *
 	 * @param suffix
 	 *            the suffix
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
+	 *            if the recursive flag is true the filter will be executed recursively
 	 * @return the new created {@link SuffixFileFilter} object
 	 */
 	public static FileFilter of(final String suffix, final boolean recursive)
@@ -101,12 +120,17 @@ public class SuffixFileFilter implements FileFilter
 	@Override
 	public boolean accept(final File file)
 	{
-		// if recursive flag true and file is a directory allow recursive search
+		// if the recursive flag is true and the file is a directory allow recursive search
 		if (recursive && file.isDirectory())
 		{
 			return true;
 		}
 		final String fileName = file.getName().toLowerCase();
 		return fileName.endsWith(suffix);
+	}
+
+	public String getDescription()
+	{
+		return description;
 	}
 }

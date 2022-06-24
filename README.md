@@ -31,13 +31,13 @@ to your project `build.gradle` if you want to import the core functionality of s
 define version in file gradle.properties
 
 ```
-sillyIoVersion=1.9
+sillyIoVersion=2
 ```
 
 or in build.gradle ext area
 
 ```
-    sillyIoVersion = "1.9"
+    sillyIoVersion = "2"
 ```
 
 and then add the dependency to the dependencies area
@@ -58,7 +58,7 @@ Than you can add the dependency to your dependencies:
     <properties>
             ...
         <!-- SILLY-IO version -->
-        <silly-io.version>1.9</silly-io.version>
+        <silly-io.version>2</silly-io.version>
             ...
     </properties>
             ...
@@ -167,22 +167,16 @@ Do not hesitate to contact the silly-io developers with your questions, concerns
 
 ## Credits
 
-|**Travis CI**|
-|     :---:      |
-|[![Travis CI](https://travis-ci.com/images/logos/TravisCI-Full-Color.png)](https://travis-ci.com)|
-|Special thanks to [Travis CI](https://travis-ci.com) for providing a free continuous integration service for open source projects|
-|     <img width=1000/>     |
-
 |**Nexus Sonatype repositories**|
 |     :---:      |
 |[![sonatype repository](https://img.shields.io/nexus/r/https/oss.sonatype.org/io.github.astrapi69/silly-io.svg?style=for-the-badge)](https://oss.sonatype.org/index.html#nexus-search;gav~io.github.astrapi69~silly-io~~~)|
 |Special thanks to [sonatype repository](https://www.sonatype.com) for providing a free maven repository service for open source projects|
 |     <img width=1000/>     |
 
-|**coveralls.io**|
+|**codecov.io**|
 |     :---:      |
-|[![Coverage Status](https://coveralls.io/repos/github/astrapi69/silly-io/badge.svg?branch=develop)](https://coveralls.io/github/astrapi69/silly-io?branch=master)|
-|Special thanks to [coveralls.io](https://coveralls.io) for providing a free code coverage for open source projects|
+|[![Coverage Status](https://codecov.io/gh/astrapi69/silly-io/branch/develop/graph/badge.svg)](https://codecov.io/gh/astrapi69/silly-io)|
+|Special thanks to [codecov.io](https://codecov.io) for providing a free code coverage for open source projects|
 |     <img width=1000/>     |
 
 |**javadoc.io**|

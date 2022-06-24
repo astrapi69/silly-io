@@ -29,7 +29,6 @@ import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * The class {@link MultiplyExtensionsFileFilter} accepts File-objects that are directories or end
@@ -42,20 +41,19 @@ import java.util.Set;
 public class MultiplyExtensionsFileFilter implements FileFilter
 {
 
-	/** The recursive flag */
-	private boolean recursive;
+	/** The recursive flag, if the recursive flag is true the filter will be executed recursively */
+	private final boolean recursive;
 
-	/** The file extensions */
-	private Set<String> fileExtensions;
+	/** The collection of the file extensions */
+	private final Collection<String> fileExtensions;
 
 	/**
 	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
-	 *
 	 * @param recursive
-	 *            Flag to accept directories
+	 *            if the recursive flag is true the filter will be executed recursively
 	 * @param fileExtensions
-	 *            the file extensions
+	 *            the optional arguments of the file extensions
 	 */
 	public MultiplyExtensionsFileFilter(final boolean recursive, final String... fileExtensions)
 	{
@@ -66,7 +64,7 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
 	 * @param fileExtensions
-	 *            the file extensions
+	 *            the collection of the file extensions
 	 */
 	public MultiplyExtensionsFileFilter(final Collection<String> fileExtensions)
 	{
@@ -77,9 +75,9 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
 	 * @param fileExtensions
-	 *            the file extensions
+	 *            the collection of the file extensions
 	 * @param recursive
-	 *            Flag to accept directories and allows recursive search
+	 *            if the recursive flag is true the filter will be executed recursively
 	 */
 	public MultiplyExtensionsFileFilter(final Collection<String> fileExtensions,
 		final boolean recursive)
@@ -101,11 +99,63 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	 * Instantiates a new {@link MultiplyExtensionsFileFilter}
 	 *
 	 * @param fileExtensions
-	 *            the file extensions
+	 *            the optional arguments of the file extensions
 	 */
 	public MultiplyExtensionsFileFilter(final String... fileExtensions)
 	{
 		this(false, fileExtensions);
+	}
+
+	/**
+	 * Factory method for create a new {@link MultiplyExtensionsFileFilter}
+	 *
+	 * @param fileExtensions
+	 *            the collection of the file extensions
+	 * @return the new created {@link MultiplyExtensionsFileFilter} object
+	 */
+	public static FileFilter of(final Collection<String> fileExtensions)
+	{
+		return new MultiplyExtensionsFileFilter(fileExtensions);
+	}
+
+	/**
+	 * Factory method for create a new {@link MultiplyExtensionsFileFilter}
+	 *
+	 * @param fileExtensions
+	 *            the collection of the file extensions
+	 * @param recursive
+	 *            if the recursive flag is true the filter will be executed recursively
+	 * @return the new created {@link MultiplyExtensionsFileFilter} object
+	 */
+	public static FileFilter of(final Collection<String> fileExtensions, final boolean recursive)
+	{
+		return new MultiplyExtensionsFileFilter(fileExtensions, recursive);
+	}
+
+	/**
+	 * Factory method for create a new {@link MultiplyExtensionsFileFilter}
+	 *
+	 * @param recursive
+	 *            if the recursive flag is true the filter will be executed recursively
+	 * @param fileExtensions
+	 *            the optional arguments of the file extensions
+	 * @return the new created {@link MultiplyExtensionsFileFilter} object
+	 */
+	public static FileFilter of(final boolean recursive, final String... fileExtensions)
+	{
+		return new MultiplyExtensionsFileFilter(recursive, fileExtensions);
+	}
+
+	/**
+	 * Factory method for create a new {@link MultiplyExtensionsFileFilter}
+	 *
+	 * @param fileExtensions
+	 *            the optional arguments of the file extensions
+	 * @return the new created {@link MultiplyExtensionsFileFilter} object
+	 */
+	public static FileFilter of(final String... fileExtensions)
+	{
+		return new MultiplyExtensionsFileFilter(fileExtensions);
 	}
 
 	/**
@@ -135,14 +185,8 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 	@Override
 	public String toString()
 	{
-		final StringBuilder buffer = new StringBuilder();
-		buffer.append("[MultiplyExtensionsFileFilter:");
-		buffer.append(" fileExtensions: ");
-		buffer.append(fileExtensions);
-		buffer.append(" acceptDir: ");
-		buffer.append(recursive);
-		buffer.append("]");
-		return buffer.toString();
+		return "[MultiplyExtensionsFileFilter:" + " fileExtensions: " + fileExtensions
+			+ " recursive: " + recursive + "]";
 	}
 
 }

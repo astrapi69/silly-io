@@ -24,6 +24,8 @@
  */
 package io.github.astrapi69.io.file.filter;
 
+import java.io.FileFilter;
+
 import io.github.astrapi69.io.file.FileExtension;
 
 /**
@@ -37,10 +39,11 @@ public class TxtFileFilter extends SuffixFileFilter
 {
 
 	/**
-	 * Instantiates a new {@link TxtFileFilter} with the given flag for recursion
+	 * Instantiates a new {@link TxtFileFilter} for the txt file extension with the given flag for
+	 * recursion
 	 *
 	 * @param recursive
-	 *            if this flag is true the filter will be executed recursively
+	 *            if the recursive flag is true the filter will be executed recursively
 	 */
 	public TxtFileFilter(final boolean recursive)
 	{
@@ -48,11 +51,34 @@ public class TxtFileFilter extends SuffixFileFilter
 	}
 
 	/**
-	 * Instantiates a new {@link TxtFileFilter} with the given flag for recursion
+	 * Instantiates a new {@link TxtFileFilter} for the txt file extension
 	 */
 	public TxtFileFilter()
 	{
 		this(true);
+	}
+
+	/**
+	 * Factory method for create a new {@link TxtFileFilter} for the txt file extension
+	 *
+	 * @return the new created {@link TxtFileFilter} object
+	 */
+	public static FileFilter of()
+	{
+		return new TxtFileFilter();
+	}
+
+	/**
+	 * Factory method for create a new {@link TxtFileFilter} for the txt file extension with the
+	 * given flag for recursion
+	 *
+	 * @param recursive
+	 *            if the recursive flag is true the filter will be executed recursively
+	 * @return the new created {@link TxtFileFilter} object
+	 */
+	public static FileFilter of(final boolean recursive)
+	{
+		return new TxtFileFilter(recursive);
 	}
 
 	/**
@@ -61,11 +87,7 @@ public class TxtFileFilter extends SuffixFileFilter
 	@Override
 	public String toString()
 	{
-		final StringBuilder buffer = new StringBuilder();
-		buffer.append("[TxtFileFilter:");
-		buffer.append(FileExtension.TXT.getExtension());
-		buffer.append("]");
-		return buffer.toString();
+		return "[TxtFileFilter:" + FileExtension.TXT.getExtension() + "]";
 	}
 
 }

@@ -64,7 +64,7 @@ public class SimpleFilenameFilterTest
 
 		filesuffix = ".properties";
 		acceptDir = false;
-		filenameFilter = new SimpleFilenameFilter(filesuffix, acceptDir);
+		filenameFilter = SimpleFilenameFilter.of(filesuffix, acceptDir);
 		assertNotNull(filenameFilter);
 
 		filename = "resources.properties";
@@ -80,13 +80,12 @@ public class SimpleFilenameFilterTest
 
 		filesuffix = ".properties";
 		acceptDir = true;
-		filenameFilter = new SimpleFilenameFilter(filesuffix, acceptDir);
+		filenameFilter = SimpleFilenameFilter.of(filesuffix, acceptDir);
 		assertNotNull(filenameFilter);
 
 		filename = "";
 
 		actual = filenameFilter.accept(dir, filename);
-		expected = true;
 		assertEquals(expected, actual);
 	}
 
@@ -101,7 +100,7 @@ public class SimpleFilenameFilterTest
 		filesuffix = "";
 		acceptDir = false;
 		assertThrows(IllegalArgumentException.class,
-			() -> new SimpleFilenameFilter(filesuffix, acceptDir));
+			() -> SimpleFilenameFilter.of(filesuffix, acceptDir));
 	}
 
 	/**
@@ -115,7 +114,7 @@ public class SimpleFilenameFilterTest
 		filesuffix = "";
 		acceptDir = false;
 		assertThrows(IllegalArgumentException.class,
-			() -> new SimpleFilenameFilter(filesuffix, acceptDir));
+			() -> SimpleFilenameFilter.of(filesuffix, acceptDir));
 	}
 
 	/**
@@ -131,9 +130,9 @@ public class SimpleFilenameFilterTest
 		boolean acceptDir;
 		filesuffix = ".properties";
 		acceptDir = false;
-		;
+
 		actual = ToStringEvaluator
-			.evaluateConsistency(new SimpleFilenameFilter(filesuffix, acceptDir));
+			.evaluateConsistency(SimpleFilenameFilter.of(filesuffix, acceptDir));
 		expected = true;
 		assertEquals(expected, actual);
 	}
