@@ -1,6 +1,13 @@
 ## Change log
 ----------------------
 
+Version 2.1
+-------------
+
+ADDED:
+
+- new class StringOutputStream
+
 Version 2
 -------------
 
