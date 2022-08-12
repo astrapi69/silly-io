@@ -26,6 +26,7 @@ package io.github.astrapi69.io.file;
 
 import java.io.File;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * The enum {@link FileExtension} for file extensions
@@ -337,6 +338,16 @@ public enum FileExtension
 		return fileExtension.startsWith(".")
 			? FilenameExtensions.getFileExtension(file, true).equals(fileExtension)
 			: FilenameExtensions.getFileExtension(file, false).equals(fileExtension);
+	}
+
+	/**
+	 * Gets all known compression file extensions as a {@link Set}
+	 * 
+	 * @return a {@link Set} with all known compression file extensions
+	 */
+	public static Set<String> getZipExtensions()
+	{
+		return Set.of(FileConstants.ZIP_EXTENSIONS);
 	}
 
 	public String getExtension()

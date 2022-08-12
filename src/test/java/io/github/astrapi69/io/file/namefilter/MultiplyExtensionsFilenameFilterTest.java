@@ -38,7 +38,7 @@ import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
-import io.github.astrapi69.collections.list.ListFactory;
+import io.github.astrapi69.collection.list.ListFactory;
 import io.github.astrapi69.evaluate.object.evaluators.ToStringEvaluator;
 import io.github.astrapi69.lang.ClassExtensions;
 

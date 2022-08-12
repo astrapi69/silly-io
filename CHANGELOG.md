@@ -4,6 +4,19 @@
 Version 2.2-SNAPSHOT
 -------------
 
+ADDED:
+
+- new method that gets all known compression file extensions as a Set object
+
+CHANGED:
+
+- update gradle to new version 7.5.1
+- update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version
+  6.9.1
+- update of test dependency jobj-core to new version 6
+- update of test dependency silly-collections to new version 19
+- update of test dependency junit-jupiter-api to new version 5.9.0
+
 Version 2.1
 -------------
 
