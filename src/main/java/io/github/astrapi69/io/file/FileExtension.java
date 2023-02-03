@@ -265,6 +265,12 @@ public enum FileExtension
 	/** The file extension for Ogg Vorbis audio files */
 	OGG(".ogg"),
 
+	/** The file extension for yaml files */
+	YML(".yml"),
+
+	/** The file extension for yaml files */
+	YAML(".yaml"),
+
 	/** The file extension for velocity template files */
 	VELOCITY_TEMPLATE(".vm");
 

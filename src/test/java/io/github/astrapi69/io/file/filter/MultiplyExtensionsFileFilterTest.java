@@ -39,7 +39,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import io.github.astrapi69.collection.list.ListFactory;
-import io.github.astrapi69.evaluate.object.evaluators.ToStringEvaluator;
+import io.github.astrapi69.evaluate.object.evaluator.ToStringEvaluator;
 import io.github.astrapi69.lang.ClassExtensions;
 
 /**
@@ -93,7 +93,6 @@ public class MultiplyExtensionsFileFilterTest
 		assertNotNull(fileFilter);
 
 		actual = fileFilter.accept(dir);
-		expected = true;
 		assertEquals(expected, actual);
 
 		file = new File(".", "TestFind.class");
@@ -171,7 +170,6 @@ public class MultiplyExtensionsFileFilterTest
 
 		String filesuffix;
 		boolean acceptDir;
-		filesuffix = ".properties";
 		acceptDir = false;
 		Collection<String> fileExtensions;
 

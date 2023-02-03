@@ -7,15 +7,19 @@ Version 2.2-SNAPSHOT
 ADDED:
 
 - new method that gets all known compression file extensions as a Set object
+- new file extensions to enum FileExtension for yml and yaml files
 
 CHANGED:
 
-- update gradle to new version 7.5.1
+- update gradle to new version 7.6
+- update of gradle plugin dependency com.github.ben-manes.versions.gradle.plugin to new minor version 0.45.0
 - update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version
-  6.9.1
-- update of test dependency jobj-core to new version 6
-- update of test dependency silly-collections to new version 19
-- update of test dependency junit-jupiter-api to new version 5.9.0
+  6.14.0
+- update of test dependency jobj-core to new version 7
+- update of test dependency silly-collection to new version 20.4
+- update of test dependency jobj-contract-verifier to new version 4
+- update of test dependency 'com.github.meanbeanlib:meanbean' to new version 3.0.0-M9
+- update of test dependency junit-jupiter-api to new version 5.9.2
 
 Version 2.1
 -------------
