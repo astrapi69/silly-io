@@ -38,8 +38,8 @@ import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
-import io.github.astrapi69.collections.list.ListFactory;
-import io.github.astrapi69.evaluate.object.evaluators.ToStringEvaluator;
+import io.github.astrapi69.collection.list.ListFactory;
+import io.github.astrapi69.evaluate.object.evaluator.ToStringEvaluator;
 import io.github.astrapi69.lang.ClassExtensions;
 
 /**
@@ -87,8 +87,6 @@ public class MultiplyExtensionsFilenameFilterTest
 		expected = true;
 		assertEquals(expected, actual);
 
-
-		filesuffix = ".properties";
 		acceptDir = true;
 		filenameFilter = new MultiplyExtensionsFilenameFilter(fileExtensions, acceptDir);
 		assertNotNull(filenameFilter);
@@ -96,7 +94,6 @@ public class MultiplyExtensionsFilenameFilterTest
 		filename = "";
 
 		actual = filenameFilter.accept(dir, filename);
-		expected = true;
 		assertEquals(expected, actual);
 
 		filename = "TestFind.class";
@@ -155,7 +152,6 @@ public class MultiplyExtensionsFilenameFilterTest
 	@Test
 	public final void testConstructorsWithNullValues()
 	{
-		Collection<String> fileExtensions = null;
 		assertThrows(IllegalArgumentException.class,
 			() -> new MultiplyExtensionsFilenameFilter(ListFactory.newArrayList()));
 	}
@@ -171,7 +167,6 @@ public class MultiplyExtensionsFilenameFilterTest
 
 		String filesuffix;
 		boolean acceptDir;
-		filesuffix = ".properties";
 		acceptDir = false;
 		Collection<String> fileExtensions;
 

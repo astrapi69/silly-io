@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
-import io.github.astrapi69.evaluate.object.evaluators.ToStringEvaluator;
+import io.github.astrapi69.evaluate.object.evaluator.ToStringEvaluator;
 import io.github.astrapi69.lang.ClassExtensions;
 
 /**
@@ -88,7 +88,6 @@ public class ClassFileFilterTest
 		FileUtils.writeStringToFile(file, "", Charset.defaultCharset());
 
 		actual = fileFilter.accept(file);
-		expected = true;
 		assertEquals(expected, actual);
 		try
 		{

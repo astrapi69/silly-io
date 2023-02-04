@@ -24,11 +24,15 @@
  */
 package io.github.astrapi69.io.file;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -71,5 +75,15 @@ class FileExtensionTest
 
 		assertTrue(FileExtension.is(file, ".properties"));
 		assertTrue(FileExtension.is(file, "properties"));
+	}
+
+	@Test
+	void getZipExtensions()
+	{
+		Set<String> actual;
+		Set<String> expected;
+		actual = FileExtension.getZipExtensions();
+		expected = new HashSet<>(Arrays.asList(FileConstants.ZIP_EXTENSIONS));
+		assertEquals(expected, actual);
 	}
 }

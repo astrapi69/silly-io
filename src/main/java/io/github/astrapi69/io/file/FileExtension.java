@@ -26,6 +26,7 @@ package io.github.astrapi69.io.file;
 
 import java.io.File;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * The enum {@link FileExtension} for file extensions
@@ -264,6 +265,12 @@ public enum FileExtension
 	/** The file extension for Ogg Vorbis audio files */
 	OGG(".ogg"),
 
+	/** The short type of file extension for yaml files */
+	YML(".yml"),
+
+	/** The file extension for yaml files */
+	YAML(".yaml"),
+
 	/** The file extension for velocity template files */
 	VELOCITY_TEMPLATE(".vm");
 
@@ -337,6 +344,16 @@ public enum FileExtension
 		return fileExtension.startsWith(".")
 			? FilenameExtensions.getFileExtension(file, true).equals(fileExtension)
 			: FilenameExtensions.getFileExtension(file, false).equals(fileExtension);
+	}
+
+	/**
+	 * Gets all known compression file extensions as a {@link Set}
+	 * 
+	 * @return a {@link Set} with all known compression file extensions
+	 */
+	public static Set<String> getZipExtensions()
+	{
+		return Set.of(FileConstants.ZIP_EXTENSIONS);
 	}
 
 	public String getExtension()

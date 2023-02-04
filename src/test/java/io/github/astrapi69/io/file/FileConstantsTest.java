@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import io.github.astrapi69.collections.array.ArrayFactory;
+import io.github.astrapi69.collection.array.ArrayFactory;
 
 /**
  * The unit test class for the class {@link FileConstants}
