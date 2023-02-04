@@ -265,7 +265,7 @@ public enum FileExtension
 	/** The file extension for Ogg Vorbis audio files */
 	OGG(".ogg"),
 
-	/** The file extension for yaml files */
+	/** The short type of file extension for yaml files */
 	YML(".yml"),
 
 	/** The file extension for yaml files */

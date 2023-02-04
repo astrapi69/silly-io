@@ -19,6 +19,7 @@ CHANGED:
 - update of test dependency silly-collection to new version 20.4
 - update of test dependency jobj-contract-verifier to new version 4
 - update of test dependency 'com.github.meanbeanlib:meanbean' to new version 3.0.0-M9
+- update of test dependency test-object in new minor version 7.2
 - update of test dependency junit-jupiter-api to new version 5.9.2
 
 Version 2.1
