@@ -22,7 +22,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.astrapi69.io.annotations;
+package io.github.astrapi69.io.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,37 +30,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation {@link ImportResource} can be used to import a resource
+ * The annotation {@link ImportResources} contains an Array of {@link ImportResource} objects
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ImportResource {
+public @interface ImportResources {
 
 	/**
-	 * The index from the resource
+	 * The array of {@link ImportResource} objects
 	 *
-	 * @return the index from the resource
+	 * @return the array of {@link ImportResource} objects
 	 */
-	int index() default 0;
-
-	/**
-	 * The resource name
-	 *
-	 * @return the resource name
-	 */
-	String resourceName();
-
-	/**
-	 * The resource type i.e. javascript, css, png etc.
-	 *
-	 * @return The resource type
-	 */
-	String resourceType();
-
-	/**
-	 * The "skin" style of the resource
-	 *
-	 * @return The "skin" style of the resource
-	 */
-	String style() default "";
+	ImportResource[] resources();
 }

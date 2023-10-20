@@ -22,7 +22,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.astrapi69.io.annotations;
+package io.github.astrapi69.io.annotation;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -94,6 +94,7 @@ public final class ImportResourcesExtensions
 		return resourcesMap;
 	}
 
+	@SafeVarargs
 	public static <T> T[] join(final T[] array1, final T... array2)
 	{
 		if (array1 == null)
@@ -114,7 +115,7 @@ public final class ImportResourcesExtensions
 		}
 		catch (final ArrayStoreException ase)
 		{
-			// Check if problem was due to incompatible types
+			// Check if the problem was due to incompatible types
 			/*
 			 * We do this here, rather than before the copy because: - it would be a wasted check
 			 * most of the time - safer, in case check turns out to be too strict

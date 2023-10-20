@@ -226,13 +226,14 @@ public class StreamExtensionsTest extends BaseTestCase
 	/**
 	 * Test get serial version uid.
 	 */
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetSerialVersionUID()
 	{
-		final Class<Person> personClass = (Class<Person>)new Person().getClass();
+		Class<Person> personClass;
+
+		personClass = Person.class;
 		final long serialVersionUID = StreamExtensions.getSerialVersionUID(personClass);
-		assertTrue(serialVersionUID == 1L);
+		assertEquals(1L, serialVersionUID);
 	}
 
 	/**

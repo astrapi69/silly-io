@@ -24,7 +24,7 @@
  */
 package io.github.astrapi69.io;
 
-import io.github.astrapi69.io.annotations.ImportResource;
+import io.github.astrapi69.io.annotation.ImportResource;
 
 @ImportResource(index = 1, resourceName = "OtherPage.js", resourceType = "js")
 public class OtherPage
