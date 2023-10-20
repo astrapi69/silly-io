@@ -31,13 +31,13 @@ to your project `build.gradle` if you want to import the core functionality of s
 define version in file gradle.properties
 
 ```
-sillyIoVersion=2.2
+sillyIoVersion=3
 ```
 
 or in build.gradle ext area
 
 ```
-    sillyIoVersion = "2.2"
+    sillyIoVersion = "3"
 ```
 
 and then add the dependency to the dependencies area
@@ -58,7 +58,7 @@ Than you can add the dependency to your dependencies:
     <properties>
             ...
         <!-- SILLY-IO version -->
-        <silly-io.version>2.2</silly-io.version>
+        <silly-io.version>3</silly-io.version>
             ...
     </properties>
             ...

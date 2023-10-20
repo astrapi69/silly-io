@@ -22,7 +22,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.astrapi69.io.annotations;
+package io.github.astrapi69.io.annotation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,7 +54,7 @@ public class ImportResourceComparatorTest
 		final Map<Class<?>, ImportResource[]> resources = ImportResourcesExtensions
 			.getImportResources("io.github.astrapi69.io");
 		final ImportResource[] somePageResources = resources
-			.get(io.github.astrapi69.io.annotations.TestPage.class);
+			.get(io.github.astrapi69.io.annotation.TestPage.class);
 		assertNotNull(somePageResources);
 
 		expected = 3;

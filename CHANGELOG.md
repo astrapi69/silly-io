@@ -1,6 +1,28 @@
 ## Change log
 ----------------------
 
+Version 3
+-------------
+
+ADDED:
+
+- new method for writing from Reader to Writer
+
+CHANGED:
+
+- update of jdk to version 17
+- update gradle to new version 8.4
+- update of gradle plugin dependency com.github.ben-manes.versions.gradle.plugin to new minor version 0.49.0
+- update of gradle-plugin dependency 'org.ajoberstar.grgit:grgit-gradle' in version 5.2.0
+- update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version 6.22.0
+- update of test dependency commons-io in new version 2.14.0
+- update of test dependency silly-collection to new version 27
+- update of test dependency jobj-core to new version 8.1
+- update of test dependency test-object in new version 8
+- update of test dependency vintage-time in new version 6
+- update of test dependency junit-jupiter-api and junit-jupiter-engine in new version 5.10.0
+- rename of package annotations to annotation
+
 Version 2.2
 -------------
 
@@ -112,7 +134,7 @@ ADDED:
 - new comparator for the annotation ImportResource
 - new extension class for the annotation ImportResource and ImportResources
 - new extension class for execute commands on shell
-- new package io.github.astrapi69.io.annotations created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
+- new package io.github.astrapi69.io.annotation created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
 - new package io.github.astrapi69.io.shell created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
 
 CHANGED:

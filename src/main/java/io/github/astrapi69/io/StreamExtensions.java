@@ -42,6 +42,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -50,15 +51,24 @@ import java.nio.file.Paths;
  * @version 1.0
  * @author Asterios Raptis
  */
-public final class StreamExtensions implements Serializable
+public final class StreamExtensions
 {
-	/**
-	 * The serialVersionUID
-	 */
-	private static final long serialVersionUID = 5042445056004440533L;
-
 	private StreamExtensions()
 	{
+	}
+
+	/**
+	 * Returns the given file as a byte array
+	 *
+	 * @param file
+	 *            the file
+	 * @return Returns the given file as a byte array
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred
+	 */
+	public static byte[] getByteArray(final File file) throws IOException
+	{
+		return getByteArray(getInputStream(file));
 	}
 
 	/**
@@ -101,7 +111,7 @@ public final class StreamExtensions implements Serializable
 	 * Gets the input stream from a File object.
 	 *
 	 * @param file
-	 *            the file.
+	 *            the file
 	 * @return the input stream.
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
@@ -125,7 +135,7 @@ public final class StreamExtensions implements Serializable
 	public static InputStream getInputStream(final File file, final boolean createFile)
 		throws IOException
 	{
-		InputStream is = null;
+		InputStream is;
 		if (file.exists())
 		{
 			is = file.toURI().toURL().openStream();
@@ -156,7 +166,49 @@ public final class StreamExtensions implements Serializable
 	 */
 	public static InputStream getInputStream(final String fullpathWithFilename) throws IOException
 	{
-		return Files.newInputStream(Paths.get(fullpathWithFilename));
+		return getInputStream(Paths.get(fullpathWithFilename));
+	}
+
+	/**
+	 * Gets the input stream from the given filename with the full path
+	 *
+	 * @param path
+	 *            the {@link Path} object
+	 * @return the input stream.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static InputStream getInputStream(final Path path) throws IOException
+	{
+		return Files.newInputStream(path);
+	}
+
+	/**
+	 * Gets the output stream from the given filename with the full path
+	 *
+	 * @param fullPathWithFilename
+	 *            the full path with filename
+	 * @return the output stream
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static OutputStream getOutputStream(final String fullPathWithFilename) throws IOException
+	{
+		return getOutputStream(Paths.get(fullPathWithFilename));
+	}
+
+	/**
+	 * Gets the input stream from the given filename with the full path
+	 *
+	 * @param path
+	 *            the {@link Path} object
+	 * @return the input stream.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static OutputStream getOutputStream(final Path path) throws IOException
+	{
+		return Files.newOutputStream(path);
 	}
 
 	/**
@@ -231,17 +283,17 @@ public final class StreamExtensions implements Serializable
 	 * @param encoding
 	 *            The encoding from the file.
 	 * @param createFile
-	 *            If true and the file does not exist it will be create a new file.
+	 *            If true and the file does not exist, a new file will be created
 	 * @return the reader
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred
 	 */
 	public static Reader getReader(final File inputFile, final String encoding,
 		final boolean createFile) throws IOException
 	{
-		FileInputStream fis = null;
-		InputStreamReader isr = null;
-		BufferedReader reader = null;
+		FileInputStream fis;
+		InputStreamReader isr;
+		BufferedReader reader;
 		if (inputFile.exists())
 		{
 			fis = new FileInputStream(inputFile);
@@ -363,10 +415,31 @@ public final class StreamExtensions implements Serializable
 	public static void writeInputStreamToOutputStream(final InputStream inputStream,
 		final OutputStream outputStream) throws IOException
 	{
-		int byt;
-		while ((byt = inputStream.read()) != -1)
+		int nextByte;
+		while ((nextByte = inputStream.read()) != -1)
 		{
-			outputStream.write(byt);
+			outputStream.write(nextByte);
+		}
+	}
+
+	/**
+	 * This method reads from an opened {@link Reader} object and writes it to the opened
+	 * {@link Writer} object
+	 *
+	 * @param reader
+	 *            The opened Reader
+	 * @param writer
+	 *            The opened Writer
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred
+	 */
+	public static void writeReaderToWriter(final Reader reader, final Writer writer)
+		throws IOException
+	{
+		int character;
+		while ((character = reader.read()) != -1)
+		{
+			writer.write(character);
 		}
 	}
 
