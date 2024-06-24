@@ -62,7 +62,7 @@ public class LinuxShellExecutorTest
 		String executionPath;
 		String command;
 
-		shellPath = "/usr/bin/zsh";
+		shellPath = "bash";
 
 		executionPath = PathFinder.getProjectDirectory().getAbsolutePath();
 		command = "ls -al";
