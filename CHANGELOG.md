@@ -1,7 +1,7 @@
 ## Change log
 ----------------------
 
-Version 3.1-SNAPSHOT
+Version 3.1
 -------------
 
 ADDED:
@@ -17,6 +17,7 @@ CHANGED:
 - update of test dependency commons-io in new version 2.16.1
 - update of test dependency jobj-core to new version 8.2
 - update of test dependency silly-collection to new version 27.1
+- moved method LinuxShellExecutor#toString to StreamExtensions#toString
 
 Version 3
 -------------

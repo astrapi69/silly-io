@@ -25,19 +25,21 @@ Utility library that provides java classes for create In- and OuputStream and Re
 
 ## gradle dependency
 
+Replace the variable ${latestVersion} with the current latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io)
+
 You can first define the version in the ext section and add than the following gradle dependency
 to your project `build.gradle` if you want to import the core functionality of silly-io:
 
 define version in file gradle.properties
 
 ```
-sillyIoVersion=3
+sillyIoVersion=${latestVersion}
 ```
 
 or in build.gradle ext area
 
 ```
-    sillyIoVersion = "3"
+    sillyIoVersion = "${latestVersion}"
 ```
 
 and then add the dependency to the dependencies area
@@ -58,7 +60,7 @@ Than you can add the dependency to your dependencies:
     <properties>
             ...
         <!-- SILLY-IO version -->
-        <silly-io.version>3</silly-io.version>
+        <silly-io.version>${latestVersion}</silly-io.version>
             ...
     </properties>
             ...
