@@ -25,12 +25,15 @@
 package io.github.astrapi69.io.shell;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import io.github.astrapi69.io.StreamExtensions;
 
 /**
  * The class LinuxShellExecutor.
@@ -39,6 +42,56 @@ public final class LinuxShellExecutor
 {
 	private LinuxShellExecutor()
 	{
+	}
+
+	/**
+	 * Executes the given command in the given execution path with the given executable
+	 *
+	 * @param shellPath
+	 *            the path where the shell executable locates
+	 * @param executionPath
+	 *            the path where the command shell be executed
+	 * @param command
+	 *            the command to execute
+	 * @return the output if any
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred
+	 * @throws InterruptedException
+	 *             is thrown when a thread is waiting, sleeping, or otherwise occupied, * and the
+	 *             thread is interrupted, either before or during the activity
+	 */
+	public static String execute(String shellPath, String executionPath, String command)
+		throws IOException, InterruptedException
+	{
+		if (executionPath.contains("~"))
+		{
+			executionPath = executionPath.replace("~", System.getProperty("user.home"));
+		}
+		File executionDirectory = new File(executionPath);
+		if (!executionDirectory.exists())
+		{
+			throw new IllegalArgumentException("Execution directory does not exist");
+		}
+
+		String cdToExecutionPath = "cd " + executionPath;
+		String commands = cdToExecutionPath + " && " + command;
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		processBuilder.command(shellPath, "-c", commands);
+
+		Process process = processBuilder.start();
+		StringBuilder stringBuilder = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+		String line;
+		while ((line = reader.readLine()) != null)
+		{
+			stringBuilder.append(line).append(System.lineSeparator());
+		}
+		int waitFor = process.waitFor();
+
+		if (waitFor != 0)
+			stringBuilder.append("Exit code: ").append(waitFor).append("\n");
+		return stringBuilder.toString();
 	}
 
 	/**
@@ -70,40 +123,11 @@ public final class LinuxShellExecutor
 		{
 			try (InputStream shellIn = shell.getInputStream())
 			{
-				response = toString(shellIn);
+				response = StreamExtensions.toString(shellIn);
 			}
 		}
 
 		return response;
-	}
-
-	/**
-	 * Converts the given InputStream to a string.
-	 *
-	 * @param is
-	 *            the is
-	 * @return the string
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public static String toString(final InputStream is) throws IOException
-	{
-
-		if (is != null)
-		{
-			final StringBuilder sb = new StringBuilder();
-			final BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-			String line;
-			while ((line = br.readLine()) != null)
-			{
-				sb.append(line).append("\n");
-			}
-			return sb.toString();
-		}
-		else
-		{
-			return "";
-		}
 	}
 
 }

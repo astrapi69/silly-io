@@ -47,6 +47,7 @@ import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.BaseTestCase;
 import io.github.astrapi69.date.CreateDateExtensions;
+import io.github.astrapi69.io.shell.LinuxShellExecutor;
 import io.github.astrapi69.lang.ClassExtensions;
 import io.github.astrapi69.test.object.Person;
 
@@ -317,4 +318,19 @@ public class StreamExtensionsTest extends BaseTestCase
 		FileUtils.deleteQuietly(writeInMe);
 	}
 
+	/**
+	 * Test method for {@link StreamExtensions#toString(java.io.InputStream)}
+	 *
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Test
+	public void testToString() throws IOException
+	{
+		String expected;
+		String actual;
+		expected = "";
+		actual = StreamExtensions.toString(null);
+		assertEquals(actual, expected);
+	}
 }

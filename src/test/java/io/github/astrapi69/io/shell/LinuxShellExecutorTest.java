@@ -32,6 +32,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.meanbean.test.BeanTester;
 
+import io.github.astrapi69.file.search.PathFinder;
+
 /**
  * The unit test class for the class {@link LinuxShellExecutor}.
  */
@@ -45,27 +47,29 @@ public class LinuxShellExecutorTest
 	 *             Signals that an I/O exception has occurred.
 	 */
 	@Test
-	public void testExecute() throws IOException, InterruptedException
+	public void testExecute() throws IOException
 	{
 		String actual;
 		actual = LinuxShellExecutor.execute(true, "ls -al");
 		assertNotNull(actual);
 	}
 
-	/**
-	 * Test method for {@link LinuxShellExecutor#toString(java.io.InputStream)}
-	 *
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
+
 	@Test
-	public void testToString() throws IOException
+	void execute() throws IOException, InterruptedException
 	{
-		String expected;
-		String actual;
-		expected = "";
-		actual = LinuxShellExecutor.toString(null);
-		assertEquals(actual, expected);
+
+		String shellPath;
+		String executionPath;
+		String command;
+
+		shellPath = "/usr/bin/zsh";
+
+		executionPath = PathFinder.getProjectDirectory().getAbsolutePath();
+		command = "git add HELP.md";
+
+		String shellOutput = LinuxShellExecutor.execute(shellPath, executionPath, command);
+		System.out.println(shellOutput);
 	}
 
 	/**

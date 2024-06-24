@@ -1,13 +1,12 @@
-
 dependencies {
-    testImplementation("commons-io:commons-io:$commonsIoVersion")
-    testImplementation("io.github.astrapi69:silly-collection:$sillyCollectionVersion")
-    testImplementation("io.github.astrapi69:jobj-contract-verifier:$jobjContractVerifierVersion")
-    testImplementation("io.github.astrapi69:jobj-core:$jobjCoreVersion")
-    testImplementation("io.github.astrapi69:test-object:$testObjectVersion")
-    testImplementation("io.github.astrapi69:vintage-time:$vintageTimeVersion")
-    testImplementation("com.github.meanbeanlib:meanbean:$meanbeanVersion")
-    testImplementation("org.hamcrest:hamcrest-all:$hamcrestVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation libs.file.worker
+    testImplementation libs.commons.io
+    testImplementation libs.silly.collection
+    testImplementation libs.jobj.contract.verifier
+    testImplementation libs.jobj.core
+    testImplementation libs.vintage.time
+    testImplementation libs.hamcrest.all
+    // Note: use of bundles...
+    testImplementation libs.bundles.unit.testing
+    testRuntimeOnly libs.junit.platform.launcher
 }
