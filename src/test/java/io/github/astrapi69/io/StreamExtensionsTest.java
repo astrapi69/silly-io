@@ -45,10 +45,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.meanbean.test.BeanTester;
 
-import io.github.astrapi69.BaseTestCase;
 import io.github.astrapi69.date.CreateDateExtensions;
 import io.github.astrapi69.io.shell.LinuxShellExecutor;
 import io.github.astrapi69.lang.ClassExtensions;
+import io.github.astrapi69.test.base.BaseTestCase;
 import io.github.astrapi69.test.object.Person;
 
 /**

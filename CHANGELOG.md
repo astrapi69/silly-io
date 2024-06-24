@@ -8,6 +8,16 @@ ADDED:
 
 - new libs.versions.toml file for new automatic catalog versions update
 
+CHANGED:
+
+- update gradle to new version 8.8
+- update of gradle plugin dependency com.github.ben-manes.versions.gradle.plugin to new minor version 0.51.0
+- update of gradle-plugin dependency 'org.ajoberstar.grgit:grgit-gradle' in version 5.2.2
+- update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version 7.0.0.BETA1
+- update of test dependency commons-io in new version 2.16.1
+- update of test dependency jobj-core to new version 8.2
+- update of test dependency silly-collection to new version 27.1
+
 Version 3
 -------------
 
