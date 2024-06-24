@@ -24,7 +24,6 @@
  */
 package io.github.astrapi69.io.shell;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
@@ -58,7 +57,7 @@ public class LinuxShellExecutorTest
 	@Test
 	void execute() throws IOException, InterruptedException
 	{
-
+		String actual;
 		String shellPath;
 		String executionPath;
 		String command;
@@ -66,10 +65,10 @@ public class LinuxShellExecutorTest
 		shellPath = "/usr/bin/zsh";
 
 		executionPath = PathFinder.getProjectDirectory().getAbsolutePath();
-		command = "git add HELP.md";
+		command = "ls -al";
 
-		String shellOutput = LinuxShellExecutor.execute(shellPath, executionPath, command);
-		System.out.println(shellOutput);
+		actual = LinuxShellExecutor.execute(shellPath, executionPath, command);
+		assertNotNull(actual);
 	}
 
 	/**
