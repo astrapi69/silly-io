@@ -366,10 +366,10 @@ public final class StreamExtensions
 	public static Writer getWriter(final File file, final String encoding, final boolean createFile)
 		throws IOException
 	{
-		PrintWriter printWriter = null;
-		BufferedOutputStream bos = null;
-		FileOutputStream fos = null;
-		OutputStreamWriter osw = null;
+		PrintWriter printWriter;
+		BufferedOutputStream bos;
+		FileOutputStream fos;
+		OutputStreamWriter osw;
 		if (file.exists())
 		{
 			fos = new FileOutputStream(file);
@@ -443,4 +443,32 @@ public final class StreamExtensions
 		}
 	}
 
+	/**
+	 * Converts the given InputStream to a string.
+	 *
+	 * @param is
+	 *            the is
+	 * @return the string
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static String toString(final InputStream is) throws IOException
+	{
+
+		if (is != null)
+		{
+			final StringBuilder sb = new StringBuilder();
+			final BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			String line;
+			while ((line = br.readLine()) != null)
+			{
+				sb.append(line).append("\n");
+			}
+			return sb.toString();
+		}
+		else
+		{
+			return "";
+		}
+	}
 }

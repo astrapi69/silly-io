@@ -356,6 +356,11 @@ public enum FileExtension
 		return Set.of(FileConstants.ZIP_EXTENSIONS);
 	}
 
+	/**
+	 * Gets the extension
+	 * 
+	 * @return the extension
+	 */
 	public String getExtension()
 	{
 		return extension;
