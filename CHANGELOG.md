@@ -12,6 +12,7 @@ ADDED:
 
 CHANGED:
 
+- update gradle to new version 8.9-rc-2
 - tagged constant class FileConstants as deprecated
 - removed obsolete package.html files
 - update of test dependency file-worker to new version 17.3
