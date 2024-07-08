@@ -278,6 +278,15 @@ public enum FileExtension
 	private final String extension;
 
 	/**
+	 * String array with a few extensions from zip-files
+	 */
+	public static final String[] ZIP_EXTENSIONS = { FileExtension.ZIP.getExtension(),
+			FileExtension.JAR.getExtension(), FileExtension.WAR.getExtension(),
+			FileExtension.EAR.getExtension(), FileExtension.TAR.getExtension(),
+			FileExtension.RAR.getExtension(), FileExtension.SEVEN_ZIP.getExtension(),
+			FileExtension.BZ2.getExtension(), FileExtension.GZ.getExtension() };
+
+	/**
 	 * Instantiates a new {@link FileExtension}
 	 *
 	 * @param extension
@@ -353,7 +362,7 @@ public enum FileExtension
 	 */
 	public static Set<String> getZipExtensions()
 	{
-		return Set.of(FileConstants.ZIP_EXTENSIONS);
+		return Set.of(FileExtension.ZIP_EXTENSIONS);
 	}
 
 	/**

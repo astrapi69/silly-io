@@ -4,7 +4,18 @@
 Version 3.2-SNAPSHOT
 -------------
 
+ADDED:
 
+- new enum class FileCharacter that holds file specific characters
+- new enum class FileSize that holds file specific sizes
+- new package-info.java files for all packages
+
+CHANGED:
+
+- tagged constant class FileConstants as deprecated
+- removed obsolete package.html files
+- update of test dependency file-worker to new version 17.3
+- update of test dependency jobj-contract-verifier to new version 5.1
 
 Version 3.1
 -------------
