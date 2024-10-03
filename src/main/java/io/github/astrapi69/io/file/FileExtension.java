@@ -232,6 +232,9 @@ public enum FileExtension
 	/** The file extension for PNG image files */
 	PNG(".png"),
 
+	/** The file extension for PDF image files */
+	PDF(".pdf"),
+
 	/** The file extension for PostScript image files */
 	PS(".ps"),
 

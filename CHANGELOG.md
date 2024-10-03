@@ -9,6 +9,7 @@ ADDED:
 - new enum class FileCharacter that holds file specific characters
 - new enum class FileSize that holds file specific sizes
 - new package-info.java files for all packages
+- new file extension for pdf files in enum class FileExtension
 
 CHANGED:
 
