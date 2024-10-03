@@ -13,11 +13,16 @@ ADDED:
 
 CHANGED:
 
-- update gradle to new version 8.9-rc-2
+- update gradle to new version 8.10.2
+- update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version 7.0.0.BETA2
+- update of test dependency commons-io in new version 2.17.0
+- update of test dependency jobj-core to new version 9
 - tagged constant class FileConstants as deprecated
 - removed obsolete package.html files
-- update of test dependency file-worker to new version 17.3
-- update of test dependency jobj-contract-verifier to new version 5.1
+- update of test dependency file-worker to new version 17.4
+- update of test dependency jobj-contract-verifier to new version 5.2
+- update of test dependency silly-collection to new version 28
+- update of test dependency junit-jupiter to new version 5.11.1
 
 Version 3.1
 -------------
