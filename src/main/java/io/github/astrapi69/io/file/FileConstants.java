@@ -29,42 +29,66 @@ package io.github.astrapi69.io.file;
  *
  * @author Asterios Raptis
  * @version 1.0
+ * @deprecated use instead the enum classes {@link FileCharacter}, {@link FileExtension} and
+ *             {@link FileSize}. <br>
+ *             Note: will be removed in next major version
  */
 public abstract class FileConstants
 {
 
 	/**
 	 * Constant for the slash. current value:"\"
+	 * 
+	 * @deprecated use instead the enum class {@link FileCharacter#BACKSLASH}. <br>
+	 *             Note: will be removed in next major version
 	 */
 	public static final String BACKSLASH = "\\";
 
 	/**
 	 * Constant for the blocksize. current value:8192
+	 * 
+	 * @deprecated use instead the enum class {@link FileSize#DEFAULT_BLOCK_SIZE}. <br>
+	 *             Note: will be removed in next major version
 	 */
 	public static final int BLOCKSIZE = 8192;
 
 	/**
 	 * Constant for the dot. current value:"."
+	 * 
+	 * @deprecated use instead the enum class {@link FileCharacter#DOT}. <br>
+	 *             Note: will be removed in next major version
 	 */
 	public static final String DOT = ".";
 
 	/**
 	 * Constant for the dot. current value:":"
+	 * 
+	 * @deprecated use instead the enum class {@link FileCharacter#DOUBLE_DOT}. <br>
+	 *             Note: will be removed in next major version
 	 */
 	public static final String DOUBLEDOT = ":";
 
 	/**
 	 * Constant for the kilobyte. current value:1024
+	 * 
+	 * @deprecated use instead the enum class {@link FileSize#KILOBYTE}. <br>
+	 *             Note: will be removed in next major version
 	 */
 	public static final int KILOBYTE = 1024;
 
 	/**
 	 * Constant for the slash. current value:"/"
+	 * 
+	 * @deprecated use instead the enum class {@link FileCharacter#SLASH}. <br>
+	 *             Note: will be removed in next major version
 	 */
 	public static final String SLASH = "/";
 
 	/**
 	 * String array with a few extensions from zip-files
+	 * 
+	 * @deprecated use instead the enum class {@link FileExtension#ZIP_EXTENSIONS}. <br>
+	 *             Note: will be removed in next major version
 	 */
 	public static final String[] ZIP_EXTENSIONS = { FileExtension.ZIP.getExtension(),
 			FileExtension.JAR.getExtension(), FileExtension.WAR.getExtension(),
@@ -74,6 +98,9 @@ public abstract class FileConstants
 
 	/**
 	 * String array with the invalid characters in filenames
+	 * 
+	 * @deprecated use instead the enum class {@link FileCharacter#INVALID_IN_NAME}. <br>
+	 *             Note: will be removed in next major version
 	 */
 	public static String[] INVALID_CHARS_IN_FILENAME = { "\\", "/", ":", "*", "\"", "<", ">", "|" };
 

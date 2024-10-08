@@ -232,6 +232,9 @@ public enum FileExtension
 	/** The file extension for PNG image files */
 	PNG(".png"),
 
+	/** The file extension for PDF image files */
+	PDF(".pdf"),
+
 	/** The file extension for PostScript image files */
 	PS(".ps"),
 
@@ -276,6 +279,15 @@ public enum FileExtension
 
 	/** The file extension */
 	private final String extension;
+
+	/**
+	 * String array with a few extensions from zip-files
+	 */
+	public static final String[] ZIP_EXTENSIONS = { FileExtension.ZIP.getExtension(),
+			FileExtension.JAR.getExtension(), FileExtension.WAR.getExtension(),
+			FileExtension.EAR.getExtension(), FileExtension.TAR.getExtension(),
+			FileExtension.RAR.getExtension(), FileExtension.SEVEN_ZIP.getExtension(),
+			FileExtension.BZ2.getExtension(), FileExtension.GZ.getExtension() };
 
 	/**
 	 * Instantiates a new {@link FileExtension}
@@ -353,17 +365,27 @@ public enum FileExtension
 	 */
 	public static Set<String> getZipExtensions()
 	{
-		return Set.of(FileConstants.ZIP_EXTENSIONS);
+		return Set.of(FileExtension.ZIP_EXTENSIONS);
 	}
 
 	/**
 	 * Gets the extension
-	 * 
+	 *
 	 * @return the extension
 	 */
 	public String getExtension()
 	{
 		return extension;
+	}
+
+	/**
+	 * Gets the extension without the dot
+	 *
+	 * @return the extension without the dot
+	 */
+	public String getExtensionOnly()
+	{
+		return extension.substring(1, extension.length());
 	}
 
 }
