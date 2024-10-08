@@ -93,7 +93,7 @@ class FileExtensionTest
 		Set<String> actual;
 		Set<String> expected;
 		actual = FileExtension.getZipExtensions();
-		expected = new HashSet<>(Arrays.asList(FileConstants.ZIP_EXTENSIONS));
+		expected = new HashSet<>(Arrays.asList(FileExtension.ZIP_EXTENSIONS));
 		assertEquals(expected, actual);
 	}
 }

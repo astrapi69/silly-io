@@ -4,6 +4,9 @@
 Version 3.3-SNAPSHOT
 -------------
 
+CHANGED:
+
+- remove of deprecated class FileConstants
 
 Version 3.2
 -------------
