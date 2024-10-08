@@ -46,8 +46,25 @@ class FileExtensionTest
 	{
 		String actual;
 		String expected;
+
 		actual = FileExtension.PROPERTIES.getExtensionOnly();
 		expected = "properties";
+		assertEquals(expected, actual);
+
+		actual = FileExtension.JSON.getExtensionOnly();
+		expected = "json";
+		assertEquals(expected, actual);
+
+		actual = FileExtension.XML.getExtensionOnly();
+		expected = "xml";
+		assertEquals(expected, actual);
+
+		actual = FileExtension.YML.getExtensionOnly();
+		expected = "yml";
+		assertEquals(expected, actual);
+
+		actual = FileExtension.YAML.getExtensionOnly();
+		expected = "yaml";
 		assertEquals(expected, actual);
 	}
 
