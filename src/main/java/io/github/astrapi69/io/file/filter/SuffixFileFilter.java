@@ -30,8 +30,8 @@ import java.io.FileFilter;
 /**
  * The class {@link SuffixFileFilter} accepts File-objects that match to the given suffix
  *
- * @version 1.0
  * @author Asterios Raptis
+ * @version 1.0
  */
 public class SuffixFileFilter implements FileFilter
 {
@@ -129,6 +129,11 @@ public class SuffixFileFilter implements FileFilter
 		return fileName.endsWith(suffix);
 	}
 
+	/**
+	 * Gets the description
+	 *
+	 * @return the description
+	 */
 	public String getDescription()
 	{
 		return description;

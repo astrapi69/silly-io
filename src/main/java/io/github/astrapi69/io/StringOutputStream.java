@@ -73,6 +73,12 @@ public class StringOutputStream extends OutputStream implements Serializable
 		return charset;
 	}
 
+	/**
+	 * Sets the given charset
+	 *
+	 * @param charset
+	 *            the charset
+	 */
 	public void setCharset(Charset charset)
 	{
 		this.charset = charset;

@@ -1,12 +1,5 @@
 dependencies {
-    testImplementation libs.file.worker
-    testImplementation libs.commons.io
-    testImplementation libs.silly.collection
-    testImplementation libs.jobj.contract.verifier
-    testImplementation libs.jobj.core
-    testImplementation libs.vintage.time
-    testImplementation libs.hamcrest.all
     // Note: use of bundles...
     testImplementation libs.bundles.unit.testing
-    testRuntimeOnly libs.junit.platform.launcher
+    testRuntimeOnly libs.bundles.test.runtime.only
 }

@@ -14,6 +14,7 @@ ADDED:
 
 CHANGED:
 
+- rename of module to new name 'io.github.astrapisixtynine.silly.io'
 - update gradle to new version 8.10.2
 - update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version 7.0.0.BETA2
 - update of test dependency commons-io in new version 2.17.0
