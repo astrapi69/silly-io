@@ -42,6 +42,16 @@ class FileExtensionTest
 {
 
 	@Test
+	void getExtensionOnly() throws URISyntaxException
+	{
+		String actual;
+		String expected;
+		actual = FileExtension.PROPERTIES.getExtensionOnly();
+		expected = "properties";
+		assertEquals(expected, actual);
+	}
+
+	@Test
 	void is() throws URISyntaxException
 	{
 		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";

@@ -10,6 +10,7 @@ ADDED:
 - new enum class FileSize that holds file specific sizes
 - new package-info.java files for all packages
 - new file extension for pdf files in enum class FileExtension
+- new method in enum class FileExtension for get only the extension without the dot
 
 CHANGED:
 

@@ -370,12 +370,22 @@ public enum FileExtension
 
 	/**
 	 * Gets the extension
-	 * 
+	 *
 	 * @return the extension
 	 */
 	public String getExtension()
 	{
 		return extension;
+	}
+
+	/**
+	 * Gets the extension without the dot
+	 *
+	 * @return the extension without the dot
+	 */
+	public String getExtensionOnly()
+	{
+		return extension.substring(1, extension.length());
 	}
 
 }
