@@ -4,6 +4,12 @@
 Version 3.3-SNAPSHOT
 -------------
 
+ADDED:
+
+- new class CommandLineExecutor for executing shell commands across different operating systems
+- introduce OS enum for OS detection and integrate it with CommandLineExecutor to set appropriate shell paths and flags
+- new Implement factory method for creating ProcessBuilder instances to simplify process configuration
+
 CHANGED:
 
 - remove of deprecated class FileConstants
