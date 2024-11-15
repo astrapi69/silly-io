@@ -4,6 +4,22 @@
 Version 3.4-SNAPSHOT
 -------------
 
+## [Unreleased]
+### Added
+- New file extensions to the `FileExtension` enum:
+  - Document formats: DOC, DOCX, XLS, XLSX, PPT, PPTX
+  - Media files: MP4, AVI, MKV, MOV, FLV, WMV, M4A, FLAC
+  - Image formats: WEBP, HEIC, RAW
+  - Programming files: HTML, CSS, TS, JAVA, KT, CPP, H
+  - Compressed and disk image files: 7Z, ISO, DMG
+  - Configuration files: YAML, YML, ENV, CONFIG, INI
+
+- New methods in `FilenameExtensions`:
+  - `getFilenameWithNewExtension(File, String)`: Generates a filename with a specified string-based extension.
+  - `getFilenameWithNewExtension(File, FileExtension)`: Generates a filename with a specified `FileExtension` enum-based extension.
+
+### Changed
+- Updated the `resolve` method in the `FileExtension` enum to resolve file extensions dynamically based on string input.
 
 Version 3.3
 -------------

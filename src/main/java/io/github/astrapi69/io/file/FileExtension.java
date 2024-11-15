@@ -154,6 +154,9 @@ public enum FileExtension
 	/** The file extension for xml files */
 	XML(".xml"),
 
+	/** The file extension for xls files */
+	XLS(".xls"),
+
 	/** The file extension for json files */
 	JSON(".json"),
 
@@ -275,7 +278,88 @@ public enum FileExtension
 	YAML(".yaml"),
 
 	/** The file extension for velocity template files */
-	VELOCITY_TEMPLATE(".vm");
+	VELOCITY_TEMPLATE(".vm"),
+
+	/** The file extension for ODT document files */
+	ODT(".odt"),
+
+	/** The file extension for DOC document files */
+	DOC(".doc"),
+
+	/** The file extension for DOCX document files */
+	DOCX(".docx"),
+
+	/** The file extension for XLSX document files */
+	XLSX(".xlsx"),
+
+	/** The file extension for PPT document files */
+	PPT(".ppt"),
+
+	/** The file extension for PPTX document files */
+	PPTX(".pptx"),
+
+	/** The file extension for MP4 Media files */
+	MP4(".mp4"),
+
+	/** The file extension for AVI Media files */
+	AVI(".avi"),
+
+	/** The file extension for MKV Media files */
+	MKV(".mkv"),
+
+	/** The file extension for MOV Media files */
+	MOV(".mov"),
+
+	/** The file extension for FLV Media files */
+	FLV(".flv"),
+
+	/** The file extension for WMV Media files */
+	WMV(".wmv"),
+
+	/** The file extension for M4A Media files */
+	M4A(".m4a"),
+
+	/** The file extension for FLAC Media files */
+	FLAC(".flac"),
+
+	/** The file extension for WEBP Image files */
+	WEBP(".webp"),
+
+	/** The file extension for HEIC Image files */
+	HEIC(".heic"),
+
+	/** The file extension for RAW Image files */
+	RAW(".raw"),
+
+	/** The file extension for HTML web files */
+	HTML(".html"),
+
+	/** The file extension for CSS web files */
+	CSS(".css"),
+
+	/** The file extension for TS programming web files */
+	TS(".ts"),
+
+	/** The file extension for KT programming files */
+	KT(".kt"),
+
+	/** The file extension for CPP programming files */
+	CPP(".cpp"),
+
+	/** The file extension for H programming files */
+	H(".h"),
+
+	/** The file extension for ENV programming files */
+	ENV(".env"),
+
+	/** The file extension for CONFIG configuration files */
+	CONFIG(".config"),
+
+	/** The file extension for CONF configuration files */
+	CONF(".conf"),
+
+	/** The file extension for INI programming files */
+	INI(".ini");
 
 	/** The file extension */
 	private final String extension;
@@ -386,6 +470,29 @@ public enum FileExtension
 	public String getExtensionOnly()
 	{
 		return extension.substring(1, extension.length());
+	}
+
+	/**
+	 * Resolves a {@link FileExtension} from the given string representation of a file extension
+	 *
+	 * @param fileExtension
+	 *            the string representation of the file extension
+	 * @return the corresponding {@link FileExtension} or null if no match is found
+	 */
+	public static FileExtension resolve(String fileExtension)
+	{
+		if (fileExtension == null)
+		{
+			return null;
+		}
+		for (FileExtension extension : FileExtension.values())
+		{
+			if (extension.getExtension().equalsIgnoreCase(fileExtension))
+			{
+				return extension;
+			}
+		}
+		return null;
 	}
 
 }

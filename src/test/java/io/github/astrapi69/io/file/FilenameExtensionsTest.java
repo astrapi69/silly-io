@@ -24,6 +24,7 @@
  */
 package io.github.astrapi69.io.file;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,6 +32,8 @@ import java.io.File;
 import java.net.URISyntaxException;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.lang.ClassExtensions;
@@ -40,6 +43,29 @@ import io.github.astrapi69.lang.ClassExtensions;
  */
 public class FilenameExtensionsTest
 {
+
+	@ParameterizedTest
+	@CsvSource({ "test.txt,.jpg,test.jpg", "document.pdf,.doc,document.doc",
+			"archive.zip,.tar,archive.tar", "image.png,.jpeg,image.jpeg" })
+	void testGetFilenameWithNewExtension_String(String inputFilename, String newExtension,
+		String expectedOutput)
+	{
+		File file = new File(inputFilename);
+		String result = FilenameExtensions.getFilenameWithNewExtension(file, newExtension);
+		assertEquals(expectedOutput, result);
+	}
+
+	@ParameterizedTest
+	@CsvSource({ "test.txt,.jpg,test.jpg", "document.pdf,.doc,document.doc",
+			"archive.zip,.tar,archive.tar", "image.png,.jpeg,image.jpeg" })
+	void testGetFilenameWithNewExtension_FileExtension(String inputFilename, String newExtension,
+		String expectedOutput)
+	{
+		File file = new File(inputFilename);
+		FileExtension fileExtension = FileExtension.resolve(newExtension);
+		String result = FilenameExtensions.getFilenameWithNewExtension(file, fileExtension);
+		assertEquals(expectedOutput, result);
+	}
 
 	/**
 	 * Test method for {@link FilenameExtensions#getFilenamePrefix(File)}
@@ -213,7 +239,7 @@ public class FilenameExtensionsTest
 	{
 		String expected;
 		String actual;
-		actual = null;
+
 		final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
 
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
