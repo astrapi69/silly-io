@@ -2,7 +2,7 @@
 
 ---
 
-## Version 3.4-SNAPSHOT
+## Version 3.4
 
 ### [Unreleased]
 #### Added
