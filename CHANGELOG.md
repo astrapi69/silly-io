@@ -2,9 +2,14 @@
 
 ---
 
-## Version 3.4
+## Version 3.5-SNAPSHOT
 
 ### [Unreleased]
+
+---
+
+## Version 3.4
+
 #### Added
 - **File Extensions**:
   - Document formats: `DOC`, `DOCX`, `XLS`, `XLSX`, `PPT`, `PPTX`
