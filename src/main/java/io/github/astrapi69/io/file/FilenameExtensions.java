@@ -25,6 +25,7 @@
 package io.github.astrapi69.io.file;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * The class {@link FilenameExtensions}
@@ -137,6 +138,49 @@ public final class FilenameExtensions
 		{
 			final String fileName = file.getName();
 			return getFilenameWithoutExtension(fileName);
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the filename with the new extension or null if the given file object is a directory
+	 *
+	 * @param file
+	 *            the file
+	 * @param newExtension
+	 *            the new extension
+	 * @return the filename with the new extension or null if the given file object is a directory
+	 */
+	public static String getFilenameWithNewExtension(final File file, final String newExtension)
+	{
+		Objects.requireNonNull(file, "File must not be null");
+		Objects.requireNonNull(newExtension, "The new extension must not be null");
+		String fileName = FilenameExtensions.getFilenameWithoutExtension(file);
+		if (fileName != null)
+		{
+			String newFileName = fileName + newExtension;
+			return newFileName;
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the filename with the new extension or null if the given file object is a directory
+	 *
+	 * @param file
+	 *            the file
+	 * @param newExtension
+	 *            the new extension
+	 * @return the filename with the new extension or null if the given file object is a directory
+	 */
+	public static String getFilenameWithNewExtension(final File file,
+		final FileExtension newExtension)
+	{
+		String fileName = FilenameExtensions.getFilenameWithoutExtension(file);
+		if (fileName != null)
+		{
+			String newFileName = fileName + newExtension.getExtension();
+			return newFileName;
 		}
 		return null;
 	}

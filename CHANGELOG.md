@@ -1,265 +1,201 @@
-## Change log
-----------------------
+# Changelog
 
-Version 3.3
--------------
+---
 
-ADDED:
+## Version 3.4
 
-- new class CommandLineExecutor for executing shell commands across different operating systems
-- introduce OS enum for OS detection and integrate it with CommandLineExecutor to set appropriate shell paths and flags
-- new Implement factory method for creating ProcessBuilder instances to simplify process configuration
+### [Unreleased]
+#### Added
+- **File Extensions**:
+  - Document formats: `DOC`, `DOCX`, `XLS`, `XLSX`, `PPT`, `PPTX`
+  - Media files: `MP4`, `AVI`, `MKV`, `MOV`, `FLV`, `WMV`, `M4A`, `FLAC`
+  - Image formats: `WEBP`, `HEIC`, `RAW`
+  - Programming files: `HTML`, `CSS`, `TS`, `JAVA`, `KT`, `CPP`, `H`
+  - Compressed and disk image files: `7Z`, `ISO`, `DMG`
+  - Configuration files: `YAML`, `YML`, `ENV`, `CONFIG`, `INI`
+- **Filename Extensions Methods**:
+  - `getFilenameWithNewExtension(File, String)`: Creates a filename with a new string-based extension.
+  - `getFilenameWithNewExtension(File, FileExtension)`: Creates a filename with a new enum-based `FileExtension`.
 
-CHANGED:
+#### Changed
+- Enhanced the `resolve` method in `FileExtension` to dynamically resolve file extensions by string input.
 
-- remove of deprecated class FileConstants
+---
 
-Version 3.2
--------------
+## Version 3.3
 
-ADDED:
+#### Added
+- `CommandLineExecutor`: Execute shell commands across operating systems.
+- `OS` Enum: Enables OS detection for appropriate shell paths and flags.
+- Factory method for `ProcessBuilder` for simplified process configuration.
 
-- new enum class FileCharacter that holds file specific characters
-- new enum class FileSize that holds file specific sizes
-- new package-info.java files for all packages
-- new file extension for pdf files in enum class FileExtension
-- new method in enum class FileExtension for get only the extension without the dot
+#### Changed
+- Removed the deprecated `FileConstants` class.
 
-CHANGED:
+---
 
-- rename of module to new name 'io.github.astrapisixtynine.silly.io'
-- update gradle to new version 8.10.2
-- update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version 7.0.0.BETA2
-- update of test dependency commons-io in new version 2.17.0
-- update of test dependency jobj-core to new version 9
-- tagged constant class FileConstants as deprecated
-- removed obsolete package.html files
-- update of test dependency file-worker to new version 17.4
-- update of test dependency jobj-contract-verifier to new version 5.2
-- update of test dependency silly-collection to new version 28
-- update of test dependency junit-jupiter to new version 5.11.1
+## Version 3.2
 
-Version 3.1
--------------
+#### Added
+- Enum classes for `FileCharacter` and `FileSize` to handle file-specific characters and sizes.
+- Package-level `package-info.java` files for all packages.
+- `FileExtension` additions: `PDF` extension and method to retrieve extensions without a dot.
 
-ADDED:
+#### Changed
+- Renamed the module to `io.github.astrapisixtynine.silly.io`.
+- Updated Gradle to version `8.10.2`.
+- Updated dependencies for better compatibility:
+  - Spotless plugin: `7.0.0.BETA2`
+  - Commons-IO: `2.17.0`
+  - Various test dependencies.
 
-- new libs.versions.toml file for new automatic catalog versions update
+---
 
-CHANGED:
+## Version 3.1
 
-- update gradle to new version 8.8
-- update of gradle plugin dependency com.github.ben-manes.versions.gradle.plugin to new minor version 0.51.0
-- update of gradle-plugin dependency 'org.ajoberstar.grgit:grgit-gradle' in version 5.2.2
-- update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version 7.0.0.BETA1
-- update of test dependency commons-io in new version 2.16.1
-- update of test dependency jobj-core to new version 8.2
-- update of test dependency silly-collection to new version 27.1
-- moved method LinuxShellExecutor#toString to StreamExtensions#toString
+#### Added
+- `libs.versions.toml` for automatic catalog version updates.
 
-Version 3
--------------
+#### Changed
+- Updated Gradle to version `8.8`.
+- Dependency updates:
+  - Gradle plugins: Spotless, Grgit, and Versions plugin.
+  - Test dependencies: `commons-io`, `jobj-core`, `silly-collection`.
+- Refactored: Moved `LinuxShellExecutor#toString` to `StreamExtensions#toString`.
 
-ADDED:
+---
 
-- new method for writing from Reader to Writer
+## Version 3
 
-CHANGED:
+#### Added
+- New method to write data from `Reader` to `Writer`.
 
-- update of jdk to version 17
-- update gradle to new version 8.4
-- update of gradle plugin dependency com.github.ben-manes.versions.gradle.plugin to new minor version 0.49.0
-- update of gradle-plugin dependency 'org.ajoberstar.grgit:grgit-gradle' in version 5.2.0
-- update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version 6.22.0
-- update of test dependency commons-io in new version 2.14.0
-- update of test dependency silly-collection to new version 27
-- update of test dependency jobj-core to new version 8.1
-- update of test dependency test-object in new version 8
-- update of test dependency vintage-time in new version 6
-- update of test dependency junit-jupiter-api and junit-jupiter-engine in new version 5.10.0
-- rename of package annotations to annotation
+#### Changed
+- Updated JDK to version `17`.
+- Updated Gradle to version `8.4`.
+- Dependency updates:
+  - Spotless plugin: `6.22.0`
+  - Test dependencies: `commons-io`, `jobj-core`, `silly-collection`, `vintage-time`, and others.
+- Renamed `annotations` package to `annotation`.
 
-Version 2.2
--------------
+---
 
-ADDED:
+## Version 2.2
 
-- new method that gets all known compression file extensions as a Set object
-- new file extensions to enum FileExtension for yml and yaml files
+#### Added
+- Method to retrieve known compression file extensions as a `Set`.
+- Added `yml` and `yaml` file extensions to `FileExtension`.
 
-CHANGED:
+#### Changed
+- Updated Gradle to version `7.6`.
+- Updated dependencies for plugins and test libraries.
 
-- update gradle to new version 7.6
-- update of gradle plugin dependency com.github.ben-manes.versions.gradle.plugin to new minor version 0.45.0
-- update of gradle-plugin dependency 'com.diffplug.spotless:spotless-plugin-gradle' to new version
-  6.14.0
-- update of test dependency jobj-core to new version 7
-- update of test dependency silly-collection to new version 20.4
-- update of test dependency jobj-contract-verifier to new version 4
-- update of test dependency 'com.github.meanbeanlib:meanbean' to new version 3.0.0-M9
-- update of test dependency test-object in new minor version 7.2
-- update of test dependency junit-jupiter-api to new version 5.9.2
+---
 
-Version 2.1
--------------
+## Version 2.1
 
-ADDED:
+#### Added
+- New class `StringOutputStream`.
 
-- new class StringOutputStream
+---
 
-Version 2
--------------
+## Version 2
 
-ADDED:
+#### Added
+- Constructor and factory methods for `SimpleFilenameFilter`.
+- Factory methods for classes implementing `FileFilter`.
 
-- new constructor in class SimpleFilenameFilter with only the file extension
-- new factory methods in class SimpleFilenameFilter for both constructors created
-- new factory methods for all classes that implements the FileFilter interface
+#### Changed
+- Updated JDK to version `11`.
+- Updated Gradle to version `7.5-rc-2`.
 
-CHANGED:
+---
 
-- update of jdk to version 11
-- update of gradle to new version 7.5-rc-2
-- update of gradle-plugin dependency of 'com.diffplug.spotless:spotless-plugin-gradle' in version 6.7.2
+## Version 1.9
 
-Version 1.9
--------------
+#### Added
+- Methods in `SerializedObjectExtensions` and `Serializer` for Base64 conversion.
 
-ADDED:
+---
 
-- new method in class SerializedObjectExtensions for convert an object to a base64 encoded String object
-- new method in class Serializer for convert an object to a base64 encoded String object
-- new method in class SerializedObjectExtensions for convert a base64 encoded String object back to an object
-- new method in class Serializer for convert a base64 encoded String object back to an object
+## Version 1.8
 
-Version 1.8
--------------
+#### Added
+- New file extensions in `FileExtension`.
+- GitHub Actions workflow for Java CI with Gradle.
+- Spotless plugin for code formatting.
 
-ADDED:
+---
 
-- new file extensions for several files in enum FileExtension
-- new github-action workflow for 'Java CI with Gradle'
-- new gradle plugin dependency of 'com.diffplug.spotless:spotless-plugin-gradle' to minor version 6.3.0
-- new method that checks if a given file extension is known from a file object
+## Version 1.7
 
-CHANGED:
+#### Added
+- Methods in `FilenameExtensions` for file extension handling.
+- File extensions for ZIP files in `FileExtension`.
 
-- update gradle to new version 7.4
-- update of gradle plugin dependency com.github.ben-manes.versions.gradle.plugin to new minor version 0.42.0
-- update of test dependency test-objects in new major version 6
-- update of test dependency jobj-core in new version 5.3
+#### Changed
+- Updated dependencies and Gradle to version `7.3.3`.
 
-Version 1.7
--------------
+---
 
-ADDED:
+## Version 1.6
 
-- new method for get the file extension in class FilenameExtensions
-- new file extensions for zip files in enum FileExtension
-- new methods for check if a file is of given file extension
+#### Added
+- `SuffixFileFilter` for generic file filtering.
 
-CHANGED:
+#### Changed
+- Updated Gradle to version `7.2`.
 
-- update gradle to new version 7.3.3
-- update of com.github.ben-manes.versions.gradle.plugin to new version 0.41.0
-- update of test dependency commons-io in new version 2.11.0
-- update of test dependency silly-collections in new version 18
-- update of test dependency jobj-contract-verifier in new version 3.5
-- update of test dependency jobj-core in new version 5.2
-- update of test dependency test-objects in new version 5.7
-- update of test dependency vintage-time in new version 5.4
-- update of test dependency junit-jupiter-api and junit-jupiter-engine in new version 5.8.2
+---
 
-Version 1.6
--------------
+## Version 1.5
 
-ADDED:
+#### Added
+- Classes for shell command execution and annotations.
 
-- new class SuffixFileFilter for a generic FileFilter implementation
-- new file extension '.mcrdb' in enum FileExtension
+#### Changed
+- Migrated from TestNG to JUnit5.
+- Updated Gradle and dependencies.
 
-CHANGED:
+---
 
-- update gradle to new version 7.2
+## Version 1.4
 
-Version 1.5
--------------
+#### Added
+- `PrefixFileFilter` for recursive file searches.
 
-ADDED:
+#### Changed
+- Updated dependencies and package structures.
 
-- new comparator for the annotation ImportResource
-- new extension class for the annotation ImportResource and ImportResources
-- new extension class for execute commands on shell
-- new package io.github.astrapi69.io.annotation created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
-- new package io.github.astrapi69.io.shell created and moved from obsolet project 'de.alpharogroup:jcommons-lang' all related classes to it
+---
 
-CHANGED:
+## Version 1.3
 
-- changed unit test framework from testng to junit5
-- update gradle to new version 7.1
-- update gradle-plugin dependency of gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin to new version 0.16.1
-- update of test dependency silly-collections in new version 8.7
-- update of test dependency jobj-core in new version 3.8
-- update of test dependency test-objects in new version 5.5
+#### Added
+- `Serializer` class for runtime exception handling.
 
-Version 1.4
--------------
+---
 
-ADDED:
+## Version 1.2
 
-- new class PrefixFileFilter created that can find files with a given prefix recursive
+#### Added
+- Method to retrieve an `InputStream` from a file path.
 
-CHANGED:
+#### Changed
+- Migrated from Maven to Gradle.
+- Removed Lombok dependencies.
 
-- update of gradle to new version 6.8
-- to new package io.github.astrapi69
-- update of com.github.ben-manes.versions.gradle.plugin to new version 0.36.0
-- update of test dependency silly-collections in new version 8.3
-- all FileFilter and FilenameFilter classes have a recursive flag for recursive search
+---
 
-Version 1.3
--------------
+## Version 1.1
 
-ADDED:
+#### Changed
+- Migrated file filter classes from the obsolete `jcommons-lang` project.
 
-- new class Serializer that reflects the SerializedObjectExtensions and throws only decorated RuntimeExceptions
+---
 
-CHANGED:
+## Version 1
 
-- update of gradle to new version 6.7
-- update of test dependency jobj-core in new version 3.6
-- update of test dependency silly-collections in new version 8.3
-- update of test dependency commons-io in new version 2.8.0
-- update of test dependency testng to new version 7.3.0
-
-Version 1.2
--------------
-
-ADDED:
-
-- new method for get an InputStream from a file path
-- new build system gradle
-
-CHANGED:
-
-- removed maven build system and all related files
-- removed all lombok dependent imports
-
-Version 1.1
--------------
-
-CHANGED:
-
--  moved file filter classes from obsolet jcommons-lang project to this project
-
-Version 1
--------------
-
-ADDED:
-
-- this changelog file
-- created PULL_REQUEST_TEMPLATE.md file
-- created CODE_OF_CONDUCT.md file
-- created CONTRIBUTING.md file
-- provide package.html for the javadoc of packages
-- moved classes from obsolet jcommons-lang project to this project
+#### Added
+- Initial project setup.
+- Created changelog, contribution guidelines, and pull request templates.
