@@ -371,7 +371,9 @@ public enum FileExtension
 			FileExtension.JAR.getExtension(), FileExtension.WAR.getExtension(),
 			FileExtension.EAR.getExtension(), FileExtension.TAR.getExtension(),
 			FileExtension.RAR.getExtension(), FileExtension.SEVEN_ZIP.getExtension(),
-			FileExtension.BZ2.getExtension(), FileExtension.GZ.getExtension() };
+			FileExtension.BZ2.getExtension(), FileExtension.GZ.getExtension(),
+			FileExtension.TAR_GZ.getExtension(), FileExtension.Z.getExtension(),
+			FileExtension.ARJ.getExtension() };
 
 	/**
 	 * Instantiates a new {@link FileExtension}
