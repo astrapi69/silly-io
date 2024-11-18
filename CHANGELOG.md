@@ -5,6 +5,12 @@
 ## Version 3.5-SNAPSHOT
 
 ### [Unreleased]
+### Added
+- Support for new file extensions: `.ott`, `.fodt`, `.uot`, `.dotx`, and `.rtf`.
+
+### Changed
+- Reorganized `FileExtension` enum constants in alphabetical order.
+- Enhanced Javadoc to include descriptions for the newly added file extensions.
 
 ---
 
