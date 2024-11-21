@@ -25,6 +25,7 @@
 package io.github.astrapi69.io.file;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -35,6 +36,71 @@ public final class FilenameExtensions
 
 	private FilenameExtensions()
 	{
+	}
+
+	/**
+	 * Sanitizes a given filename by replacing specified characters using a replacement map and
+	 * preserving the file extension.
+	 *
+	 * <p>
+	 * The method processes the filename in two parts:
+	 * <ul>
+	 * <li>The name part: characters are replaced according to the replacement map.</li>
+	 * <li>The extension part: the portion after the last period (.) is preserved unchanged.</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * For example, given the input filename <code>"A fancy.filename.txt"</code> and a replacement
+	 * map:
+	 * 
+	 * <pre>
+	 * {
+	 * 	&#64;code
+	 * 	Map&lt;Character, String&gt; replacementMap = new HashMap&lt;&gt;();
+	 * 	replacementMap.put(' ', "-");
+	 * 	replacementMap.put('.', "_");
+	 * 	replacementMap.put('a', "@");
+	 * }
+	 * </pre>
+	 * 
+	 * The output will be: <code>"@-f@ncy_filename.txt"</code>.
+	 *
+	 * @param filename
+	 *            the original filename to sanitize
+	 * @param replacementMap
+	 *            a map containing characters to replace as keys and their replacements as values;
+	 *            replacements are case-insensitive
+	 * @return the sanitized filename with the file extension preserved
+	 * @throws NullPointerException
+	 *             if the filename or replacement map is null
+	 */
+	public static String sanitizeFilename(String filename, Map<Character, String> replacementMap)
+	{
+		StringBuilder sanitized = new StringBuilder();
+
+		// Locate the last period (.) to preserve the file extension
+		int lastDotIndex = filename.lastIndexOf('.');
+		String namePart = (lastDotIndex != -1) ? filename.substring(0, lastDotIndex) : filename;
+		String extensionPart = (lastDotIndex != -1) ? filename.substring(lastDotIndex) : "";
+
+		// Replace characters in the name part
+		for (char c : namePart.toCharArray())
+		{
+			char lowerCaseChar = Character.toLowerCase(c);
+			if (replacementMap.containsKey(lowerCaseChar))
+			{
+				sanitized.append(replacementMap.get(lowerCaseChar));
+			}
+			else
+			{
+				sanitized.append(c);
+			}
+		}
+
+		// Append the extension part unchanged
+		sanitized.append(extensionPart);
+
+		return sanitized.toString();
 	}
 
 	/**
