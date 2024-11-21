@@ -2,9 +2,26 @@
 
 ---
 
+## Version 3.5
+
+### Added
+- Support for new file extensions: `.ott`, `.fodt`, `.uot`, `.dotx`, and `.rtf`.
+- Enhanced Javadoc for the `FilenameExtensionsTest` methods:
+  - `testSanitizeFilename`: Added detailed documentation for test cases with examples.
+  - `testSanitizeFilenameWithEmptyMap`: Added Javadoc for testing the method with an empty replacement map.
+  - `testSanitizeFilenameWithCustomMap`: Included comprehensive Javadoc explaining custom replacement scenarios.
+
+### Improved
+- Improved readability and clarity of test method documentation with links to the `sanitizeFilename` method and specific examples.
+
+### Changed
+- Reorganized `FileExtension` enum constants in alphabetical order.
+- Enhanced Javadoc to include descriptions for the newly added file extensions.
+
+---
+
 ## Version 3.4
 
-### [Unreleased]
 #### Added
 - **File Extensions**:
   - Document formats: `DOC`, `DOCX`, `XLS`, `XLSX`, `PPT`, `PPTX`
