@@ -2,9 +2,8 @@
 
 ---
 
-## Version 3.5-SNAPSHOT
+## Version 3.5
 
-### [Unreleased]
 ### Added
 - Support for new file extensions: `.ott`, `.fodt`, `.uot`, `.dotx`, and `.rtf`.
 - Enhanced Javadoc for the `FilenameExtensionsTest` methods:
