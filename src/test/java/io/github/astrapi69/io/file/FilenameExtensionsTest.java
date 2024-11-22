@@ -38,6 +38,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.meanbean.test.BeanTester;
 
+import io.github.astrapi69.file.search.PathFinder;
 import io.github.astrapi69.lang.ClassExtensions;
 
 /**
@@ -45,6 +46,49 @@ import io.github.astrapi69.lang.ClassExtensions;
  */
 public class FilenameExtensionsTest
 {
+
+	/**
+	 * Test for the {@link FilenameExtensions#getName(File)}
+	 */
+	@Test
+	void testGetName()
+	{
+
+		String expected;
+		String actual;
+		String fileName;
+
+		fileName = "example.txt";
+		// Given: a file with a specific name
+		File file = new File(PathFinder.getSrcTestResourcesDir(), "example.txt");
+
+		// When: getting the name of the file
+		actual = FilenameExtensions.getName(file);
+
+		expected = fileName;
+		// Then: the name should match the expected value
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Test for the {@link FilenameExtensions#getName(File)} method with edge cases
+	 */
+	@Test
+	void testGetNameWithEdgeCases()
+	{
+		// Given: files with different names
+		File emptyNameFile = new File("");
+		File hiddenFile = new File(".hiddenfile");
+
+		// When: getting the names of the files
+		String emptyFileName = FilenameExtensions.getName(emptyNameFile);
+		String hiddenFileName = FilenameExtensions.getName(hiddenFile);
+
+		// Then: names should match expected values
+		assertEquals("", emptyFileName, "File with no name should return an empty string");
+		assertEquals(".hiddenfile", hiddenFileName,
+			"Hidden file name should be returned correctly");
+	}
 
 	/**
 	 * Tests the {@link FilenameExtensions#sanitizeFilename(String, Map)} method with various

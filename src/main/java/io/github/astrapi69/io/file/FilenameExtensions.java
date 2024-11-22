@@ -127,6 +127,19 @@ public final class FilenameExtensions
 	}
 
 	/**
+	 * Gets the filename
+	 *
+	 * @param file
+	 *            the file
+	 * @return the filename
+	 */
+	public static String getName(final File file)
+	{
+		final String fileName = file.getName();
+		return fileName;
+	}
+
+	/**
 	 * Gets the file extension or an empty String if no file extension exists or the given file
 	 * object is a directory
 	 *

@@ -4,6 +4,8 @@
 
 ## Version 3.6-SNAPSHOT
 
+### Added
+- new delegate method getName in FilenameExtensions
 
 ---
 
