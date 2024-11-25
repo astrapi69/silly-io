@@ -2,7 +2,7 @@
 
 ---
 
-## Version 3.6-SNAPSHOT
+## Version 3.6
 
 ## [Unreleased]
 ### Added
