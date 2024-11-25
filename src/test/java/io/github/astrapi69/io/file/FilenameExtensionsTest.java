@@ -48,6 +48,43 @@ public class FilenameExtensionsTest
 {
 
 	/**
+	 * Test for the {@link FilenameExtensions#getCharacterFileReplacementMap()}
+	 */
+	@Test
+	public void testGetCharacterFileReplacementMap()
+	{
+		// Call the method to get the replacement map
+		Map<Character, String> replacementMap = FilenameExtensions.getCharacterFileReplacementMap();
+
+		// Verify the map is not null
+		assertNotNull(replacementMap, "The replacement map should not be null");
+
+		// Verify the size of the map
+		assertEquals(11, replacementMap.size(), "The replacement map should contain 11 entries");
+
+		// Verify specific replacements
+		assertEquals("_", replacementMap.get(' '), "Space should be replaced with underscore");
+		assertEquals("-", replacementMap.get('.'), "Period should be replaced with hyphen");
+		assertEquals("-", replacementMap.get('/'), "Forward slash should be replaced with hyphen");
+		assertEquals("-", replacementMap.get('\\'), "Backslash should be replaced with hyphen");
+		assertEquals("-", replacementMap.get(':'), "Colon should be replaced with hyphen");
+		assertEquals("_", replacementMap.get('*'), "Asterisk should be replaced with underscore");
+		assertEquals("_", replacementMap.get('?'),
+			"Question mark should be replaced with underscore");
+		assertEquals("_", replacementMap.get('"'),
+			"Double quote should be replaced with underscore");
+		assertEquals("_", replacementMap.get('<'),
+			"Less-than sign should be replaced with underscore");
+		assertEquals("_", replacementMap.get('>'),
+			"Greater-than sign should be replaced with underscore");
+		assertEquals("_", replacementMap.get('|'), "Pipe should be replaced with underscore");
+
+		// Verify there are no unexpected replacements
+		assertNull(replacementMap.get('a'), "Character 'a' should not have a replacement");
+		assertNull(replacementMap.get('&'), "Character '&' should not have a replacement");
+	}
+
+	/**
 	 * Test for the {@link FilenameExtensions#getName(File)}
 	 */
 	@Test
