@@ -25,6 +25,7 @@
 package io.github.astrapi69.io.file;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,6 +37,65 @@ public final class FilenameExtensions
 
 	private FilenameExtensions()
 	{
+	}
+
+	/**
+	 * Creates a map of character replacements for sanitizing filenames.
+	 * <p>
+	 * This map is used to replace characters in filenames that are invalid or problematic in file
+	 * systems. The replacements ensure that filenames are safe and compatible across different
+	 * operating systems.
+	 * </p>
+	 *
+	 * <p>
+	 * Replacements include:
+	 * <ul>
+	 * <li>Spaces (' ') are replaced with underscores ('_').</li>
+	 * <li>Periods ('.') are replaced with hyphens ('-') except for the last one (used for
+	 * extensions).</li>
+	 * <li>Forward slashes ('/') are replaced with hyphens ('-').</li>
+	 * <li>Backslashes ('\\') are replaced with hyphens ('-').</li>
+	 * <li>Colons (':') are replaced with hyphens ('-').</li>
+	 * <li>Asterisks ('*') are replaced with underscores ('_').</li>
+	 * <li>Question marks ('?') are replaced with underscores ('_').</li>
+	 * <li>Double quotes ('"') are replaced with underscores ('_').</li>
+	 * <li>Less-than signs ('&lt;') are replaced with underscores ('_').</li>
+	 * <li>Greater-than signs ('&gt;') are replaced with underscores ('_').</li>
+	 * <li>Pipes ('|') are replaced with underscores ('_').</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * Example usage:
+	 * </p>
+	 * 
+	 * <pre>
+	 * {
+	 * 	&#64;code
+	 * 	Map&lt;Character, String&gt; replacementMap = getCharacterFileReplacementMap();
+	 * 	String sanitizedFilename = sanitizeFilename("A &lt;fancy&gt; file|name?.txt", replacementMap);
+	 * 	// Result: "A_-fancy_-file_name_.txt"
+	 * }
+	 * </pre>
+	 *
+	 * @return a map where the keys are characters to be replaced, and the values are their
+	 *         replacements
+	 */
+	public static Map<Character, String> getCharacterFileReplacementMap()
+	{
+		Map<Character, String> replacementMap = new HashMap<>();
+		replacementMap.put(' ', "_"); // Replace spaces with underscores
+		replacementMap.put('.', "-"); // Replace periods with hyphens (except the last one for
+										// extensions)
+		replacementMap.put('/', "-"); // Replace forward slash
+		replacementMap.put('\\', "-"); // Replace backslash
+		replacementMap.put(':', "-"); // Replace colon
+		replacementMap.put('*', "_"); // Replace asterisk
+		replacementMap.put('?', "_"); // Replace question mark
+		replacementMap.put('"', "_"); // Replace double quotes
+		replacementMap.put('<', "_"); // Replace less-than sign
+		replacementMap.put('>', "_"); // Replace greater-than sign
+		replacementMap.put('|', "_"); // Replace pipe
+		return replacementMap;
 	}
 
 	/**
@@ -124,6 +184,19 @@ public final class FilenameExtensions
 			fileNamePrefix = fileName;
 		}
 		return fileNamePrefix;
+	}
+
+	/**
+	 * Gets the filename
+	 *
+	 * @param file
+	 *            the file
+	 * @return the filename
+	 */
+	public static String getName(final File file)
+	{
+		final String fileName = file.getName();
+		return fileName;
 	}
 
 	/**

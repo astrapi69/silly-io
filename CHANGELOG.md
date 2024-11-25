@@ -2,6 +2,24 @@
 
 ---
 
+## Version 3.6
+
+## [Unreleased]
+### Added
+- Introduced the `getCharacterFileReplacementMap` method in `FilenameExtensions` to provide a map of character replacements for sanitizing filenames. The map includes replacements for spaces, periods, slashes, colons, and other problematic characters.
+- Added detailed Javadoc for the `getCharacterFileReplacementMap` method, including examples and usage scenarios.
+- Created a JUnit test `testGetCharacterFileReplacementMap` to verify the correctness of the replacement map, ensuring expected character replacements and negative tests for undefined characters.
+- new delegate method getName in FilenameExtensions
+
+### Updated
+- Upgraded `commons-io:commons-io` from `2.17.0` to `2.18.0`. See [Commons IO](https://commons.apache.org/proper/commons-io/) for details.
+
+### Gradle
+- Updated Gradle version from `8.11` to `8.11.1` (release candidate). For more information, see [Gradle releases](https://docs.gradle.org/current/release-notes.html).
+
+
+---
+
 ## Version 3.5
 
 ### Added
