@@ -5,12 +5,11 @@
 [![Java CI with Gradle](https://github.com/astrapi69/silly-io/actions/workflows/gradle.yml/badge.svg)](https://github.com/astrapi69/silly-io/actions/workflows/gradle.yml)
 [![Coverage Status](https://codecov.io/gh/astrapi69/silly-io/branch/develop/graph/badge.svg)](https://codecov.io/gh/astrapi69/silly-io)
 [![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)
 [![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
 [![Donate](https://img.shields.io/badge/donate-❤-ff2244.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GVBTWLRAZ7HB8)
 [![Hits Of Code](https://hitsofcode.com/github/astrapi69/silly-io?branch=develop)](https://hitsofcode.com/github/astrapi69/silly-io/view?branch=develop)
-[![Lines Of Code](https://tokei.rs/b1/github/astrapi69/silly-io)](https://github.com/astrapi69/silly-io)
 
 </div>
 
@@ -25,7 +24,7 @@ Utility library that provides java classes for create In- and OuputStream and Re
 
 ## gradle dependency
 
-Replace the variable ${latestVersion} with the current latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.astrapi69/silly-io)
+Replace the variable ${latestVersion} with the current latest version: [![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)
 
 You can first define the version in the ext section and add than the following gradle dependency
 to your project `build.gradle` if you want to import the core functionality of silly-io:
@@ -50,8 +49,7 @@ and then add the dependency to the dependencies area
 
 ## Maven dependency
 
-Maven dependency is now on sonatype.
-Check out [sonatype repository](https://oss.sonatype.org/index.html#nexus-search;gav~io.github.astrapi69~silly-io~~~) for latest snapshots and releases.
+The library is on Maven Central. Check out [Maven Central](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io) for the latest release.
 
 Add the following maven dependency to your project `pom.xml` if you want to import the core functionality of silly-io:
 
@@ -119,9 +117,9 @@ Do not hesitate to contact the silly-io developers with your questions, concerns
 
 ## Credits
 
-|**Nexus Sonatype repositories**|
+|**Maven Central**|
 |     :---:      |
-|[![sonatype repository](https://img.shields.io/nexus/r/https/oss.sonatype.org/io.github.astrapi69/silly-io.svg?style=for-the-badge)](https://oss.sonatype.org/index.html#nexus-search;gav~io.github.astrapi69~silly-io~~~)|
+|[![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io?style=for-the-badge)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)|
 |Special thanks to [sonatype repository](https://www.sonatype.com) for providing a free maven repository service for open source projects|
 |     <img width=1000/>     |
 
