@@ -31,11 +31,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
+import io.github.astrapi69.io.file.FileExtension;
 import io.github.astrapi69.io.file.FilenameExtensions;
 import io.github.astrapi69.io.file.filter.ClassFileFilter;
 
@@ -50,7 +55,7 @@ public final class AnnotationExtensions
 
 	/**
 	 * Gets all annotated classes that belongs from the given package path and the given annotation
-	 * class.
+	 * class, from the class directories and the archives of the class path.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -76,12 +81,19 @@ public final class AnnotationExtensions
 		{
 			classes.addAll(scanForAnnotatedClasses(directory, packagePath, annotationClass));
 		}
+		for (final Class<?> archiveClass : scanArchivesForClasses(packagePath))
+		{
+			if (annotationClass == null || archiveClass.isAnnotationPresent(annotationClass))
+			{
+				classes.add(archiveClass);
+			}
+		}
 		return classes;
 	}
 
 	/**
 	 * Gets all annotated classes that belongs from the given package path and the given list with
-	 * annotation classes.
+	 * annotation classes, from the class directories and the archives of the class path.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -110,7 +122,91 @@ public final class AnnotationExtensions
 			classes
 				.addAll(scanForAnnotatedClassesFromSet(directory, packagePath, annotationClasses));
 		}
+		for (final Class<?> archiveClass : scanArchivesForClasses(packagePath))
+		{
+			resolveAnnotatedClasses(annotationClasses, classes, archiveClass);
+		}
 		return classes;
+	}
+
+	/**
+	 * Loads the classes of the given package and of its sub packages from every archive of the
+	 * class path that holds the package. Every class file counts, the ones of nested classes too,
+	 * as the scan of a class directory reads them
+	 *
+	 * @param packagePath
+	 *            the package path
+	 * @return the classes found in the archives
+	 * @throws ClassNotFoundException
+	 *             occurs if a given class cannot be located by the specified class loader
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static Set<Class<?>> scanArchivesForClasses(final String packagePath)
+		throws ClassNotFoundException, IOException
+	{
+		final String packageEntry = packagePath.replace('.', '/');
+		final Set<Class<?>> archiveClasses = new HashSet<>();
+		for (final URL resource : FindClassExtensions.getResources(packageEntry))
+		{
+			if (FindClassExtensions.isArchive(resource))
+			{
+				for (final String className : archiveClassNames(resource, packageEntry + "/"))
+				{
+					archiveClasses.add(loadClass(className));
+				}
+			}
+		}
+		return archiveClasses;
+	}
+
+	/**
+	 * Lists the binary names of the classes whose class files lie below the given entry prefix of
+	 * the archive the given URL points into
+	 *
+	 * @param archiveEntryUrl
+	 *            the URL of the package in a jar, a war or an ear
+	 * @param entryPrefix
+	 *            the path of the package in the archive, with its trailing slash
+	 * @return the binary names of the classes
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static Set<String> archiveClassNames(final URL archiveEntryUrl,
+		final String entryPrefix) throws IOException
+	{
+		final String classFileSuffix = FileExtension.CLASS.getExtension();
+		try (JarFile jarFile = new JarFile(FindClassExtensions.toArchiveFile(archiveEntryUrl)))
+		{
+			return jarFile.stream().map(JarEntry::getName)
+				.filter(entryName -> entryName.startsWith(entryPrefix)
+					&& entryName.endsWith(classFileSuffix))
+				.map(entryName -> FilenameExtensions.getFilenameWithoutExtension(entryName)
+					.replace('/', '.'))
+				.collect(Collectors.toSet());
+		}
+	}
+
+	/**
+	 * Loads the class of the given name as the scan of a class directory does: initialized, or
+	 * without initializing it when its initialization fails
+	 *
+	 * @param qualifiedClassname
+	 *            the binary name of the class
+	 * @return the class
+	 * @throws ClassNotFoundException
+	 *             occurs if the class cannot be located by the specified class loader
+	 */
+	private static Class<?> loadClass(final String qualifiedClassname) throws ClassNotFoundException
+	{
+		try
+		{
+			return FindClassExtensions.forName(qualifiedClassname);
+		}
+		catch (final LinkageError linkageError)
+		{
+			return Class.forName(qualifiedClassname, false, ClassloaderExtensions.getClassLoader());
+		}
 	}
 
 	/**

@@ -24,6 +24,7 @@
  */
 package io.github.astrapi69.io.annotation;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -34,7 +35,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -42,8 +47,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import io.github.astrapi69.io.annotation.ClassFixtures.RootKind;
+import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
 
 /**
  * {@link ScanPackageExtensions} lists the names of the classes of a package, from a directory of
@@ -57,6 +67,8 @@ class ScanPackageExtensionsTest
 	static final String SCAN_PACKAGE = "io.github.astrapi69.io.annotation.testdata.scan";
 
 	static final String JAR_PACKAGE = "generated.scan";
+
+	static final String DEFECT_PACKAGE = "gen.pkg";
 
 	@TempDir
 	Path directory;
@@ -103,6 +115,78 @@ class ScanPackageExtensionsTest
 			"generated/scan/sub/Deep.class", "other/", "other/Elsewhere.class");
 	}
 
+	/**
+	 * Scans the given package in a jar of the given entries, written into a file of its own and
+	 * reached through a context class loader of the test's own
+	 *
+	 * @param packageName
+	 *            the package to scan
+	 * @param recursive
+	 *            the recursive flag of the scan
+	 * @param qualifiedClassnames
+	 *            the flag of the scan for qualified class names
+	 * @param entryNames
+	 *            the entries of the jar, as {@link ClassFixtures#newJar} reads them
+	 * @return the class names the scan lists
+	 * @throws Exception
+	 *             if the jar cannot be written or the scan fails
+	 */
+	private Set<String> scanJar(final String packageName, final boolean recursive,
+		final boolean qualifiedClassnames, final String... entryNames) throws Exception
+	{
+		final Path jar = ClassFixtures.newJar(Files.createTempFile(directory, "scan", ".jar"),
+			entryNames);
+		return scanRoots(packageName, recursive, qualifiedClassnames, jar);
+	}
+
+	/**
+	 * Scans the given package through a context class loader of the test's own that reads the given
+	 * class path roots, in the given order
+	 *
+	 * @param packageName
+	 *            the package to scan
+	 * @param recursive
+	 *            the recursive flag of the scan
+	 * @param qualifiedClassnames
+	 *            the flag of the scan for qualified class names
+	 * @param roots
+	 *            the class directories and jars of the class path
+	 * @return the class names the scan lists
+	 * @throws Exception
+	 *             if the scan fails
+	 */
+	static Set<String> scanRoots(final String packageName, final boolean recursive,
+		final boolean qualifiedClassnames, final Path... roots) throws Exception
+	{
+		final URL[] rootUrls = new URL[roots.length];
+		for (int index = 0; index < roots.length; index++)
+		{
+			rootUrls[index] = UrlStyle.ESCAPED.of(roots[index]);
+		}
+		return ClassFixtures.withClassPathRoots(
+			() -> ScanPackageExtensions.scanClassNames(packageName, recursive, qualifiedClassnames),
+			rootUrls);
+	}
+
+	static Stream<Arguments> urlEscapedRoots()
+	{
+		return ClassFixtures.urlEscapedDirectories().flatMap(
+			escapedDirectory -> Stream.of(RootKind.values()).map(rootKind -> arguments(rootKind,
+				escapedDirectory.get()[0], escapedDirectory.get()[1])));
+	}
+
+	@ParameterizedTest(name = "a {0} below \"{1}\", {2} URL")
+	@MethodSource("urlEscapedRoots")
+	void scanClassNames_readsARootWhosePathHoldsACharacterThatAUrlEscapes(final RootKind rootKind,
+		final String directoryName, final UrlStyle urlStyle) throws Exception
+	{
+		final Path root = rootKind.write(directory.resolve(directoryName).resolve("root"),
+			"plus.pkg.Plus");
+
+		assertEquals(Set.of("plus.pkg.Plus"), ClassFixtures.withClassPathRoots(
+			() -> ScanPackageExtensions.scanClassNames("plus.pkg"), urlStyle.of(root)));
+	}
+
 	@ParameterizedTest(name = "recursive {0}, qualified names {1}")
 	@MethodSource("directoryScans")
 	void scanClassNames_listsTheClassesOfADirectoryPackage(final boolean recursive,
@@ -143,6 +227,92 @@ class ScanPackageExtensionsTest
 		}
 	}
 
+	@ParameterizedTest(name = "{0}")
+	@ValueSource(strings = { "gen/pkg/readme.txt", "gen/pkg/messages.properties", "gen/pkg/LICENSE",
+			"gen/pkg/Old.class.bak" })
+	void scanClassNames_listsOnlyTheClassFilesOfAJarPackage(final String otherEntry)
+		throws Exception
+	{
+		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", otherEntry };
+
+		assertEquals(Set.of(DEFECT_PACKAGE + ".A"),
+			scanJar(DEFECT_PACKAGE, false, true, entryNames));
+		assertEquals(Set.of("A"), scanJar(DEFECT_PACKAGE, false, false, entryNames));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@ValueSource(strings = { "gen/pkgX.class", "gen/pkg.class", "gen/pkg_1.class" })
+	void scanClassNames_skipsTheClassesOfTheParentPackageOfAJarPackage(final String parentEntry)
+		throws Exception
+	{
+		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", parentEntry };
+
+		assertAll(
+			() -> assertEquals(Set.of(DEFECT_PACKAGE + ".A"),
+				scanJar(DEFECT_PACKAGE, false, true, entryNames)),
+			() -> assertEquals(Set.of("A"), scanJar(DEFECT_PACKAGE, false, false, entryNames)));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@CsvSource({ "gen/pkgother/, gen/pkgother/B.class", "gen/pkg_old/, gen/pkg_old/B.class",
+			"gen/pkgX/, gen/pkgX/B.class" })
+	void scanClassNames_skipsTheSiblingPackagesThatShareThePrefix_whenRecursive(
+		final String siblingDirectory, final String siblingClass) throws Exception
+	{
+		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", "gen/pkg/sub/",
+				"gen/pkg/sub/C.class", siblingDirectory, siblingClass };
+
+		assertAll(
+			() -> assertEquals(Set.of(DEFECT_PACKAGE + ".A", DEFECT_PACKAGE + ".sub.C"),
+				scanJar(DEFECT_PACKAGE, true, true, entryNames)),
+			() -> assertEquals(Set.of("A", "C"), scanJar(DEFECT_PACKAGE, true, false, entryNames)));
+	}
+
+	@ParameterizedTest(name = "a {0} and a {1}")
+	@CsvSource({ "DIRECTORY, DIRECTORY", "JAR, JAR", "DIRECTORY, JAR", "JAR, DIRECTORY" })
+	void scanClassNames_readsThePackageInEveryRootOfTheClassPath(final RootKind firstRoot,
+		final RootKind secondRoot) throws Exception
+	{
+		final Path first = firstRoot.write(directory.resolve("first"), DEFECT_PACKAGE + ".A");
+		final Path second = secondRoot.write(directory.resolve("second"), DEFECT_PACKAGE + ".B",
+			DEFECT_PACKAGE + ".sub.C");
+
+		assertAll(
+			() -> assertEquals(Set.of(DEFECT_PACKAGE + ".A", DEFECT_PACKAGE + ".B"),
+				scanRoots(DEFECT_PACKAGE, false, true, first, second)),
+			() -> assertEquals(
+				Set.of(DEFECT_PACKAGE + ".A", DEFECT_PACKAGE + ".B", DEFECT_PACKAGE + ".sub.C"),
+				scanRoots(DEFECT_PACKAGE, true, true, first, second)));
+	}
+
+	@Test
+	void scanClassNames_readsAPackageThatIsInTheMainAndInTheTestClasses() throws IOException
+	{
+		final Set<String> classNames = ScanPackageExtensions
+			.scanClassNames(ScanPackageExtensions.class.getPackageName());
+
+		assertTrue(
+			classNames.containsAll(Set.of(ScanPackageExtensions.class.getName(),
+				ScanPackageExtensionsTest.class.getName())),
+			() -> "the classes found: " + classNames);
+	}
+
+	@ParameterizedTest(name = "from a {0}")
+	@EnumSource(RootKind.class)
+	void scanClassNames_listsTheTopLevelClassesOnly_fromEveryKindOfRoot(final RootKind rootKind)
+		throws Exception
+	{
+		final Path root = rootKind.write(directory.resolve("root"), "nest.pkg.Outer",
+			"nest.pkg.Outer$Inner", "nest.pkg.Outer$1", "nest.pkg.sub.Deep",
+			"nest.pkg.sub.Deep$Inner");
+
+		assertAll(
+			() -> assertEquals(Set.of("nest.pkg.Outer"), scanRoots("nest.pkg", false, true, root)),
+			() -> assertEquals(Set.of("nest.pkg.Outer", "nest.pkg.sub.Deep"),
+				scanRoots("nest.pkg", true, true, root)),
+			() -> assertEquals(Set.of("Outer", "Deep"), scanRoots("nest.pkg", true, false, root)));
+	}
+
 	@ParameterizedTest(name = "{0} archive")
 	@ValueSource(strings = { "war", "ear" })
 	void scanClassNames_readsAPackageInAWarOrEarArchiveLikeAJar(final String protocol)
@@ -177,9 +347,10 @@ class ScanPackageExtensionsTest
 		}
 
 		@Override
-		public URL getResource(final String name)
+		protected Enumeration<URL> findResources(final String name)
 		{
-			return packagePath.equals(name) ? packageUrl : super.getResource(name);
+			return Collections
+				.enumeration(packagePath.equals(name) ? List.of(packageUrl) : List.of());
 		}
 	}
 

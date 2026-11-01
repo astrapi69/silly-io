@@ -26,9 +26,11 @@ package io.github.astrapi69.io.annotation;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -98,9 +100,66 @@ public class FindClassExtensions
 		final List<File> dirs = new ArrayList<>();
 		for (final URL resource : resources)
 		{
-			dirs.add(new File(URLDecoder.decode(resource.getFile(), "UTF-8")));
+			if (resource.getProtocol().equals("file"))
+			{
+				dirs.add(toFile(resource.toString()));
+			}
+			else
+			{
+				dirs.add(new File(URLDecoder.decode(resource.getFile(), "UTF-8")));
+			}
 		}
 		return dirs;
+	}
+
+	/**
+	 * Gives the file that the given file URL names. A URL that is a valid URI, as
+	 * {@link java.nio.file.Path#toUri()} and the class loaders of the JDK build it, is decoded as a
+	 * URI: an escaped character is unescaped, and a {@code +} stays a plus, which form decoding
+	 * would turn into a space. A URL that is no valid URI, as the deprecated {@link File#toURL()}
+	 * builds one for a path with a space, holds its path unescaped and is taken as it is
+	 *
+	 * @param fileUrl
+	 *            the file URL, of the scheme {@code file}
+	 * @return the file the URL names
+	 */
+	static File toFile(final String fileUrl)
+	{
+		try
+		{
+			return Path.of(new URI(fileUrl)).toFile();
+		}
+		catch (final URISyntaxException exception)
+		{
+			return new File(fileUrl.substring(fileUrl.indexOf(':') + 1));
+		}
+	}
+
+	/**
+	 * Checks if the given URL points into an archive, a jar, a war or an ear
+	 *
+	 * @param url
+	 *            the URL of a resource
+	 * @return true if the URL points into an archive
+	 */
+	static boolean isArchive(final URL url)
+	{
+		final String protocol = url.getProtocol();
+		return protocol.equals("jar") || protocol.equals("ear") || protocol.equals("war");
+	}
+
+	/**
+	 * Gives the archive file that the given URL points into: the file URL before the {@code !},
+	 * read as {@link #toFile(String)} reads it
+	 *
+	 * @param archiveEntryUrl
+	 *            the URL of an entry in a jar, a war or an ear
+	 * @return the archive file
+	 */
+	static File toArchiveFile(final URL archiveEntryUrl)
+	{
+		final String entryUrl = archiveEntryUrl.getFile();
+		return toFile(entryUrl.substring(0, entryUrl.indexOf("!")));
 	}
 
 	/**

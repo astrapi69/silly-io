@@ -42,8 +42,11 @@ import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -52,6 +55,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.github.astrapi69.io.annotation.ClassFixtures.RootKind;
+import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
 import io.github.astrapi69.io.annotation.testdata.broken.FailingStaticInitializer;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPage;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPanel;
@@ -70,6 +75,8 @@ class AnnotationExtensionsTest
 	private static final String SCAN_PACKAGE = ScanPackageExtensionsTest.SCAN_PACKAGE;
 
 	private static final String BROKEN_PACKAGE = "io.github.astrapi69.io.annotation.testdata.broken";
+
+	private static final String ROOT_PACKAGE = "gen.pkg";
 
 	private static final Set<Class<?>> ALL_SCANNED_CLASSES = Set.of(ScannedPage.class,
 		ScannedPanel.class, ScannedPlain.class, ScannedSubPage.class);
@@ -148,6 +155,61 @@ class AnnotationExtensionsTest
 			arguments(named("a key the annotation does not have", "noSuchKey"), "value"));
 	}
 
+	static Stream<Arguments> rootScans()
+	{
+		final Set<String> everyClass = Set.of(ROOT_PACKAGE + ".Annotated", ROOT_PACKAGE + ".Plain",
+			ROOT_PACKAGE + ".Plain$Inner", ROOT_PACKAGE + ".Uninitializable",
+			ROOT_PACKAGE + ".sub.Deep");
+		final Set<String> importResourceClasses = Set.of(ROOT_PACKAGE + ".Annotated",
+			ROOT_PACKAGE + ".sub.Deep");
+		final Stream<Arguments> scans = Stream.of(
+			arguments(named("getAllClasses", (PackageScan)AnnotationExtensions::getAllClasses),
+				everyClass),
+			arguments(
+				named("getAllAnnotatedClasses with ImportResource",
+					(PackageScan)packagePath -> AnnotationExtensions
+						.getAllAnnotatedClasses(packagePath, ImportResource.class)),
+				importResourceClasses),
+			arguments(
+				named("getAllAnnotatedClassesFromSet with ImportResource",
+					(PackageScan)packagePath -> AnnotationExtensions
+						.getAllAnnotatedClassesFromSet(packagePath, Set.of(ImportResource.class))),
+				importResourceClasses),
+			arguments(named("getAllAnnotatedClassesFromSet without an annotation set",
+				(PackageScan)packagePath -> AnnotationExtensions
+					.getAllAnnotatedClassesFromSet(packagePath, null)),
+				everyClass),
+			arguments(named("getAllClasses with ImportResource",
+				(PackageScan)packagePath -> AnnotationExtensions.getAllClasses(packagePath,
+					Set.of(ImportResource.class))),
+				importResourceClasses));
+		return scans.flatMap(scan -> Stream.of(RootKind.values())
+			.map(rootKind -> arguments(scan.get()[0], rootKind, scan.get()[1])));
+	}
+
+	/**
+	 * The classes of the root package scans: two carry an {@link ImportResource}, one of them in a
+	 * sub package, one is plain, one has the name the compiler gives a nested class, and one cannot
+	 * be initialized
+	 *
+	 * @return the class file of each class, by its binary name
+	 */
+	private static Map<String, byte[]> rootClassFiles()
+	{
+		final Map<String, byte[]> classFiles = new LinkedHashMap<>();
+		classFiles.put(ROOT_PACKAGE + ".Annotated",
+			ClassFixtures.newImportResourceClassFile(ROOT_PACKAGE + ".Annotated", "Annotated.css"));
+		classFiles.put(ROOT_PACKAGE + ".Plain",
+			ClassFixtures.newClassFile(ROOT_PACKAGE + ".Plain"));
+		classFiles.put(ROOT_PACKAGE + ".Plain$Inner",
+			ClassFixtures.newClassFile(ROOT_PACKAGE + ".Plain$Inner"));
+		classFiles.put(ROOT_PACKAGE + ".Uninitializable",
+			ClassFixtures.newUninitializableClassFile(ROOT_PACKAGE + ".Uninitializable"));
+		classFiles.put(ROOT_PACKAGE + ".sub.Deep",
+			ClassFixtures.newImportResourceClassFile(ROOT_PACKAGE + ".sub.Deep", "Deep.css"));
+		return classFiles;
+	}
+
 	private static File packageDirectory(final Class<?> classInThePackage) throws Exception
 	{
 		return Path.of(classInThePackage.getResource("").toURI()).toFile();
@@ -205,6 +267,34 @@ class AnnotationExtensionsTest
 	void getAllClasses_findsEveryClassOfThePackageAndItsSubPackages() throws Exception
 	{
 		assertEquals(ALL_SCANNED_CLASSES, AnnotationExtensions.getAllClasses(SCAN_PACKAGE));
+	}
+
+	@ParameterizedTest(name = "below \"{0}\", {1} URL")
+	@MethodSource("io.github.astrapi69.io.annotation.ClassFixtures#urlEscapedDirectories")
+	void getAllClasses_findsTheClassesOfADirectoryWhosePathHoldsACharacterThatAUrlEscapes(
+		final String directoryName, final UrlStyle urlStyle) throws Exception
+	{
+		final Path root = ClassFixtures
+			.newClassDirectory(directory.resolve(directoryName).resolve("root"), "plus.pkg.Plus");
+
+		final Set<Class<?>> classes = ClassFixtures.withClassPathRoots(
+			() -> AnnotationExtensions.getAllClasses("plus.pkg"), urlStyle.of(root));
+
+		assertEquals(List.of("plus.pkg.Plus"), classes.stream().map(Class::getName).toList());
+	}
+
+	@ParameterizedTest(name = "{0}, from a {1}")
+	@MethodSource("rootScans")
+	void getAllAnnotatedClasses_findsTheClassesOfAJarAsOfAClassDirectory(final PackageScan scan,
+		final RootKind rootKind, final Set<String> expected) throws Exception
+	{
+		final Path root = rootKind.write(directory.resolve("root"), rootClassFiles());
+
+		final Set<Class<?>> classes = ClassFixtures
+			.withClassPathRoots(() -> scan.scan(ROOT_PACKAGE), UrlStyle.ESCAPED.of(root));
+
+		assertEquals(expected,
+			classes.stream().map(Class::getName).collect(Collectors.toUnmodifiableSet()));
 	}
 
 	@Test
@@ -279,6 +369,24 @@ class AnnotationExtensionsTest
 		assertThrows(IllegalArgumentException.class,
 			() -> AnnotationExtensions.setAnnotationValue(importResource, key, value));
 		assertEquals(Map.of("resourceName", "old.css"), memberValues);
+	}
+
+	/**
+	 * One of the package scans of {@link AnnotationExtensions}
+	 */
+	@FunctionalInterface
+	interface PackageScan
+	{
+		/**
+		 * Scans the given package
+		 *
+		 * @param packagePath
+		 *            the package to scan
+		 * @return the classes the scan finds
+		 * @throws Exception
+		 *             if the scan fails
+		 */
+		Set<Class<?>> scan(String packagePath) throws Exception;
 	}
 
 	/**
