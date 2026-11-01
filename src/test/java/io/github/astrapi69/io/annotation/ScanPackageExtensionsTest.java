@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -200,6 +201,21 @@ class ScanPackageExtensionsTest
 			() -> assertEquals(Set.of(DEFECT_PACKAGE + ".A"),
 				scanJar(DEFECT_PACKAGE, false, true, entryNames)),
 			() -> assertEquals(Set.of("A"), scanJar(DEFECT_PACKAGE, false, false, entryNames)));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@CsvSource({ "gen/pkgother/, gen/pkgother/B.class", "gen/pkg_old/, gen/pkg_old/B.class",
+			"gen/pkgX/, gen/pkgX/B.class" })
+	void scanClassNames_skipsTheSiblingPackagesThatShareThePrefix_whenRecursive(
+		final String siblingDirectory, final String siblingClass) throws Exception
+	{
+		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", "gen/pkg/sub/",
+				"gen/pkg/sub/C.class", siblingDirectory, siblingClass };
+
+		assertAll(
+			() -> assertEquals(Set.of(DEFECT_PACKAGE + ".A", DEFECT_PACKAGE + ".sub.C"),
+				scanJar(DEFECT_PACKAGE, true, true, entryNames)),
+			() -> assertEquals(Set.of("A", "C"), scanJar(DEFECT_PACKAGE, true, false, entryNames)));
 	}
 
 	@ParameterizedTest(name = "{0} archive")

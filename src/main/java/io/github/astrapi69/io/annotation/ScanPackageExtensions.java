@@ -102,8 +102,7 @@ public final class ScanPackageExtensions
 					{
 						entryPath = entryPath.substring(0, entryPath.length() - 1);
 					}
-					if (entryPath.startsWith(packageName)
-						&& packageName.length() < entryPath.length())
+					if (entryPath.startsWith(packageName + "."))
 					{
 						classNames
 							.addAll(scanClassNames(entryPath, recursive, qualifiedClassnames));
