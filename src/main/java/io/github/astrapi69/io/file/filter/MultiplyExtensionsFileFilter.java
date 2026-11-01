@@ -29,6 +29,7 @@ import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 
 /**
  * The class {@link MultiplyExtensionsFileFilter} accepts File-objects that are directories or end
@@ -91,7 +92,7 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 		this.fileExtensions = new LinkedHashSet<>();
 		for (final String extension : fileExtensions)
 		{
-			this.fileExtensions.add(extension.toLowerCase());
+			this.fileExtensions.add(extension.toLowerCase(Locale.ROOT));
 		}
 	}
 
@@ -168,7 +169,7 @@ public class MultiplyExtensionsFileFilter implements FileFilter
 		{
 			return true;
 		}
-		final String filename = pathname.getName().toLowerCase();
+		final String filename = pathname.getName().toLowerCase(Locale.ROOT);
 		for (final String extension : fileExtensions)
 		{
 			if (filename.endsWith(extension))

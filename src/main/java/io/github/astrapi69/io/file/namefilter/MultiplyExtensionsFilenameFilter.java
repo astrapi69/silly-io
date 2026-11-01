@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -78,7 +79,7 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 		this.recursive = recursive;
 		for (final String extension : fileExtensions)
 		{
-			this.fileExtensions.add(extension.toLowerCase());
+			this.fileExtensions.add(extension.toLowerCase(Locale.ROOT));
 		}
 	}
 
@@ -120,7 +121,7 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 		{
 			return true;
 		}
-		final String filename = name.toLowerCase();
+		final String filename = name.toLowerCase(Locale.ROOT);
 		for (final String extension : fileExtensions)
 		{
 			if (filename.endsWith(extension))

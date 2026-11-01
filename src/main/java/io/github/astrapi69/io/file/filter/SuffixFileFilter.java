@@ -26,6 +26,7 @@ package io.github.astrapi69.io.file.filter;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Locale;
 
 /**
  * The class {@link SuffixFileFilter} accepts File-objects that match to the given suffix, in any
@@ -126,8 +127,8 @@ public class SuffixFileFilter implements FileFilter
 		{
 			return true;
 		}
-		final String fileName = file.getName().toLowerCase();
-		return fileName.endsWith(suffix.toLowerCase());
+		final String fileName = file.getName().toLowerCase(Locale.ROOT);
+		return fileName.endsWith(suffix.toLowerCase(Locale.ROOT));
 	}
 
 	/**
