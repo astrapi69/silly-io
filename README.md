@@ -89,6 +89,23 @@ No animals were harmed in the making of this library.
 
 The source code comes under the liberal MIT License, making silly-io great for all types of applications.
 
+## Releasing
+
+What a release consists of, in the order it is run:
+
+1. **One pull request** with the CHANGELOG entry and `projectVersion` without `-SNAPSHOT`
+   (`docs: changelog for X.Y, and the version that carries it`), the full build green on it.
+2. **Tag the merge commit** with `./gradlew tagRelease`, which names it `RELEASE-X.Y`, and push the
+   tag. `publish.yml` uploads to the Central Portal, where the maintainer releases it. A pushed tag is
+   never moved or deleted; a failed run is fixed on the branch and re-run.
+3. **Verify on Central**: the jar, pom, `.module`, `-sources.jar` and `-javadoc.jar`, their sha1, and
+   `gpg --verify` on the `.asc`.
+4. **GitHub release** from the CHANGELOG entry.
+5. **`master` follows the release**: a fast-forward onto the tag where possible, otherwise
+   `git merge --no-ff "RELEASE-X.Y^{commit}"` on `master`, never a force push. Afterwards
+   `git diff RELEASE-X.Y master` is empty: `master` is always the latest release, nothing else.
+6. **Open the next cycle**: `projectVersion` to the next `-SNAPSHOT`.
+
 ## Semantic Versioning
 
 The versions of silly-io are maintained with the Simplified Semantic Versioning guidelines.
