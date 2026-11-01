@@ -48,6 +48,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -294,6 +295,22 @@ class ScanPackageExtensionsTest
 			classNames.containsAll(Set.of(ScanPackageExtensions.class.getName(),
 				ScanPackageExtensionsTest.class.getName())),
 			() -> "the classes found: " + classNames);
+	}
+
+	@ParameterizedTest(name = "from a {0}")
+	@EnumSource(RootKind.class)
+	void scanClassNames_listsTheTopLevelClassesOnly_fromEveryKindOfRoot(final RootKind rootKind)
+		throws Exception
+	{
+		final Path root = rootKind.write(directory.resolve("root"), "nest.pkg.Outer",
+			"nest.pkg.Outer$Inner", "nest.pkg.Outer$1", "nest.pkg.sub.Deep",
+			"nest.pkg.sub.Deep$Inner");
+
+		assertAll(
+			() -> assertEquals(Set.of("nest.pkg.Outer"), scanRoots("nest.pkg", false, true, root)),
+			() -> assertEquals(Set.of("nest.pkg.Outer", "nest.pkg.sub.Deep"),
+				scanRoots("nest.pkg", true, true, root)),
+			() -> assertEquals(Set.of("Outer", "Deep"), scanRoots("nest.pkg", true, false, root)));
 	}
 
 	@ParameterizedTest(name = "{0} archive")

@@ -60,7 +60,8 @@ public final class ScanPackageExtensions
 
 	/**
 	 * Scan class names from the given package name, in every directory and archive of the class
-	 * path that holds the package.
+	 * path that holds the package. Only top-level classes are listed: a class file whose name holds
+	 * a {@code $}, as the class files of nested and anonymous classes do, is skipped.
 	 *
 	 * @param packageName
 	 *            the package name
@@ -198,7 +199,7 @@ public final class ScanPackageExtensions
 			}
 			else
 			{
-				if (!file.isDirectory())
+				if (!file.isDirectory() && !file.getName().contains("$"))
 				{
 					final String filenameWithoutExtension = FilenameExtensions
 						.getFilenameWithoutExtension(file);
