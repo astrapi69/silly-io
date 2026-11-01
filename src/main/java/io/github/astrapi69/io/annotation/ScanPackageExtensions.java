@@ -71,6 +71,13 @@ public final class ScanPackageExtensions
 	 * whose name holds a {@code $}, as the class files of nested and anonymous classes do, is
 	 * skipped, and so are a {@code package-info.class} and a {@code module-info.class}, which hold
 	 * no class.
+	 * <p>
+	 * A jar must contain its directory entries, which {@code jar}, Gradle and Maven write by
+	 * default: the class loader finds a jar through the directory entry of the package, so the
+	 * classes of a jar without one are not found. A jar below a directory whose name ends in
+	 * {@code !}, as in {@code x!/lib.jar}, cannot be read: its URL is split at the first
+	 * {@code !/}, as {@link java.net.JarURLConnection} splits it, which ends the path of the
+	 * archive at {@code x}.
 	 *
 	 * @param packageName
 	 *            the package name

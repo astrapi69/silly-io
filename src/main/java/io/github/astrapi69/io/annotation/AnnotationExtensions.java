@@ -57,6 +57,13 @@ public final class AnnotationExtensions
 	 * anonymous classes included. Without an annotation class every class is returned. A
 	 * {@code package-info} and a {@code module-info} are skipped: they hold no class, and the
 	 * annotations of a package are read with {@link Package#getAnnotation(Class)}.
+	 * <p>
+	 * A jar must contain its directory entries, which {@code jar}, Gradle and Maven write by
+	 * default: the class loader finds a jar through the directory entry of the package, so the
+	 * classes of a jar without one are not found. A jar below a directory whose name ends in
+	 * {@code !}, as in {@code x!/lib.jar}, cannot be read: its URL is split at the first
+	 * {@code !/}, as {@link java.net.JarURLConnection} splits it, which ends the path of the
+	 * archive at {@code x}.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -99,6 +106,13 @@ public final class AnnotationExtensions
 	 * local and anonymous classes included. Without an annotation set every class is returned. A
 	 * {@code package-info} and a {@code module-info} are skipped: they hold no class, and the
 	 * annotations of a package are read with {@link Package#getAnnotation(Class)}.
+	 * <p>
+	 * A jar must contain its directory entries, which {@code jar}, Gradle and Maven write by
+	 * default: the class loader finds a jar through the directory entry of the package, so the
+	 * classes of a jar without one are not found. A jar below a directory whose name ends in
+	 * {@code !}, as in {@code x!/lib.jar}, cannot be read: its URL is split at the first
+	 * {@code !/}, as {@link java.net.JarURLConnection} splits it, which ends the path of the
+	 * archive at {@code x}.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -221,7 +235,8 @@ public final class AnnotationExtensions
 	/**
 	 * Gets all the classes from the class loader that belongs to the given package path: every
 	 * class file of the package and of its sub packages, the ones of nested, local and anonymous
-	 * classes included, and no {@code package-info} or {@code module-info}.
+	 * classes included, and no {@code package-info} or {@code module-info}. A jar is read as
+	 * {@link #getAllAnnotatedClasses(String, Class)} reads it.
 	 *
 	 * @param packagePath
 	 *            the package path
