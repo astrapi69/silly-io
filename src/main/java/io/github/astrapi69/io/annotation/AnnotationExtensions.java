@@ -52,7 +52,9 @@ public final class AnnotationExtensions
 
 	/**
 	 * Gets all annotated classes that belongs from the given package path and the given annotation
-	 * class, from the class directories and the archives of the class path.
+	 * class, from the class directories and the archives of the class path. All classes count:
+	 * every class file of the package and of its sub packages, the ones of nested, local and
+	 * anonymous classes included. Without an annotation class every class is returned.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -76,7 +78,7 @@ public final class AnnotationExtensions
 		final Set<Class<?>> classes = new HashSet<>();
 		for (final File directory : directories)
 		{
-			classes.addAll(scanForAnnotatedClasses(directory, packagePath, annotationClass));
+			classes.addAll(scanForAllAnnotatedClasses(directory, packagePath, annotationClass));
 		}
 		for (final Class<?> archiveClass : scanArchivesForClasses(packagePath))
 		{
@@ -90,7 +92,9 @@ public final class AnnotationExtensions
 
 	/**
 	 * Gets all annotated classes that belongs from the given package path and the given list with
-	 * annotation classes, from the class directories and the archives of the class path.
+	 * annotation classes, from the class directories and the archives of the class path. All
+	 * classes count: every class file of the package and of its sub packages, the ones of nested,
+	 * local and anonymous classes included. Without an annotation set every class is returned.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -116,8 +120,8 @@ public final class AnnotationExtensions
 		final Set<Class<?>> classes = new HashSet<>();
 		for (final File directory : directories)
 		{
-			classes
-				.addAll(scanForAnnotatedClassesFromSet(directory, packagePath, annotationClasses));
+			classes.addAll(
+				scanForAllAnnotatedClassesFromSet(directory, packagePath, annotationClasses));
 		}
 		for (final Class<?> archiveClass : scanArchivesForClasses(packagePath))
 		{
@@ -207,7 +211,9 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Gets all the classes from the class loader that belongs to the given package path.
+	 * Gets all the classes from the class loader that belongs to the given package path: every
+	 * class file of the package and of its sub packages, the ones of nested, local and anonymous
+	 * classes included.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -229,7 +235,9 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Gets all the classes from the class loader that belongs to the given package path.
+	 * Gets all the classes from the class loader that belongs to the given package path and carry
+	 * one of the given annotations, as {@link #getAllAnnotatedClassesFromSet(String, Set)} does:
+	 * nested, local and anonymous classes included.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -344,7 +352,9 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Scan recursive for annotated classes in the given directory.
+	 * Scan recursive for all annotated classes in the given directory: every class file below the
+	 * given directory counts, the ones of nested, local and anonymous classes included. Without an
+	 * annotation class every class is returned.
 	 *
 	 * @param directory
 	 *            the directory
@@ -356,7 +366,7 @@ public final class AnnotationExtensions
 	 * @throws ClassNotFoundException
 	 *             occurs if a given class cannot be located by the specified class loader
 	 */
-	public static Set<Class<?>> scanForAnnotatedClasses(final File directory,
+	public static Set<Class<?>> scanForAllAnnotatedClasses(final File directory,
 		final String packagePath, final Class<? extends Annotation> annotationClass)
 		throws ClassNotFoundException
 	{
@@ -375,7 +385,7 @@ public final class AnnotationExtensions
 			{
 				qualifiedClassname = packagePath + "." + file.getName();
 				foundClasses
-					.addAll(scanForAnnotatedClasses(file, qualifiedClassname, annotationClass));
+					.addAll(scanForAllAnnotatedClasses(file, qualifiedClassname, annotationClass));
 			}
 			else
 			{
@@ -420,7 +430,9 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Scan recursive for annotated classes in the given directory.
+	 * Scan recursive for all annotated classes in the given directory: every class file below the
+	 * given directory counts, the ones of nested, local and anonymous classes included. Without an
+	 * annotation set every class is returned.
 	 *
 	 * @param directory
 	 *            the directory
@@ -432,7 +444,7 @@ public final class AnnotationExtensions
 	 * @throws ClassNotFoundException
 	 *             occurs if a given class cannot be located by the specified class loader
 	 */
-	public static Set<Class<?>> scanForAnnotatedClassesFromSet(final File directory,
+	public static Set<Class<?>> scanForAllAnnotatedClassesFromSet(final File directory,
 		final String packagePath, final Set<Class<? extends Annotation>> annotationClasses)
 		throws ClassNotFoundException
 	{
@@ -451,7 +463,7 @@ public final class AnnotationExtensions
 			{
 				qualifiedClassname = packagePath + "." + file.getName();
 				foundClasses.addAll(
-					scanForAnnotatedClassesFromSet(file, qualifiedClassname, annotationClasses));
+					scanForAllAnnotatedClassesFromSet(file, qualifiedClassname, annotationClasses));
 			}
 			else
 			{
@@ -494,7 +506,8 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Scan recursive for classes in the given directory.
+	 * Scan recursive for all classes in the given directory: every class file below the given
+	 * directory counts, the ones of nested, local and anonymous classes included.
 	 *
 	 * @param directory
 	 *            the directory
@@ -504,10 +517,10 @@ public final class AnnotationExtensions
 	 * @throws ClassNotFoundException
 	 *             occurs if a given class cannot be located by the specified class loader
 	 */
-	public static Set<Class<?>> scanForClasses(final File directory, final String packagePath)
+	public static Set<Class<?>> scanForAllClasses(final File directory, final String packagePath)
 		throws ClassNotFoundException
 	{
-		return AnnotationExtensions.scanForAnnotatedClasses(directory, packagePath, null);
+		return AnnotationExtensions.scanForAllAnnotatedClasses(directory, packagePath, null);
 	}
 
 }

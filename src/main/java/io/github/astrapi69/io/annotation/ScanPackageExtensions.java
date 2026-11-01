@@ -51,24 +51,26 @@ public final class ScanPackageExtensions
 	private static final Set<String> NO_CLASS_NAMES = Set.of("package-info", "module-info");
 
 	/**
-	 * Scan class names from the given package name.
+	 * Scans the qualified names of the top-level classes of the given package, without its sub
+	 * packages, as {@link #scanTopLevelClassNames(String, boolean, boolean)} lists them.
 	 *
 	 * @param packageName
 	 *            the package name
-	 * @return the list
+	 * @return the qualified names of the top-level classes
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static Set<String> scanClassNames(final String packageName) throws IOException
+	public static Set<String> scanTopLevelClassNames(final String packageName) throws IOException
 	{
-		return scanClassNames(packageName, false, true);
+		return scanTopLevelClassNames(packageName, false, true);
 	}
 
 	/**
-	 * Scan class names from the given package name, in every directory and archive of the class
-	 * path that holds the package. Only top-level classes are listed: a class file whose name holds
-	 * a {@code $}, as the class files of nested and anonymous classes do, is skipped, and so are a
-	 * {@code package-info.class} and a {@code module-info.class}, which hold no class.
+	 * Scans the names of the top-level classes of the given package, in every directory and archive
+	 * of the class path that holds the package. Only top-level classes are listed: a class file
+	 * whose name holds a {@code $}, as the class files of nested and anonymous classes do, is
+	 * skipped, and so are a {@code package-info.class} and a {@code module-info.class}, which hold
+	 * no class.
 	 *
 	 * @param packageName
 	 *            the package name
@@ -76,12 +78,12 @@ public final class ScanPackageExtensions
 	 *            the recursive flag
 	 * @param qualifiedClassnames
 	 *            the flag if the class names should be qualified class names.
-	 * @return the list
+	 * @return the names of the top-level classes
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static Set<String> scanClassNames(final String packageName, final boolean recursive,
-		final boolean qualifiedClassnames) throws IOException
+	public static Set<String> scanTopLevelClassNames(final String packageName,
+		final boolean recursive, final boolean qualifiedClassnames) throws IOException
 	{
 		final Set<String> classNames = new LinkedHashSet<>();
 		final String packagePath = packageName.replace(".", "/");
@@ -102,9 +104,10 @@ public final class ScanPackageExtensions
 	}
 
 	/**
-	 * Scans the class names of the given package in the archive that the given URL points into. The
-	 * archive is read once: a recursive scan takes the class files of the sub packages from the
-	 * same pass over its entries, whether the archive holds directory entries for them or not
+	 * Scans the top-level class names of the given package in the archive that the given URL points
+	 * into. The archive is read once: a recursive scan takes the class files of the sub packages
+	 * from the same pass over its entries, whether the archive holds directory entries for them or
+	 * not
 	 *
 	 * @param packageURL
 	 *            the URL of the package in a jar, a war or an ear
@@ -150,7 +153,8 @@ public final class ScanPackageExtensions
 	}
 
 	/**
-	 * Scans the class names of the given package in the class directory the given URL points to
+	 * Scans the top-level class names of the given package in the class directory the given URL
+	 * points to
 	 *
 	 * @param packageURL
 	 *            the URL of the package directory
@@ -179,8 +183,8 @@ public final class ScanPackageExtensions
 			if (file.isDirectory() && recursive)
 			{
 				qualifiedClassname = packagePath + "." + file.getName();
-				classNames
-					.addAll(scanClassNames(qualifiedClassname, recursive, qualifiedClassnames));
+				classNames.addAll(
+					scanTopLevelClassNames(qualifiedClassname, recursive, qualifiedClassnames));
 			}
 			else
 			{

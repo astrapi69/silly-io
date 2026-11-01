@@ -7,6 +7,12 @@
 ### Breaking
 - Java 25 is the minimum, up from 17: the family builds, tests and releases on JDK 25 (astrapi69/mystic-crypt#234), so this release is 4.0 instead of 3.7 (#14).
 - `AnnotationExtensions.setAnnotationValue` is removed, without a deprecation first. Annotations are immutable by contract, and since JEP 403 (Java 17) the JDK internals it changed are strongly encapsulated: for every real annotation it threw `InaccessibleObjectException` unless the JVM ran with `--add-opens java.base/sun.reflect.annotation=ALL-UNNAMED`. No project of the family calls it (#29).
+- `ScanPackageExtensions.scanClassNames` is renamed `scanTopLevelClassNames`, both overloads: it lists top-level classes only, which the old name did not tell, after Guava's `ClassPath.getTopLevelClasses`. Its behaviour is unchanged (#47).
+- `ScanClassExtensions.scanClassNames` is renamed `scanTopLevelClasses`, both overloads: it loads top-level classes, not class names (#47).
+- `ScanClassExtensions.scanClassesFromPackage` is renamed `scanAllClassesFromPackage`, both overloads: it loads all classes of the directory, nested and anonymous ones included, after Guava's `ClassPath.getAllClasses` (#47).
+- `AnnotationExtensions.scanForAnnotatedClasses` is renamed `scanForAllAnnotatedClasses`: it finds all annotated classes of the directory, nested and anonymous ones included, as `getAllAnnotatedClasses` beside it does, whose name stays (#47).
+- `AnnotationExtensions.scanForAnnotatedClassesFromSet` is renamed `scanForAllAnnotatedClassesFromSet`, for the same reason (#47).
+- `AnnotationExtensions.scanForClasses` is renamed `scanForAllClasses`: it finds all classes of the directory, nested and anonymous ones included, as `getAllClasses` does (#47).
 
 ### Changed
 - The tests cover 98.7% of the lines and 97.3% of the branches, up from 67.2% and 48.8%, and the build fails below 95% of the lines or 90% of the branches (`jacocoTestCoverageVerification` in `check`) (#20).

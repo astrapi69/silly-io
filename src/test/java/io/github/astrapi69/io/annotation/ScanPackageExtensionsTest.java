@@ -164,9 +164,8 @@ class ScanPackageExtensionsTest
 		{
 			rootUrls[index] = UrlStyle.ESCAPED.of(roots[index]);
 		}
-		return ClassFixtures.withClassPathRoots(
-			() -> ScanPackageExtensions.scanClassNames(packageName, recursive, qualifiedClassnames),
-			rootUrls);
+		return ClassFixtures.withClassPathRoots(() -> ScanPackageExtensions
+			.scanTopLevelClassNames(packageName, recursive, qualifiedClassnames), rootUrls);
 	}
 
 	static Stream<Arguments> urlEscapedRoots()
@@ -178,14 +177,15 @@ class ScanPackageExtensionsTest
 
 	@ParameterizedTest(name = "a {0} below \"{1}\", {2} URL")
 	@MethodSource("urlEscapedRoots")
-	void scanClassNames_readsARootWhosePathHoldsACharacterThatAUrlEscapes(final RootKind rootKind,
-		final String directoryName, final UrlStyle urlStyle) throws Exception
+	void scanTopLevelClassNames_readsARootWhosePathHoldsACharacterThatAUrlEscapes(
+		final RootKind rootKind, final String directoryName, final UrlStyle urlStyle)
+		throws Exception
 	{
 		final Path root = rootKind.write(directory.resolve(directoryName).resolve("root"),
 			"plus.pkg.Plus");
 
 		assertEquals(Set.of("plus.pkg.Plus"), ClassFixtures.withClassPathRoots(
-			() -> ScanPackageExtensions.scanClassNames("plus.pkg"), urlStyle.of(root)));
+			() -> ScanPackageExtensions.scanTopLevelClassNames("plus.pkg"), urlStyle.of(root)));
 	}
 
 	/**
@@ -199,7 +199,7 @@ class ScanPackageExtensionsTest
 	 */
 	@ParameterizedTest(name = "below {0}")
 	@ValueSource(strings = { "x!y", "!x", "x!y!z" })
-	void scanClassNames_readsAJarBelowADirectoryWhoseNameHoldsAnExclamationMark(
+	void scanTopLevelClassNames_readsAJarBelowADirectoryWhoseNameHoldsAnExclamationMark(
 		final String directoryName) throws Exception
 	{
 		final Path jar = RootKind.JAR.write(directory.resolve(directoryName).resolve("root"),
@@ -213,32 +213,33 @@ class ScanPackageExtensionsTest
 
 	@ParameterizedTest(name = "recursive {0}, qualified names {1}")
 	@MethodSource("directoryScans")
-	void scanClassNames_listsTheClassesOfADirectoryPackage(final boolean recursive,
+	void scanTopLevelClassNames_listsTheClassesOfADirectoryPackage(final boolean recursive,
 		final boolean qualifiedClassnames, final Set<String> expected) throws IOException
 	{
-		assertEquals(expected,
-			ScanPackageExtensions.scanClassNames(SCAN_PACKAGE, recursive, qualifiedClassnames));
+		assertEquals(expected, ScanPackageExtensions.scanTopLevelClassNames(SCAN_PACKAGE, recursive,
+			qualifiedClassnames));
 	}
 
 	@Test
-	void scanClassNames_listsTheQualifiedNamesOfThePackageOnly_byDefault() throws IOException
+	void scanTopLevelClassNames_listsTheQualifiedNamesOfThePackageOnly_byDefault()
+		throws IOException
 	{
 		assertEquals(
 			Set.of(SCAN_PACKAGE + ".ScannedPage", SCAN_PACKAGE + ".ScannedPanel",
 				SCAN_PACKAGE + ".ScannedPlain"),
-			ScanPackageExtensions.scanClassNames(SCAN_PACKAGE));
+			ScanPackageExtensions.scanTopLevelClassNames(SCAN_PACKAGE));
 	}
 
 	@Test
-	void scanClassNames_isEmpty_forAPackageThatIsNotOnTheClassPath() throws IOException
+	void scanTopLevelClassNames_isEmpty_forAPackageThatIsNotOnTheClassPath() throws IOException
 	{
-		assertTrue(
-			ScanPackageExtensions.scanClassNames("io.github.astrapi69.no.such.pkg").isEmpty());
+		assertTrue(ScanPackageExtensions.scanTopLevelClassNames("io.github.astrapi69.no.such.pkg")
+			.isEmpty());
 	}
 
 	@ParameterizedTest(name = "recursive {0}, qualified names {1}")
 	@MethodSource("jarScans")
-	void scanClassNames_listsTheTopLevelClassesOfAJarPackage(final boolean recursive,
+	void scanTopLevelClassNames_listsTheTopLevelClassesOfAJarPackage(final boolean recursive,
 		final boolean qualifiedClassnames, final Set<String> expected) throws Exception
 	{
 		final Path jar = newScanJar(directory);
@@ -247,14 +248,14 @@ class ScanPackageExtensionsTest
 		{
 			assertEquals(expected,
 				ClassFixtures.withContextClassLoader(jarClassLoader, () -> ScanPackageExtensions
-					.scanClassNames(JAR_PACKAGE, recursive, qualifiedClassnames)));
+					.scanTopLevelClassNames(JAR_PACKAGE, recursive, qualifiedClassnames)));
 		}
 	}
 
 	@ParameterizedTest(name = "{0}")
 	@ValueSource(strings = { "gen/pkg/readme.txt", "gen/pkg/messages.properties", "gen/pkg/LICENSE",
 			"gen/pkg/Old.class.bak" })
-	void scanClassNames_listsOnlyTheClassFilesOfAJarPackage(final String otherEntry)
+	void scanTopLevelClassNames_listsOnlyTheClassFilesOfAJarPackage(final String otherEntry)
 		throws Exception
 	{
 		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", otherEntry };
@@ -266,8 +267,8 @@ class ScanPackageExtensionsTest
 
 	@ParameterizedTest(name = "{0}")
 	@ValueSource(strings = { "gen/pkgX.class", "gen/pkg.class", "gen/pkg_1.class" })
-	void scanClassNames_skipsTheClassesOfTheParentPackageOfAJarPackage(final String parentEntry)
-		throws Exception
+	void scanTopLevelClassNames_skipsTheClassesOfTheParentPackageOfAJarPackage(
+		final String parentEntry) throws Exception
 	{
 		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", parentEntry };
 
@@ -280,7 +281,7 @@ class ScanPackageExtensionsTest
 	@ParameterizedTest(name = "{0}")
 	@CsvSource({ "gen/pkgother/, gen/pkgother/B.class", "gen/pkg_old/, gen/pkg_old/B.class",
 			"gen/pkgX/, gen/pkgX/B.class" })
-	void scanClassNames_skipsTheSiblingPackagesThatShareThePrefix_whenRecursive(
+	void scanTopLevelClassNames_skipsTheSiblingPackagesThatShareThePrefix_whenRecursive(
 		final String siblingDirectory, final String siblingClass) throws Exception
 	{
 		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", "gen/pkg/sub/",
@@ -294,7 +295,7 @@ class ScanPackageExtensionsTest
 
 	@ParameterizedTest(name = "a {0} and a {1}")
 	@CsvSource({ "DIRECTORY, DIRECTORY", "JAR, JAR", "DIRECTORY, JAR", "JAR, DIRECTORY" })
-	void scanClassNames_readsThePackageInEveryRootOfTheClassPath(final RootKind firstRoot,
+	void scanTopLevelClassNames_readsThePackageInEveryRootOfTheClassPath(final RootKind firstRoot,
 		final RootKind secondRoot) throws Exception
 	{
 		final Path first = firstRoot.write(directory.resolve("first"), DEFECT_PACKAGE + ".A");
@@ -310,10 +311,10 @@ class ScanPackageExtensionsTest
 	}
 
 	@Test
-	void scanClassNames_readsAPackageThatIsInTheMainAndInTheTestClasses() throws IOException
+	void scanTopLevelClassNames_readsAPackageThatIsInTheMainAndInTheTestClasses() throws IOException
 	{
 		final Set<String> classNames = ScanPackageExtensions
-			.scanClassNames(ScanPackageExtensions.class.getPackageName());
+			.scanTopLevelClassNames(ScanPackageExtensions.class.getPackageName());
 
 		assertTrue(
 			classNames.containsAll(Set.of(ScanPackageExtensions.class.getName(),
@@ -323,8 +324,8 @@ class ScanPackageExtensionsTest
 
 	@ParameterizedTest(name = "from a {0}")
 	@EnumSource(RootKind.class)
-	void scanClassNames_listsTheTopLevelClassesOnly_fromEveryKindOfRoot(final RootKind rootKind)
-		throws Exception
+	void scanTopLevelClassNames_listsTheTopLevelClassesOnly_fromEveryKindOfRoot(
+		final RootKind rootKind) throws Exception
 	{
 		final Path root = rootKind.write(directory.resolve("root"), "nest.pkg.Outer",
 			"nest.pkg.Outer$Inner", "nest.pkg.Outer$1", "nest.pkg.sub.Deep",
@@ -349,8 +350,8 @@ class ScanPackageExtensionsTest
 	 */
 	@ParameterizedTest(name = "from a {0}")
 	@EnumSource(RootKind.class)
-	void scanClassNames_skipsPackageInfoAndModuleInfo_fromEveryKindOfRoot(final RootKind rootKind)
-		throws Exception
+	void scanTopLevelClassNames_skipsPackageInfoAndModuleInfo_fromEveryKindOfRoot(
+		final RootKind rootKind) throws Exception
 	{
 		final Path root = rootKind.write(directory.resolve("root"), "info.pkg.Info",
 			"info.pkg.package-info", "info.pkg.module-info", "info.pkg.sub.Deep",
@@ -372,7 +373,7 @@ class ScanPackageExtensionsTest
 	 *             if the jar cannot be written or the scan fails
 	 */
 	@Test
-	void scanClassNames_readsAJarOnce_whenRecursive() throws Exception
+	void scanTopLevelClassNames_readsAJarOnce_whenRecursive() throws Exception
 	{
 		final Path jar = RootKind.JAR.write(directory.resolve("root"), "tree.pkg.Top",
 			"tree.pkg.a.A", "tree.pkg.a.b.B", "tree.pkg.a.b.c.C");
@@ -382,7 +383,7 @@ class ScanPackageExtensionsTest
 		{
 			final Set<String> classNames = ClassFixtures.withContextClassLoader(
 				recordingClassLoader,
-				() -> ScanPackageExtensions.scanClassNames("tree.pkg", true, true));
+				() -> ScanPackageExtensions.scanTopLevelClassNames("tree.pkg", true, true));
 
 			assertEquals(
 				Set.of("tree.pkg.Top", "tree.pkg.a.A", "tree.pkg.a.b.B", "tree.pkg.a.b.c.C"),
@@ -392,7 +393,7 @@ class ScanPackageExtensionsTest
 	}
 
 	@Test
-	void scanClassNames_listsTheSubPackagesOfAJar_withoutTheirDirectoryEntries_whenRecursive()
+	void scanTopLevelClassNames_listsTheSubPackagesOfAJar_withoutTheirDirectoryEntries_whenRecursive()
 		throws Exception
 	{
 		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", "gen/pkg/sub/B.class",
@@ -411,7 +412,7 @@ class ScanPackageExtensionsTest
 
 	@ParameterizedTest(name = "{0} archive")
 	@ValueSource(strings = { "war", "ear" })
-	void scanClassNames_readsAPackageInAWarOrEarArchiveLikeAJar(final String protocol)
+	void scanTopLevelClassNames_readsAPackageInAWarOrEarArchiveLikeAJar(final String protocol)
 		throws Exception
 	{
 		final Path jar = newScanJar(directory);
@@ -422,7 +423,7 @@ class ScanPackageExtensionsTest
 
 		assertEquals(Set.of(JAR_PACKAGE + ".First", JAR_PACKAGE + ".Second"),
 			ClassFixtures.withContextClassLoader(archiveClassLoader,
-				() -> ScanPackageExtensions.scanClassNames(JAR_PACKAGE)));
+				() -> ScanPackageExtensions.scanTopLevelClassNames(JAR_PACKAGE)));
 	}
 
 	/**
