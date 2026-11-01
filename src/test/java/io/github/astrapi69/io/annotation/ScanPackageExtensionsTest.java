@@ -187,6 +187,29 @@ class ScanPackageExtensionsTest
 			() -> ScanPackageExtensions.scanClassNames("plus.pkg"), urlStyle.of(root)));
 	}
 
+	/**
+	 * A {@code !} in the path of a jar is part of the path: only the {@code !/} after the jar
+	 * separates the jar from the entry in a jar URL
+	 *
+	 * @param directoryName
+	 *            the name of the directory the jar lies in
+	 * @throws Exception
+	 *             if the jar cannot be written or the scan fails
+	 */
+	@ParameterizedTest(name = "below {0}")
+	@ValueSource(strings = { "x!y", "!x", "x!y!z" })
+	void scanClassNames_readsAJarBelowADirectoryWhoseNameHoldsAnExclamationMark(
+		final String directoryName) throws Exception
+	{
+		final Path jar = RootKind.JAR.write(directory.resolve(directoryName).resolve("root"),
+			"bang.pkg.Bang", "bang.pkg.sub.Deep");
+
+		assertAll(
+			() -> assertEquals(Set.of("bang.pkg.Bang"), scanRoots("bang.pkg", false, true, jar)),
+			() -> assertEquals(Set.of("bang.pkg.Bang", "bang.pkg.sub.Deep"),
+				scanRoots("bang.pkg", true, true, jar)));
+	}
+
 	@ParameterizedTest(name = "recursive {0}, qualified names {1}")
 	@MethodSource("directoryScans")
 	void scanClassNames_listsTheClassesOfADirectoryPackage(final boolean recursive,

@@ -50,6 +50,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import io.github.astrapi69.io.annotation.ClassFixtures.RootKind;
 import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
@@ -265,6 +266,20 @@ class AnnotationExtensionsTest
 			() -> AnnotationExtensions.getAllClasses("plus.pkg"), urlStyle.of(root));
 
 		assertEquals(List.of("plus.pkg.Plus"), classes.stream().map(Class::getName).toList());
+	}
+
+	@ParameterizedTest(name = "below {0}")
+	@ValueSource(strings = { "x!y", "!x", "x!y!z" })
+	void getAllClasses_findsTheClassesOfAJarBelowADirectoryWhoseNameHoldsAnExclamationMark(
+		final String directoryName) throws Exception
+	{
+		final Path jar = RootKind.JAR.write(directory.resolve(directoryName).resolve("root"),
+			"bang.pkg.Bang");
+
+		final Set<Class<?>> classes = ClassFixtures.withClassPathRoots(
+			() -> AnnotationExtensions.getAllClasses("bang.pkg"), UrlStyle.ESCAPED.of(jar));
+
+		assertEquals(List.of("bang.pkg.Bang"), classes.stream().map(Class::getName).toList());
 	}
 
 	@ParameterizedTest(name = "{0}, from a {1}")

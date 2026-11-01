@@ -149,8 +149,10 @@ public class FindClassExtensions
 	}
 
 	/**
-	 * Gives the archive file that the given URL points into: the file URL before the {@code !},
-	 * read as {@link #toFile(String)} reads it
+	 * Gives the archive file that the given URL points into: the file URL before the first
+	 * {@code !/}, where {@link java.net.JarURLConnection} separates the archive from the entry too,
+	 * read as {@link #toFile(String)} reads it. A {@code !} without a slash after it belongs to the
+	 * path of the archive
 	 *
 	 * @param archiveEntryUrl
 	 *            the URL of an entry in a jar, a war or an ear
@@ -159,7 +161,7 @@ public class FindClassExtensions
 	static File toArchiveFile(final URL archiveEntryUrl)
 	{
 		final String entryUrl = archiveEntryUrl.getFile();
-		return toFile(entryUrl.substring(0, entryUrl.indexOf("!")));
+		return toFile(entryUrl.substring(0, entryUrl.indexOf("!/")));
 	}
 
 	/**

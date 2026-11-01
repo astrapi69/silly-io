@@ -20,6 +20,7 @@
 - `ScanPackageExtensions.scanClassNames` lists the class files of the package only: no other jar entry (#23), no class of the parent package (#24), no sibling package that shares the prefix (#25), every root of the class path (#26), and top-level classes from a directory as from a jar (#33).
 - A class path whose directory holds a `+` or another character a URL escapes is read correctly; `URLDecoder` turned `+` into a space (#27).
 - `AnnotationExtensions.getAllClasses` and `getAllAnnotatedClasses` find the classes of a jar too (#28).
+- `ScanPackageExtensions.scanClassNames` and the `AnnotationExtensions` scans read a jar below a directory whose name holds a `!` (`/home/u/x!y/lib.jar`): the archive is split from the entry at the first `!/`, as `JarURLConnection` splits it, no longer at the first `!` (#43).
 - `LinuxShellExecutor.execute` runs the command in the execution directory through `ProcessBuilder.directory`, no longer through `cd <path>` in the command string, so a directory name can no longer run as a command (#22).
 - Only a leading `~`, alone or before a `/`, stands for the home directory (#31).
 - `OS.getOperatingSystem` returns `UNIX` for AIX, HP-UX, IRIX, Solaris, SunOS, FreeBSD, OpenBSD and NetBSD (#32).
