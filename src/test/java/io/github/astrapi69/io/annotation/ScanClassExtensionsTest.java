@@ -44,6 +44,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
+import io.github.astrapi69.io.annotation.testdata.info.InfoPlain;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPage;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPanel;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPlain;
@@ -52,8 +53,8 @@ import io.github.astrapi69.io.annotation.testdata.scan.sub.ScannedSubPage;
 /**
  * {@link ScanClassExtensions} compares classes by their normalized names and loads the classes of a
  * package, from a directory or through the package scan of {@link ScanPackageExtensions}. The scans
- * read the fixtures in {@code testdata.scan} on the test class path and a jar built in a temporary
- * directory
+ * read the fixtures in {@code testdata.scan} and {@code testdata.info} on the test class path and a
+ * jar built in a temporary directory
  */
 class ScanClassExtensionsTest
 {
@@ -114,6 +115,12 @@ class ScanClassExtensionsTest
 					"nest.pkg.sub.Deep", "nest.pkg.sub.Deep$Inner")));
 	}
 
+	static Stream<Arguments> infoFileScans()
+	{
+		return Stream.of(arguments(false, Set.of("info.pkg.Info")),
+			arguments(true, Set.of("info.pkg.Info", "info.pkg.sub.Deep")));
+	}
+
 	static Path scanDirectory() throws Exception
 	{
 		return Path.of(ScannedPage.class.getResource("").toURI());
@@ -159,6 +166,45 @@ class ScanClassExtensionsTest
 	{
 		assertEquals(ALL_CLASSES, ScanClassExtensions.scanAllClassesFromPackage(
 			scanDirectory().toFile(), ScanPackageExtensionsTest.SCAN_PACKAGE, true));
+	}
+
+	/**
+	 * A {@code package-info.class} holds the annotations of its package and a
+	 * {@code module-info.class} the declaration of a module: neither is a class, so neither is
+	 * loaded, in the directory or in a sub directory
+	 *
+	 * @param recursive
+	 *            the recursive flag
+	 * @param expected
+	 *            the binary names of the classes the scan loads
+	 * @throws Exception
+	 *             if the class files cannot be written or the scan fails
+	 */
+	@ParameterizedTest(name = "recursive: {0}")
+	@MethodSource("infoFileScans")
+	void scanAllClassesFromPackage_skipsPackageInfoAndModuleInfo(final boolean recursive,
+		final Set<String> expected) throws Exception
+	{
+		final Path root = ClassFixtures.newClassDirectory(directory.resolve("root"),
+			"info.pkg.Info", "info.pkg.package-info", "info.pkg.module-info", "info.pkg.sub.Deep",
+			"info.pkg.sub.package-info");
+
+		final Set<Class<?>> classes = ClassFixtures
+			.withClassPathRoots(
+				() -> ScanClassExtensions.scanAllClassesFromPackage(
+					root.resolve("info/pkg").toFile(), "info.pkg", recursive),
+				UrlStyle.ESCAPED.of(root));
+
+		assertEquals(expected, Set.copyOf(classes.stream().map(Class::getName).toList()));
+	}
+
+	@Test
+	void scanAllClassesFromPackage_skipsThePackageInfoOfAnAnnotatedPackage() throws Exception
+	{
+		assertEquals(Set.of(InfoPlain.class),
+			ScanClassExtensions.scanAllClassesFromPackage(
+				Path.of(InfoPlain.class.getResource("").toURI()).toFile(),
+				InfoPlain.class.getPackageName()));
 	}
 
 	@Test

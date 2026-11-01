@@ -54,7 +54,16 @@ public final class AnnotationExtensions
 	 * Gets all annotated classes that belongs from the given package path and the given annotation
 	 * class, from the class directories and the archives of the class path. All classes count:
 	 * every class file of the package and of its sub packages, the ones of nested, local and
-	 * anonymous classes included. Without an annotation class every class is returned.
+	 * anonymous classes included. Without an annotation class every class is returned. A
+	 * {@code package-info} and a {@code module-info} are skipped: they hold no class, and the
+	 * annotations of a package are read with {@link Package#getAnnotation(Class)}.
+	 * <p>
+	 * A jar must contain its directory entries, which {@code jar}, Gradle and Maven write by
+	 * default: the class loader finds a jar through the directory entry of the package, so the
+	 * classes of a jar without one are not found. A jar below a directory whose name ends in
+	 * {@code !}, as in {@code x!/lib.jar}, cannot be read: its URL is split at the first
+	 * {@code !/}, as {@link java.net.JarURLConnection} splits it, which ends the path of the
+	 * archive at {@code x}.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -94,7 +103,16 @@ public final class AnnotationExtensions
 	 * Gets all annotated classes that belongs from the given package path and the given list with
 	 * annotation classes, from the class directories and the archives of the class path. All
 	 * classes count: every class file of the package and of its sub packages, the ones of nested,
-	 * local and anonymous classes included. Without an annotation set every class is returned.
+	 * local and anonymous classes included. Without an annotation set every class is returned. A
+	 * {@code package-info} and a {@code module-info} are skipped: they hold no class, and the
+	 * annotations of a package are read with {@link Package#getAnnotation(Class)}.
+	 * <p>
+	 * A jar must contain its directory entries, which {@code jar}, Gradle and Maven write by
+	 * default: the class loader finds a jar through the directory entry of the package, so the
+	 * classes of a jar without one are not found. A jar below a directory whose name ends in
+	 * {@code !}, as in {@code x!/lib.jar}, cannot be read: its URL is split at the first
+	 * {@code !/}, as {@link java.net.JarURLConnection} splits it, which ends the path of the
+	 * archive at {@code x}.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -133,7 +151,8 @@ public final class AnnotationExtensions
 	/**
 	 * Loads the classes of the given package and of its sub packages from every archive of the
 	 * class path that holds the package. Every class file counts, the ones of nested classes too,
-	 * as the scan of a class directory reads them
+	 * and no {@code package-info} or {@code module-info}, as the scan of a class directory reads
+	 * them
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -163,7 +182,8 @@ public final class AnnotationExtensions
 
 	/**
 	 * Lists the binary names of the classes whose class files lie below the given entry prefix of
-	 * the archive the given URL points into
+	 * the archive the given URL points into, without a {@code package-info} or a
+	 * {@code module-info}
 	 *
 	 * @param archiveEntryUrl
 	 *            the URL of the package in a jar, a war or an ear
@@ -181,7 +201,9 @@ public final class AnnotationExtensions
 		{
 			return jarFile.stream().map(JarEntry::getName)
 				.filter(entryName -> entryName.startsWith(entryPrefix)
-					&& entryName.endsWith(classFileSuffix))
+					&& entryName.endsWith(classFileSuffix)
+					&& ScanPackageExtensions
+						.isTypeClassFile(entryName.substring(entryName.lastIndexOf('/') + 1)))
 				.map(entryName -> FilenameExtensions.getFilenameWithoutExtension(entryName)
 					.replace('/', '.'))
 				.collect(Collectors.toSet());
@@ -213,7 +235,8 @@ public final class AnnotationExtensions
 	/**
 	 * Gets all the classes from the class loader that belongs to the given package path: every
 	 * class file of the package and of its sub packages, the ones of nested, local and anonymous
-	 * classes included.
+	 * classes included, and no {@code package-info} or {@code module-info}. A jar is read as
+	 * {@link #getAllAnnotatedClasses(String, Class)} reads it.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -237,7 +260,8 @@ public final class AnnotationExtensions
 	/**
 	 * Gets all the classes from the class loader that belongs to the given package path and carry
 	 * one of the given annotations, as {@link #getAllAnnotatedClassesFromSet(String, Set)} does:
-	 * nested, local and anonymous classes included.
+	 * nested, local and anonymous classes included, and no {@code package-info} or
+	 * {@code module-info}.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -354,7 +378,8 @@ public final class AnnotationExtensions
 	/**
 	 * Scan recursive for all annotated classes in the given directory: every class file below the
 	 * given directory counts, the ones of nested, local and anonymous classes included. Without an
-	 * annotation class every class is returned.
+	 * annotation class every class is returned. A {@code package-info} and a {@code module-info}
+	 * are skipped, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
@@ -387,7 +412,7 @@ public final class AnnotationExtensions
 				foundClasses
 					.addAll(scanForAllAnnotatedClasses(file, qualifiedClassname, annotationClass));
 			}
-			else
+			else if (ScanPackageExtensions.isTypeClassFile(file.getName()))
 			{
 				final String filename = FilenameExtensions.getFilenameWithoutExtension(file);
 				qualifiedClassname = packagePath + '.' + filename;
@@ -432,7 +457,8 @@ public final class AnnotationExtensions
 	/**
 	 * Scan recursive for all annotated classes in the given directory: every class file below the
 	 * given directory counts, the ones of nested, local and anonymous classes included. Without an
-	 * annotation set every class is returned.
+	 * annotation set every class is returned. A {@code package-info} and a {@code module-info} are
+	 * skipped, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
@@ -465,7 +491,7 @@ public final class AnnotationExtensions
 				foundClasses.addAll(
 					scanForAllAnnotatedClassesFromSet(file, qualifiedClassname, annotationClasses));
 			}
-			else
+			else if (ScanPackageExtensions.isTypeClassFile(file.getName()))
 			{
 				final String filename = FilenameExtensions.getFilenameWithoutExtension(file);
 				qualifiedClassname = packagePath + '.' + filename;
@@ -507,7 +533,8 @@ public final class AnnotationExtensions
 
 	/**
 	 * Scan recursive for all classes in the given directory: every class file below the given
-	 * directory counts, the ones of nested, local and anonymous classes included.
+	 * directory counts, the ones of nested, local and anonymous classes included, and no
+	 * {@code package-info} or {@code module-info}, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
