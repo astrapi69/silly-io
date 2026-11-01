@@ -4,6 +4,9 @@
 
 ## Version 3.7-SNAPSHOT
 
+### Changed
+- Releases go to Maven Central through the Central Portal, as in the rest of the family: the `com.gradleup.nmcp` plugin uploads, the maintainer releases each deployment in the Portal, and a `RELEASE-*` tag runs the new `publish.yml`, which signs with the signing subkey that the secret `GPG_KEY_ID` names. An upload leaves only from CI, a release only from its tag. The OSSRH staging endpoint this project published to is shut down; its settings are gone, among them the switch that held the checksums to md5 and sha1, and snapshots resolve from the Central Portal's snapshot repository (#13).
+
 ### Fixed
 - `FilenameExtensions.getFilenamePrefix(File)` and `getFilenameSuffix(File)` look for the extension's dot in the file name only, no longer in the whole path. Below a directory whose name holds a dot (`~/.cache/x/data`), a file without an extension got the rest of the path as its suffix and a prefix that ended at that directory, so a rename built from the prefix moved the file out of its directory (#9).
 
