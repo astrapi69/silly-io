@@ -54,6 +54,13 @@ public enum OS
 	private static final Pattern MAC_PATTERN = Pattern.compile(".*(mac|darwin).*",
 		Pattern.CASE_INSENSITIVE);
 
+	/**
+	 * Pattern to match the names of the Unix operating systems besides Linux and Mac OS, as Apache
+	 * Commons Lang's {@code SystemUtils.IS_OS_UNIX} counts them, and any name that says Unix
+	 */
+	private static final Pattern UNIX_PATTERN = Pattern.compile(
+		".*(aix|hp-ux|irix|solaris|sunos|freebsd|openbsd|netbsd|unix).*", Pattern.CASE_INSENSITIVE);
+
 	/** System property name for OS name */
 	private static final String OS_NAME = "os.name";
 
@@ -152,6 +159,10 @@ public enum OS
 		else if (MAC_PATTERN.matcher(name).matches())
 		{
 			return MAC;
+		}
+		else if (UNIX_PATTERN.matcher(name).matches())
+		{
+			return UNIX;
 		}
 		else
 		{

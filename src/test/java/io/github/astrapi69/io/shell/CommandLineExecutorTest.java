@@ -234,6 +234,16 @@ public class CommandLineExecutorTest
 		});
 	}
 
+	@Test
+	void execute_runsTheCommandInBash_onAUnixSystem() throws Throwable
+	{
+		assumeTrue(Files.isExecutable(Path.of("/bin/bash")), "needs /bin/bash");
+
+		withOperatingSystemName("FreeBSD",
+			() -> assertEquals("ok" + System.lineSeparator(), CommandLineExecutor
+				.execute(directory.toString(), "echo ok", new ByteArrayOutputStream())));
+	}
+
 	/**
 	 * On Windows the command goes to {@code cmd.exe}. Run on a system without it, so that starting
 	 * it fails and names the shell it tried
