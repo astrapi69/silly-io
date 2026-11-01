@@ -60,7 +60,8 @@ public final class ScanPackageExtensions
 	}
 
 	/**
-	 * Scan class names from the given package name.
+	 * Scan class names from the given package name, in every directory and archive of the class
+	 * path that holds the package.
 	 *
 	 * @param packageName
 	 *            the package name
@@ -75,20 +76,49 @@ public final class ScanPackageExtensions
 	public static Set<String> scanClassNames(final String packageName, final boolean recursive,
 		final boolean qualifiedClassnames) throws IOException
 	{
-		final ClassLoader classLoader = ClassloaderExtensions.getClassLoader();
 		final Set<String> classNames = new LinkedHashSet<>();
 		final String packagePath = packageName.replace(".", "/");
-		final URL packageURL = classLoader.getResource(packagePath);
-		if (packageURL == null)
+		for (final URL packageURL : FindClassExtensions.getResources(packagePath))
 		{
-			return classNames;
+			if (packageURL.getProtocol().equals("jar") || packageURL.getProtocol().equals("ear")
+				|| packageURL.getProtocol().equals("war"))
+			{
+				classNames
+					.addAll(scanArchive(packageURL, packageName, recursive, qualifiedClassnames));
+			}
+			else
+			{
+				classNames
+					.addAll(scanDirectory(packageURL, packageName, recursive, qualifiedClassnames));
+			}
 		}
-		if (packageURL.getProtocol().equals("jar") || packageURL.getProtocol().equals("ear")
-			|| packageURL.getProtocol().equals("war"))
+		return classNames;
+	}
+
+	/**
+	 * Scans the class names of the given package in the archive that the given URL points into
+	 *
+	 * @param packageURL
+	 *            the URL of the package in a jar, a war or an ear
+	 * @param packageName
+	 *            the package name
+	 * @param recursive
+	 *            the recursive flag
+	 * @param qualifiedClassnames
+	 *            the flag if the class names should be qualified class names
+	 * @return the class names found in the archive
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static Set<String> scanArchive(final URL packageURL, final String packageName,
+		final boolean recursive, final boolean qualifiedClassnames) throws IOException
+	{
+		final Set<String> classNames = new LinkedHashSet<>();
+		final String packagePath = packageName.replace(".", "/");
+		String fileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
+		fileName = fileName.substring(5, fileName.indexOf("!"));
+		try (JarFile jarFile = new JarFile(fileName))
 		{
-			String fileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-			fileName = fileName.substring(5, fileName.indexOf("!"));
-			final JarFile jarFile = new JarFile(fileName);
 			final Enumeration<JarEntry> jarEntries = jarFile.entries();
 			while (jarEntries.hasMoreElements())
 			{
@@ -133,40 +163,59 @@ public final class ScanPackageExtensions
 					}
 				}
 			}
-			jarFile.close();
 		}
-		else
-		{
-			final String folderName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-			final File folder = new File(folderName);
-			// define the include filefilter for class files...
-			final FileFilter includeFileFilter = new ClassFileFilter();
-			final File[] files = folder.listFiles(includeFileFilter);
-			for (final File file : files)
-			{
-				String qualifiedClassname = null;
-				if (file.isDirectory() && recursive)
-				{
-					qualifiedClassname = packagePath + "." + file.getName();
-					classNames
-						.addAll(scanClassNames(qualifiedClassname, recursive, qualifiedClassnames));
-				}
-				else
-				{
-					if (!file.isDirectory())
-					{
-						final String filenameWithoutExtension = FilenameExtensions
-							.getFilenameWithoutExtension(file);
+		return classNames;
+	}
 
-						if (qualifiedClassnames)
-						{
-							qualifiedClassname = packageName + '.' + filenameWithoutExtension;
-							classNames.add(qualifiedClassname.replace("/", "."));
-						}
-						else
-						{
-							classNames.add(filenameWithoutExtension);
-						}
+	/**
+	 * Scans the class names of the given package in the class directory the given URL points to
+	 *
+	 * @param packageURL
+	 *            the URL of the package directory
+	 * @param packageName
+	 *            the package name
+	 * @param recursive
+	 *            the recursive flag
+	 * @param qualifiedClassnames
+	 *            the flag if the class names should be qualified class names
+	 * @return the class names found in the directory
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static Set<String> scanDirectory(final URL packageURL, final String packageName,
+		final boolean recursive, final boolean qualifiedClassnames) throws IOException
+	{
+		final Set<String> classNames = new LinkedHashSet<>();
+		final String packagePath = packageName.replace(".", "/");
+		final String folderName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
+		final File folder = new File(folderName);
+		// define the include filefilter for class files...
+		final FileFilter includeFileFilter = new ClassFileFilter();
+		final File[] files = folder.listFiles(includeFileFilter);
+		for (final File file : files)
+		{
+			String qualifiedClassname = null;
+			if (file.isDirectory() && recursive)
+			{
+				qualifiedClassname = packagePath + "." + file.getName();
+				classNames
+					.addAll(scanClassNames(qualifiedClassname, recursive, qualifiedClassnames));
+			}
+			else
+			{
+				if (!file.isDirectory())
+				{
+					final String filenameWithoutExtension = FilenameExtensions
+						.getFilenameWithoutExtension(file);
+
+					if (qualifiedClassnames)
+					{
+						qualifiedClassname = packageName + '.' + filenameWithoutExtension;
+						classNames.add(qualifiedClassname.replace("/", "."));
+					}
+					else
+					{
+						classNames.add(filenameWithoutExtension);
 					}
 				}
 			}

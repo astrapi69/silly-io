@@ -37,6 +37,9 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -129,11 +132,39 @@ class ScanPackageExtensionsTest
 	{
 		final Path jar = ClassFixtures.newJar(Files.createTempFile(directory, "scan", ".jar"),
 			entryNames);
-		try (URLClassLoader jarClassLoader = new URLClassLoader(new URL[] { jar.toUri().toURL() },
+		return scanRoots(packageName, recursive, qualifiedClassnames, jar);
+	}
+
+	/**
+	 * Scans the given package through a context class loader of the test's own that reads the given
+	 * class path roots, in the given order
+	 *
+	 * @param packageName
+	 *            the package to scan
+	 * @param recursive
+	 *            the recursive flag of the scan
+	 * @param qualifiedClassnames
+	 *            the flag of the scan for qualified class names
+	 * @param roots
+	 *            the class directories and jars of the class path
+	 * @return the class names the scan lists
+	 * @throws Exception
+	 *             if the scan fails
+	 */
+	static Set<String> scanRoots(final String packageName, final boolean recursive,
+		final boolean qualifiedClassnames, final Path... roots) throws Exception
+	{
+		final URL[] rootUrls = new URL[roots.length];
+		for (int index = 0; index < roots.length; index++)
+		{
+			rootUrls[index] = roots[index].toUri().toURL();
+		}
+		try (URLClassLoader rootsClassLoader = new URLClassLoader(rootUrls,
 			ClassLoader.getSystemClassLoader()))
 		{
-			return ClassFixtures.withContextClassLoader(jarClassLoader, () -> ScanPackageExtensions
-				.scanClassNames(packageName, recursive, qualifiedClassnames));
+			return ClassFixtures.withContextClassLoader(rootsClassLoader,
+				() -> ScanPackageExtensions.scanClassNames(packageName, recursive,
+					qualifiedClassnames));
 		}
 	}
 
@@ -218,6 +249,35 @@ class ScanPackageExtensionsTest
 			() -> assertEquals(Set.of("A", "C"), scanJar(DEFECT_PACKAGE, true, false, entryNames)));
 	}
 
+	@ParameterizedTest(name = "a {0} and a {1}")
+	@CsvSource({ "DIRECTORY, DIRECTORY", "JAR, JAR", "DIRECTORY, JAR", "JAR, DIRECTORY" })
+	void scanClassNames_readsThePackageInEveryRootOfTheClassPath(final RootKind firstRoot,
+		final RootKind secondRoot) throws Exception
+	{
+		final Path first = firstRoot.write(directory.resolve("first"), DEFECT_PACKAGE + ".A");
+		final Path second = secondRoot.write(directory.resolve("second"), DEFECT_PACKAGE + ".B",
+			DEFECT_PACKAGE + ".sub.C");
+
+		assertAll(
+			() -> assertEquals(Set.of(DEFECT_PACKAGE + ".A", DEFECT_PACKAGE + ".B"),
+				scanRoots(DEFECT_PACKAGE, false, true, first, second)),
+			() -> assertEquals(
+				Set.of(DEFECT_PACKAGE + ".A", DEFECT_PACKAGE + ".B", DEFECT_PACKAGE + ".sub.C"),
+				scanRoots(DEFECT_PACKAGE, true, true, first, second)));
+	}
+
+	@Test
+	void scanClassNames_readsAPackageThatIsInTheMainAndInTheTestClasses() throws IOException
+	{
+		final Set<String> classNames = ScanPackageExtensions
+			.scanClassNames(ScanPackageExtensions.class.getPackageName());
+
+		assertTrue(
+			classNames.containsAll(Set.of(ScanPackageExtensions.class.getName(),
+				ScanPackageExtensionsTest.class.getName())),
+			() -> "the classes found: " + classNames);
+	}
+
 	@ParameterizedTest(name = "{0} archive")
 	@ValueSource(strings = { "war", "ear" })
 	void scanClassNames_readsAPackageInAWarOrEarArchiveLikeAJar(final String protocol)
@@ -232,6 +292,48 @@ class ScanPackageExtensionsTest
 		assertEquals(Set.of(JAR_PACKAGE + ".First", JAR_PACKAGE + ".Second"),
 			ClassFixtures.withContextClassLoader(archiveClassLoader,
 				() -> ScanPackageExtensions.scanClassNames(JAR_PACKAGE)));
+	}
+
+	/**
+	 * The two kinds of class path root a package is read from
+	 */
+	enum RootKind
+	{
+		/**
+		 * A directory with a class file per class, in the directory of its package
+		 */
+		DIRECTORY {
+			@Override
+			Path write(final Path location, final String... qualifiedClassNames) throws IOException
+			{
+				return ClassFixtures.newClassDirectory(location, qualifiedClassNames);
+			}
+		},
+
+		/**
+		 * A jar with the directory entries of its packages
+		 */
+		JAR {
+			@Override
+			Path write(final Path location, final String... qualifiedClassNames) throws IOException
+			{
+				return ClassFixtures.newJarOfClasses(
+					location.resolveSibling(location.getFileName() + ".jar"), qualifiedClassNames);
+			}
+		};
+
+		/**
+		 * Writes a root of this kind that holds the given classes
+		 *
+		 * @param location
+		 *            where the root is written, a jar gets the suffix {@code .jar}
+		 * @param qualifiedClassNames
+		 *            the binary names of the classes
+		 * @return the written root
+		 * @throws IOException
+		 *             if the root cannot be written
+		 */
+		abstract Path write(Path location, String... qualifiedClassNames) throws IOException;
 	}
 
 	/**
@@ -252,9 +354,10 @@ class ScanPackageExtensionsTest
 		}
 
 		@Override
-		public URL getResource(final String name)
+		protected Enumeration<URL> findResources(final String name)
 		{
-			return packagePath.equals(name) ? packageUrl : super.getResource(name);
+			return Collections
+				.enumeration(packagePath.equals(name) ? List.of(packageUrl) : List.of());
 		}
 	}
 

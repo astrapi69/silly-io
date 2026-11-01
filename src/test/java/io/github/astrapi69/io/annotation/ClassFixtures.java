@@ -31,6 +31,8 @@ import java.lang.constant.ConstantDescs;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -96,6 +98,61 @@ final class ClassFixtures
 			}
 		}
 		return jar;
+	}
+
+	/**
+	 * Writes a jar that holds the given classes, each after the directory entries of its package
+	 * and of every package above it, as a jar tool writes them
+	 *
+	 * @param jar
+	 *            the jar file to write
+	 * @param qualifiedClassNames
+	 *            the binary names of the classes
+	 * @return the written jar file
+	 * @throws IOException
+	 *             if the jar cannot be written
+	 */
+	static Path newJarOfClasses(final Path jar, final String... qualifiedClassNames)
+		throws IOException
+	{
+		final Set<String> entryNames = new LinkedHashSet<>();
+		for (final String qualifiedClassName : qualifiedClassNames)
+		{
+			final String classEntry = qualifiedClassName.replace('.', '/') + CLASS_FILE_SUFFIX;
+			int slash = classEntry.indexOf('/');
+			while (slash != -1)
+			{
+				entryNames.add(classEntry.substring(0, slash + 1));
+				slash = classEntry.indexOf('/', slash + 1);
+			}
+			entryNames.add(classEntry);
+		}
+		return newJar(jar, entryNames.toArray(String[]::new));
+	}
+
+	/**
+	 * Writes the class files of the given classes below the given class directory, each in the
+	 * directory of its package
+	 *
+	 * @param classDirectory
+	 *            the root directory of the classes, created if it does not exist
+	 * @param qualifiedClassNames
+	 *            the binary names of the classes
+	 * @return the class directory
+	 * @throws IOException
+	 *             if a class file cannot be written
+	 */
+	static Path newClassDirectory(final Path classDirectory, final String... qualifiedClassNames)
+		throws IOException
+	{
+		for (final String qualifiedClassName : qualifiedClassNames)
+		{
+			final Path classFile = classDirectory
+				.resolve(qualifiedClassName.replace('.', '/') + CLASS_FILE_SUFFIX);
+			Files.createDirectories(classFile.getParent());
+			Files.write(classFile, newClassFile(qualifiedClassName));
+		}
+		return classDirectory;
 	}
 
 	/**
