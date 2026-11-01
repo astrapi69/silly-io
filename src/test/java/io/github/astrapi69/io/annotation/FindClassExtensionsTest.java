@@ -40,7 +40,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPage;
 
 /**
@@ -93,6 +95,35 @@ class FindClassExtensionsTest
 
 		assertEquals(List.of(ScanClassExtensionsTest.scanDirectory()),
 			directories.stream().map(File::toPath).toList());
+	}
+
+	@ParameterizedTest(name = "below \"{0}\", {1} URL")
+	@MethodSource("io.github.astrapi69.io.annotation.ClassFixtures#urlEscapedDirectories")
+	void getDirectoriesFromResources_findsAPackageDirectoryWhosePathHoldsACharacterThatAUrlEscapes(
+		final String directoryName, final UrlStyle urlStyle) throws Exception
+	{
+		final Path root = ClassFixtures
+			.newClassDirectory(directory.resolve(directoryName).resolve("root"), "plus.pkg.Plus");
+
+		final List<File> directories = ClassFixtures.withClassPathRoots(
+			() -> FindClassExtensions.getDirectoriesFromResources("plus.pkg", true),
+			urlStyle.of(root));
+
+		assertEquals(List.of(root.resolve("plus").resolve("pkg")),
+			directories.stream().map(File::toPath).toList());
+	}
+
+	@Test
+	void getDirectoriesFromResources_givesNoDirectory_forAPackageInAJar() throws Exception
+	{
+		final Path jar = ClassFixtures.newJarOfClasses(directory.resolve("package.jar"),
+			"plus.pkg.Plus");
+
+		final List<File> directories = ClassFixtures.withClassPathRoots(
+			() -> FindClassExtensions.getDirectoriesFromResources("plus.pkg", true),
+			UrlStyle.ESCAPED.of(jar));
+
+		assertTrue(directories.stream().noneMatch(File::isDirectory), directories::toString);
 	}
 
 	@Test

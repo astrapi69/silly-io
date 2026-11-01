@@ -42,6 +42,7 @@ import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -52,6 +53,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
 import io.github.astrapi69.io.annotation.testdata.broken.FailingStaticInitializer;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPage;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPanel;
@@ -205,6 +207,20 @@ class AnnotationExtensionsTest
 	void getAllClasses_findsEveryClassOfThePackageAndItsSubPackages() throws Exception
 	{
 		assertEquals(ALL_SCANNED_CLASSES, AnnotationExtensions.getAllClasses(SCAN_PACKAGE));
+	}
+
+	@ParameterizedTest(name = "below \"{0}\", {1} URL")
+	@MethodSource("io.github.astrapi69.io.annotation.ClassFixtures#urlEscapedDirectories")
+	void getAllClasses_findsTheClassesOfADirectoryWhosePathHoldsACharacterThatAUrlEscapes(
+		final String directoryName, final UrlStyle urlStyle) throws Exception
+	{
+		final Path root = ClassFixtures
+			.newClassDirectory(directory.resolve(directoryName).resolve("root"), "plus.pkg.Plus");
+
+		final Set<Class<?>> classes = ClassFixtures.withClassPathRoots(
+			() -> AnnotationExtensions.getAllClasses("plus.pkg"), urlStyle.of(root));
+
+		assertEquals(List.of("plus.pkg.Plus"), classes.stream().map(Class::getName).toList());
 	}
 
 	@Test

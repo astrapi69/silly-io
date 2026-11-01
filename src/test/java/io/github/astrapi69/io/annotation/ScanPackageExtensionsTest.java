@@ -51,6 +51,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
+
 /**
  * {@link ScanPackageExtensions} lists the names of the classes of a package, from a directory of
  * the class path or from an archive. The directory cases scan the fixtures in {@code testdata.scan}
@@ -157,15 +159,30 @@ class ScanPackageExtensionsTest
 		final URL[] rootUrls = new URL[roots.length];
 		for (int index = 0; index < roots.length; index++)
 		{
-			rootUrls[index] = roots[index].toUri().toURL();
+			rootUrls[index] = UrlStyle.ESCAPED.of(roots[index]);
 		}
-		try (URLClassLoader rootsClassLoader = new URLClassLoader(rootUrls,
-			ClassLoader.getSystemClassLoader()))
-		{
-			return ClassFixtures.withContextClassLoader(rootsClassLoader,
-				() -> ScanPackageExtensions.scanClassNames(packageName, recursive,
-					qualifiedClassnames));
-		}
+		return ClassFixtures.withClassPathRoots(
+			() -> ScanPackageExtensions.scanClassNames(packageName, recursive, qualifiedClassnames),
+			rootUrls);
+	}
+
+	static Stream<Arguments> urlEscapedRoots()
+	{
+		return ClassFixtures.urlEscapedDirectories().flatMap(
+			escapedDirectory -> Stream.of(RootKind.values()).map(rootKind -> arguments(rootKind,
+				escapedDirectory.get()[0], escapedDirectory.get()[1])));
+	}
+
+	@ParameterizedTest(name = "a {0} below \"{1}\", {2} URL")
+	@MethodSource("urlEscapedRoots")
+	void scanClassNames_readsARootWhosePathHoldsACharacterThatAUrlEscapes(final RootKind rootKind,
+		final String directoryName, final UrlStyle urlStyle) throws Exception
+	{
+		final Path root = rootKind.write(directory.resolve(directoryName).resolve("root"),
+			"plus.pkg.Plus");
+
+		assertEquals(Set.of("plus.pkg.Plus"), ClassFixtures.withClassPathRoots(
+			() -> ScanPackageExtensions.scanClassNames("plus.pkg"), urlStyle.of(root)));
 	}
 
 	@ParameterizedTest(name = "recursive {0}, qualified names {1}")
@@ -317,6 +334,7 @@ class ScanPackageExtensionsTest
 			@Override
 			Path write(final Path location, final String... qualifiedClassNames) throws IOException
 			{
+				Files.createDirectories(location.getParent());
 				return ClassFixtures.newJarOfClasses(
 					location.resolveSibling(location.getFileName() + ".jar"), qualifiedClassNames);
 			}

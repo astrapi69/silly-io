@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -115,9 +114,10 @@ public final class ScanPackageExtensions
 	{
 		final Set<String> classNames = new LinkedHashSet<>();
 		final String packagePath = packageName.replace(".", "/");
-		String fileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-		fileName = fileName.substring(5, fileName.indexOf("!"));
-		try (JarFile jarFile = new JarFile(fileName))
+		final String archiveEntryUrl = packageURL.getFile();
+		final File archive = FindClassExtensions
+			.toFile(archiveEntryUrl.substring(0, archiveEntryUrl.indexOf("!")));
+		try (JarFile jarFile = new JarFile(archive))
 		{
 			final Enumeration<JarEntry> jarEntries = jarFile.entries();
 			while (jarEntries.hasMoreElements())
@@ -187,8 +187,7 @@ public final class ScanPackageExtensions
 	{
 		final Set<String> classNames = new LinkedHashSet<>();
 		final String packagePath = packageName.replace(".", "/");
-		final String folderName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-		final File folder = new File(folderName);
+		final File folder = FindClassExtensions.toFile(packageURL.toString());
 		// define the include filefilter for class files...
 		final FileFilter includeFileFilter = new ClassFileFilter();
 		final File[] files = folder.listFiles(includeFileFilter);

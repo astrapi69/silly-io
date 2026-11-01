@@ -24,10 +24,14 @@
  */
 package io.github.astrapi69.io.annotation;
 
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
 import java.io.IOException;
 import java.lang.classfile.ClassFile;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.ConstantDescs;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +40,9 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Builds classes that are on no class path, as class files or in a jar, so that a test can load
@@ -185,10 +192,90 @@ final class ClassFixtures
 		}
 	}
 
+	/**
+	 * Runs the given action with a context class loader that reads the given class path roots, in
+	 * the given order, and closes it afterwards
+	 *
+	 * @param <T>
+	 *            the type of the result
+	 * @param action
+	 *            the action to run
+	 * @param rootUrls
+	 *            the URLs of the class directories and jars of the class path
+	 * @return the result of the action
+	 * @throws Exception
+	 *             whatever the action throws
+	 */
+	static <T> T withClassPathRoots(final Callable<T> action, final URL... rootUrls)
+		throws Exception
+	{
+		try (URLClassLoader rootsClassLoader = new URLClassLoader(rootUrls,
+			ClassLoader.getSystemClassLoader()))
+		{
+			return withContextClassLoader(rootsClassLoader, action);
+		}
+	}
+
+	/**
+	 * The names of the directories, and the URL styles, below which a class path root is read: a
+	 * {@code +}, which a URL keeps and form decoding turns into a space, and a space and a percent
+	 * sign, which an escaped URL escapes
+	 *
+	 * @return the directory name and the URL style of each case
+	 */
+	static Stream<Arguments> urlEscapedDirectories()
+	{
+		return Stream.of(arguments("a+b", UrlStyle.ESCAPED), arguments("a b", UrlStyle.ESCAPED),
+			arguments("a%b", UrlStyle.ESCAPED), arguments("a+b", UrlStyle.UNESCAPED),
+			arguments("a b", UrlStyle.UNESCAPED));
+	}
+
 	private static String toClassName(final String entryName)
 	{
 		return entryName.substring(0, entryName.length() - CLASS_FILE_SUFFIX.length()).replace('/',
 			'.');
+	}
+
+	/**
+	 * The two ways a class path root is given to a class loader as a URL
+	 */
+	enum UrlStyle
+	{
+		/**
+		 * Escaped, as {@link Path#toUri()} builds it and the class loaders of the JDK read the
+		 * class path: a space is {@code %20}, a percent sign {@code %25}, a plus stays a plus
+		 */
+		ESCAPED {
+			@Override
+			URL of(final Path root) throws IOException
+			{
+				return root.toUri().toURL();
+			}
+		},
+
+		/**
+		 * Unescaped, as the deprecated {@link java.io.File#toURL()} builds it: a space stays a
+		 * space, so that the URL is no valid URI
+		 */
+		UNESCAPED {
+			@Override
+			@SuppressWarnings("deprecation")
+			URL of(final Path root) throws IOException
+			{
+				return root.toFile().toURL();
+			}
+		};
+
+		/**
+		 * Gives the URL of the given class path root in this style
+		 *
+		 * @param root
+		 *            the class directory or jar
+		 * @return the URL of the root
+		 * @throws IOException
+		 *             if no URL can be built for the root
+		 */
+		abstract URL of(Path root) throws IOException;
 	}
 
 	/**
