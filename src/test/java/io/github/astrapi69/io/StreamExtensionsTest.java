@@ -24,10 +24,13 @@
  */
 package io.github.astrapi69.io;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Named.named;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,13 +39,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.date.CreateDateExtensions;
@@ -57,6 +70,9 @@ public class StreamExtensionsTest extends BaseTestCase
 {
 	/** The file. */
 	final String propertiesFilename = "io/github/astrapi69/lang/resources.properties";
+
+	@TempDir
+	Path directory;
 
 	/**
 	 * Test get byte array input stream.
@@ -331,5 +347,100 @@ public class StreamExtensionsTest extends BaseTestCase
 		expected = "";
 		actual = StreamExtensions.toString(null);
 		assertEquals(actual, expected);
+	}
+
+	static Stream<Arguments> inputStreamOpeners()
+	{
+		return Stream.of(
+			arguments(named("a File",
+				(InputStreamOpener)file -> StreamExtensions.getInputStream(file.toFile()))),
+			arguments(named("a path name",
+				(InputStreamOpener)file -> StreamExtensions.getInputStream(file.toString()))),
+			arguments(named("a Path", (InputStreamOpener)StreamExtensions::getInputStream)));
+	}
+
+	static Stream<Arguments> outputStreamOpeners()
+	{
+		return Stream.of(
+			arguments(named("an existing File",
+				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toFile()))),
+			arguments(named("a path name",
+				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toString()))),
+			arguments(named("a Path", (OutputStreamOpener)StreamExtensions::getOutputStream)));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("inputStreamOpeners")
+	void getInputStream_readsTheBytesOfTheFile(final InputStreamOpener opener) throws IOException
+	{
+		final Path file = Files.write(directory.resolve("input.bin"), new byte[] { 0, 1, -2, 127 });
+
+		try (InputStream inputStream = opener.open(file))
+		{
+			assertArrayEquals(new byte[] { 0, 1, -2, 127 }, inputStream.readAllBytes());
+		}
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("outputStreamOpeners")
+	void getOutputStream_replacesTheContentOfTheFile(final OutputStreamOpener opener)
+		throws IOException
+	{
+		final Path file = Files.writeString(directory.resolve("output.txt"),
+			"an older and longer content");
+
+		try (OutputStream outputStream = opener.open(file))
+		{
+			outputStream.write("new".getBytes(StandardCharsets.UTF_8));
+		}
+
+		assertEquals("new", Files.readString(file));
+	}
+
+	@Test
+	void getByteArray_readsTheBytesOfAFile() throws IOException
+	{
+		final Path file = Files.write(directory.resolve("bytes.bin"), new byte[] { 9, 8, 7 });
+
+		assertArrayEquals(new byte[] { 9, 8, 7 }, StreamExtensions.getByteArray(file.toFile()));
+	}
+
+	@Test
+	void getReader_readsTheTextOfAFile() throws IOException
+	{
+		final Path file = Files.writeString(directory.resolve("text.txt"), "first line\nsecond");
+
+		try (Reader reader = StreamExtensions.getReader(file.toFile()))
+		{
+			final StringWriter content = new StringWriter();
+			reader.transferTo(content);
+			assertEquals("first line\nsecond", content.toString());
+		}
+	}
+
+	@Test
+	void writeReaderToWriter_copiesEveryCharacter() throws IOException
+	{
+		final StringWriter writer = new StringWriter();
+
+		StreamExtensions.writeReaderToWriter(new StringReader("copied\ttext\n"), writer);
+
+		assertEquals("copied\ttext\n", writer.toString());
+	}
+
+	/**
+	 * Opens an input stream on a file
+	 */
+	interface InputStreamOpener
+	{
+		InputStream open(Path file) throws IOException;
+	}
+
+	/**
+	 * Opens an output stream on a file
+	 */
+	interface OutputStreamOpener
+	{
+		OutputStream open(Path file) throws IOException;
 	}
 }
