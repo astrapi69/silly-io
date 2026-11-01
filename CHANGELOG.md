@@ -4,6 +4,13 @@
 
 ## Version 4.1-SNAPSHOT
 
+### Changed
+- Mutation testing with PIT 1.30.1 (`./gradlew pitest`, `gradle/mutation-testing.gradle`): the tests kill 371 of the 374 mutants, 99%, and the CI build fails below 97% (`mutationThreshold` in `build.gradle`; PIT rounds the score half up to a whole percent before it compares). The three survivors are equivalent: the `writeSerializedObjectToFile` methods return `true` or throw (#55), and `ByteArrayOutputStream.close` does nothing. The README's mutation score badge shows the score of `develop`, which CI publishes on the `gh-pages` branch from each push to it, also when the score fails the floor; a push to `master` publishes master's (#54).
+- The tests that PIT found weak check the `toString` of the filters, a file of another extension in `FileExtension.is`, the line separators `CommandLineExecutor` mirrors to the additional output stream, and that the scans give an empty set the caller can add to for a directory that does not exist. The parameterized filter tests build their filter in the test, so that every `of` factory counts as tested by the invocation that uses it, and the parameterized tests gained the negative, boundary and empty inputs they lacked (#54).
+- The tests write their files into a temporary directory, no longer into the working directory, where a run of PIT left them behind and the next build failed on them (#54).
+- The test runtime class path no longer holds this project's own jar: file-worker and jobj-copy depend on an older silly-io, which Gradle resolved to this project, beside the compiled classes that come first on the class path, so `test` and now `pitest` needed `mustRunAfter(jar)`. The workaround is gone with its cause (#54).
+- Unreachable code is gone, without a change in behaviour: `FindClassExtensions.forName` checked `Class.forName` for `null`, which it never returns; `ScanClassExtensions.normalizeSimpleClassName` handled a missing `.class` it had just checked for; `SerializedObjectExtensions.writeSerializedObjectToFile` flushed and closed a stream its try-with-resources closes (#54).
+
 ---
 
 ## Version 4.0

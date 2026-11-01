@@ -4,6 +4,7 @@
 
 [![Java CI with Gradle](https://github.com/astrapi69/silly-io/actions/workflows/gradle.yml/badge.svg)](https://github.com/astrapi69/silly-io/actions/workflows/gradle.yml)
 [![Coverage Status](https://codecov.io/gh/astrapi69/silly-io/branch/develop/graph/badge.svg)](https://codecov.io/gh/astrapi69/silly-io)
+[![Mutation Score](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fastrapi69%2Fsilly-io%2Fgh-pages%2Fbadges%2Fmutation-score-develop.json)](https://pitest.org/)
 [![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)
 [![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)
