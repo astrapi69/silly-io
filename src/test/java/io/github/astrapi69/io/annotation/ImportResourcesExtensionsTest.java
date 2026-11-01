@@ -24,18 +24,32 @@
  */
 package io.github.astrapi69.io.annotation;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Named.named;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.io.OtherPage;
+import io.github.astrapi69.io.annotation.testdata.scan.ScannedPage;
+import io.github.astrapi69.io.annotation.testdata.scan.ScannedPanel;
+import io.github.astrapi69.io.annotation.testdata.scan.sub.ScannedSubPage;
 
 /**
  * The unit test class for the class {@link ImportResourcesExtensions}.
@@ -130,5 +144,66 @@ public class ImportResourcesExtensionsTest
 	{
 		final BeanTester beanTester = new BeanTester();
 		beanTester.testBean(ImportResourcesExtensions.class);
+	}
+
+	static Stream<Arguments> joinedArrays()
+	{
+		final String[] first = { "a", "b" };
+		final String[] second = { "c" };
+		return Stream.of(
+			arguments(named("two arrays", first), second, new String[] { "a", "b", "c" }),
+			arguments(named("an empty first array", new String[0]), second, second),
+			arguments(named("no first array", null), second, second),
+			arguments(named("no second array", first), null, first),
+			arguments(named("no array at all", null), null, null));
+	}
+
+	private static List<String> resourceNames(final ImportResource[] importResources)
+	{
+		return Arrays.stream(importResources).map(ImportResource::resourceName).toList();
+	}
+
+	/**
+	 * The import resources of a package are collected from the classes of the package and its sub
+	 * packages that carry an {@link ImportResource} or an {@link ImportResources}, each array
+	 * sorted by the index of its resources
+	 *
+	 * @throws Exception
+	 *             if the package cannot be scanned
+	 */
+	@Test
+	void getImportResources_collectsTheResourcesOfEveryAnnotatedClass_sortedByIndex()
+		throws Exception
+	{
+		final Map<Class<?>, ImportResource[]> resources = ImportResourcesExtensions
+			.getImportResources(ScanPackageExtensionsTest.SCAN_PACKAGE);
+
+		assertEquals(Set.of(ScannedPage.class, ScannedPanel.class, ScannedSubPage.class),
+			resources.keySet());
+		assertEquals(List.of("ScannedPage.css"), resourceNames(resources.get(ScannedPage.class)));
+		assertEquals(List.of("ScannedPanel.css", "ScannedPanel.js"),
+			resourceNames(resources.get(ScannedPanel.class)));
+		assertEquals(List.of("ScannedSubPage.js"),
+			resourceNames(resources.get(ScannedSubPage.class)));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("joinedArrays")
+	void join_appendsTheSecondArrayToTheFirst(final String[] first, final String[] second,
+		final String[] expected)
+	{
+		assertArrayEquals(expected, ImportResourcesExtensions.join(first, second));
+	}
+
+	@Test
+	void join_throwsIllegalArgumentException_whenTheSecondArrayDoesNotFitIntoTheFirstsType()
+	{
+		final Object[] integers = new Integer[] { 1 };
+		final Object[] strings = new String[] { "a" };
+
+		final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+			() -> ImportResourcesExtensions.join(integers, strings));
+		assertEquals("Cannot store java.lang.String in an array of java.lang.Integer",
+			exception.getMessage());
 	}
 }

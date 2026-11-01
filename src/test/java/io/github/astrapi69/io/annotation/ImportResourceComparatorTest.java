@@ -27,12 +27,18 @@ package io.github.astrapi69.io.annotation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Named.named;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * The unit test class for the class {@link ImportResourceComparator}.
@@ -114,4 +120,33 @@ public class ImportResourceComparatorTest
 		assertEquals(expected, actual);
 	}
 
+	static Stream<Arguments> nullChecks()
+	{
+		final String text = "text";
+		return Stream.of(arguments(named("the same object", text), text, false, 0),
+			arguments(named("a null first object, null is smaller", null), text, false, -1),
+			arguments(named("a null first object, null is greater", null), text, true, 1),
+			arguments(named("a null second object, null is smaller", text), null, false, 1),
+			arguments(named("a null second object, null is greater", text), null, true, -1),
+			arguments(named("two different objects", text), "other", false, null),
+			arguments(named("two different objects, null is greater", text), "other", true, null));
+	}
+
+	@ParameterizedTest(name = "{0}: {3}")
+	@MethodSource("nullChecks")
+	void nullCheck_ordersNullByTheFlag_andLeavesTwoObjectsToTheComparison(final String object,
+		final String compareWithObject, final boolean nullIsGreaterThan, final Integer expected)
+	{
+		assertEquals(expected,
+			ImportResourceComparator.nullCheck(object, compareWithObject, nullIsGreaterThan));
+	}
+
+	@Test
+	void compare_ordersComparableObjectsNaturally_andNullFirst()
+	{
+		assertEquals(-1, Integer.signum(ImportResourceComparator.compare("a", "b")));
+		assertEquals(1, Integer.signum(ImportResourceComparator.compare("b", "a")));
+		assertEquals(-1, ImportResourceComparator.compare(null, "a"));
+		assertEquals(1, ImportResourceComparator.compare("a", null));
+	}
 }

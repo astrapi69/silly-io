@@ -8,6 +8,7 @@
 - Java 25 is the minimum, up from 17: the family builds, tests and releases on JDK 25 (astrapi69/mystic-crypt#234), so this release is 4.0 instead of 3.7 (#14).
 
 ### Changed
+- The tests cover 98.7% of the lines and 97.3% of the branches, up from 67.2% and 48.8%, and the build fails below 95% of the lines or 90% of the branches (`jacocoTestCoverageVerification` in `check`) (#20).
 - Built with Gradle 9.7.0. The grgit and hierynomus license plugins are gone: a release is tagged through git (`gradle/tagging.gradle`), and Spotless writes the license header from `src/main/resources/license-header.txt` (#14).
 - Releases go to Maven Central through the Central Portal, as in the rest of the family: the `com.gradleup.nmcp` plugin uploads, the maintainer releases each deployment in the Portal, and a `RELEASE-*` tag runs the new `publish.yml`, which signs with the signing subkey that the secret `GPG_KEY_ID` names. An upload leaves only from CI, a release only from its tag. The OSSRH staging endpoint this project published to is shut down; its settings are gone, among them the switch that held the checksums to md5 and sha1, and snapshots resolve from the Central Portal's snapshot repository (#13).
 - A test class that leaves no result fails the build (`gradle/test-results-complete.gradle`, #10), and `gradle/` is under version control (#3). The Gradle dependency graph goes to GitHub (#1).

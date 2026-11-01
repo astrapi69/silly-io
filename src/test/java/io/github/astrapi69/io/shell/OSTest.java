@@ -29,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,6 +42,24 @@ import org.junit.jupiter.params.provider.MethodSource;
  */
 public class OSTest
 {
+
+	/**
+	 * The operating system name before each case: several cases set {@code os.name}, and the test
+	 * classes that run after this one read it again
+	 */
+	private String operatingSystemName;
+
+	@BeforeEach
+	void keepTheOperatingSystemName()
+	{
+		operatingSystemName = System.getProperty("os.name");
+	}
+
+	@AfterEach
+	void restoreTheOperatingSystemName()
+	{
+		System.setProperty("os.name", operatingSystemName);
+	}
 
 	/**
 	 * Tests the {@link OS#get()} method to verify that it returns the correct OS enum constant
@@ -139,4 +159,38 @@ public class OSTest
 			"getOperatingSystem() should return the expected OS constant");
 	}
 
+	@ParameterizedTest(name = "{0}: {1}")
+	@CsvSource({ "Windows 11, WINDOWS, Windows, true, false, false",
+			"Linux, LINUX, Linux, false, false, true", "Mac OS X, MAC, Mac OS, false, true, false",
+			"Darwin, MAC, Mac OS, false, true, false",
+			"Unknown OS, OTHER, Other, false, false, false" })
+	void theQueries_followTheOperatingSystemNameProperty(final String osName, final OS expectedOS,
+		final String expectedName, final boolean windows, final boolean mac, final boolean linux)
+	{
+		System.setProperty("os.name", osName);
+
+		assertEquals(expectedOS, OS.get());
+		assertEquals(expectedName, OS.getOperatingSystemName());
+		assertEquals(windows, OS.isWindows());
+		assertEquals(mac, OS.isMac());
+		assertEquals(linux, OS.isLinux());
+	}
+
+	@ParameterizedTest(name = "{0}: {1}")
+	@CsvSource({ "Windows Server 2022, WINDOWS", "linux, LINUX", "darwin, MAC", "MacOS, MAC",
+			"Plan 9, OTHER" })
+	void getOperatingSystem_matchesTheGivenName_ratherThanTheProperty(final String osName,
+		final OS expected)
+	{
+		System.setProperty("os.name", "Unknown OS");
+
+		assertEquals(expected, OS.getOperatingSystem(osName));
+	}
+
+	@Test
+	void versionAndArchitecture_areTheSystemProperties()
+	{
+		assertEquals(System.getProperty("os.version"), OS.getOperatingSystemVersion());
+		assertEquals(System.getProperty("os.arch"), OS.getOperatingSystemArchitecture());
+	}
 }

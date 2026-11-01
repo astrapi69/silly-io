@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import io.github.astrapi69.lang.ClassExtensions;
 
@@ -112,5 +114,14 @@ class FileExtensionTest
 		actual = FileExtension.getZipExtensions();
 		expected = new HashSet<>(Arrays.asList(FileExtension.ZIP_EXTENSIONS));
 		assertEquals(expected, actual);
+	}
+
+	@ParameterizedTest(name = "{0} -> {1}")
+	@CsvSource(nullValues = "null", value = { ".txt, TXT", ".TXT, TXT", ".Class, CLASS",
+			".no-such-extension, null", "'', null", "null, null" })
+	void resolve_findsTheConstantIgnoringCase_orNull(final String fileExtension,
+		final FileExtension expected)
+	{
+		assertEquals(expected, FileExtension.resolve(fileExtension));
 	}
 }

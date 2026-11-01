@@ -25,14 +25,29 @@
 package io.github.astrapi69.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Named.named;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.NotSerializableException;
+import java.io.Serial;
 import java.io.Serializable;
+import java.io.StreamCorruptedException;
+import java.nio.file.Path;
 import java.util.Date;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.date.CreateDateExtensions;
@@ -44,6 +59,9 @@ import io.github.astrapi69.test.object.Person;
  */
 public class SerializerTest extends BaseTestCase
 {
+
+	@TempDir
+	static Path directory;
 
 	/**
 	 * Test method for {@link Serializer#toObject(String)}
@@ -157,4 +175,71 @@ public class SerializerTest extends BaseTestCase
 		beanTester.testBean(Serializer.class);
 	}
 
+	static Stream<Arguments> failingCalls()
+	{
+		final Executable readMissingFile = () -> Serializer
+			.readSerializedObjectFromFile(directory.resolve("missing.ser").toFile());
+		final Executable writeIntoADirectory = () -> Serializer.writeSerializedObjectToFile("text",
+			directory.toFile());
+		final Executable writeAnObjectThatIsNotSerializable = () -> Serializer
+			.writeSerializedObjectToFile(new Object(), directory.resolve("object.ser").toFile());
+		final Executable serializeNotSerializableContent = () -> Serializer
+			.toByteArray(new NotSerializableContent());
+		final Executable encodeNotSerializableContent = () -> Serializer
+			.toBase64EncodedString(new NotSerializableContent());
+		final Executable readBytesThatAreNoStream = () -> Serializer
+			.toObject(new byte[] { 1, 2, 3, 4 });
+		final Executable readBase64ThatIsNoStream = () -> Serializer.toObject("AQIDBA==");
+		final Executable readTextThatIsNoBase64 = () -> Serializer.toObject("not base64!");
+		return Stream.of(
+			arguments(named("reading a file that does not exist", readMissingFile),
+				FileNotFoundException.class),
+			arguments(named("writing into a directory", writeIntoADirectory),
+				FileNotFoundException.class),
+			arguments(named("writing an object that is not serializable",
+				writeAnObjectThatIsNotSerializable), NotSerializableException.class),
+			arguments(named("serializing content that is not serializable",
+				serializeNotSerializableContent), NotSerializableException.class),
+			arguments(
+				named("encoding content that is not serializable", encodeNotSerializableContent),
+				NotSerializableException.class),
+			arguments(named("reading bytes that are no object stream", readBytesThatAreNoStream),
+				StreamCorruptedException.class),
+			arguments(named("reading Base64 that is no object stream", readBase64ThatIsNoStream),
+				StreamCorruptedException.class),
+			arguments(named("reading text that is no Base64", readTextThatIsNoBase64),
+				IllegalArgumentException.class));
+	}
+
+	/**
+	 * Every method of {@link Serializer} turns the exception of {@link SerializedObjectExtensions}
+	 * into a {@link RuntimeException} that carries it as its cause
+	 *
+	 * @param call
+	 *            the call that fails
+	 * @param expectedCause
+	 *            the type of the exception the call fails with
+	 */
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("failingCalls")
+	void everyMethod_wrapsTheFailureIntoARuntimeException(final Executable call,
+		final Class<? extends Exception> expectedCause)
+	{
+		final RuntimeException exception = assertThrows(RuntimeException.class, call);
+
+		assertEquals(RuntimeException.class, exception.getClass());
+		assertInstanceOf(expectedCause, exception.getCause());
+	}
+
+	/**
+	 * A serializable class whose content is not serializable
+	 */
+	private static final class NotSerializableContent implements Serializable
+	{
+		@Serial
+		private static final long serialVersionUID = 1L;
+
+		@SuppressWarnings("unused")
+		private final Object content = new Object();
+	}
 }
