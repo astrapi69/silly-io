@@ -29,6 +29,7 @@
 - `ScanPackageExtensions.scanClassNames` and the `AnnotationExtensions` scans read a jar below a directory whose name holds a `!` (`/home/u/x!y/lib.jar`): the archive is split from the entry at the first `!/`, as `JarURLConnection` splits it, no longer at the first `!` (#43).
 - `ScanPackageExtensions.scanClassNames` no longer lists `package-info` and `module-info` as class names, from a directory as from a jar: neither class file holds a class a caller can load as a type (#45).
 - A recursive `ScanPackageExtensions.scanClassNames` reads a jar once, for the package and every sub package below it, no longer once more for every package above a sub package (a tree four packages deep was read eight times), and it finds the classes of a sub package whose directory entry the jar lacks (#46).
+- `FindClassExtensions.getDirectoriesFromResources` gives no entry for a package inside a jar, a war or an ear, instead of a `File` built from the archive URL that never exists, so a package that lies in archives only gives an empty list. The Javadoc says so (#48).
 - `LinuxShellExecutor.execute` runs the command in the execution directory through `ProcessBuilder.directory`, no longer through `cd <path>` in the command string, so a directory name can no longer run as a command (#22).
 - Only a leading `~`, alone or before a `/`, stands for the home directory (#31).
 - `OS.getOperatingSystem` returns `UNIX` for AIX, HP-UX, IRIX, Solaris, SunOS, FreeBSD, OpenBSD and NetBSD (#32).

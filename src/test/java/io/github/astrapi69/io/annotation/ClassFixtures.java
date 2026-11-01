@@ -34,12 +34,18 @@ import java.lang.classfile.ClassFile;
 import java.lang.classfile.attribute.RuntimeVisibleAnnotationsAttribute;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.ConstantDescs;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
@@ -355,6 +361,21 @@ final class ClassFixtures
 			arguments("a b", UrlStyle.UNESCAPED));
 	}
 
+	/**
+	 * Gives a URL of the given spec that is parsed but never opened, so that its protocol needs no
+	 * handler of its own, as the URL of a package in a war, an ear or a virtual file system
+	 *
+	 * @param spec
+	 *            the URL, as a string
+	 * @return the URL
+	 * @throws IOException
+	 *             if the spec is no valid URL
+	 */
+	static URL unopenedUrl(final String spec) throws IOException
+	{
+		return URL.of(URI.create(spec), new UnopenedStreamHandler());
+	}
+
 	private static String toClassName(final String entryName)
 	{
 		return entryName.substring(0, entryName.length() - CLASS_FILE_SUFFIX.length()).replace('/',
@@ -460,6 +481,51 @@ final class ClassFixtures
 		 *             if no URL can be built for the root
 		 */
 		abstract URL of(Path root) throws IOException;
+	}
+
+	/**
+	 * Answers the lookup of one package with a URL of its own, as the class loader of an
+	 * application server does for a package in a war, an ear or a virtual file system
+	 */
+	static final class PackageUrlClassLoader extends ClassLoader
+	{
+		private final String packagePath;
+
+		private final URL packageUrl;
+
+		/**
+		 * Creates a class loader that answers the lookup of the given package with the given URL
+		 *
+		 * @param packagePath
+		 *            the path of the package, with slashes
+		 * @param packageUrl
+		 *            the URL of the package
+		 */
+		PackageUrlClassLoader(final String packagePath, final URL packageUrl)
+		{
+			super(ClassLoader.getSystemClassLoader());
+			this.packagePath = packagePath;
+			this.packageUrl = packageUrl;
+		}
+
+		@Override
+		protected Enumeration<URL> findResources(final String name)
+		{
+			return Collections
+				.enumeration(packagePath.equals(name) ? List.of(packageUrl) : List.of());
+		}
+	}
+
+	/**
+	 * A stream handler for URLs that are only parsed, never opened
+	 */
+	private static final class UnopenedStreamHandler extends URLStreamHandler
+	{
+		@Override
+		protected URLConnection openConnection(final URL url) throws IOException
+		{
+			throw new IOException("the URL " + url + " is not opened in this test");
+		}
 	}
 
 	/**

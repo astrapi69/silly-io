@@ -76,13 +76,17 @@ public class FindClassExtensions
 	}
 
 	/**
-	 * Gets the directories from the given path.
+	 * Gets the directories from the given path, one for each root of the class path that holds it:
+	 * the directory of a resource of the protocol {@code file}, and the file that the decoded URL
+	 * path of a resource of another protocol names, as the virtual file system of an application
+	 * server gives one. A resource inside a jar, a war or an ear gives no entry: it is no directory
+	 * of the file system, so a package that lies in archives only gives an empty list.
 	 *
 	 * @param path
 	 *            the path
 	 * @param isPackage
 	 *            If the Flag is true than the given path is a package.
-	 * @return the directories from resources
+	 * @return the directories from resources, none for a resource inside an archive
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 *
@@ -104,7 +108,7 @@ public class FindClassExtensions
 			{
 				dirs.add(toFile(resource.toString()));
 			}
-			else
+			else if (!isArchive(resource))
 			{
 				dirs.add(new File(URLDecoder.decode(resource.getFile(), "UTF-8")));
 			}

@@ -30,15 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
@@ -416,10 +412,10 @@ class ScanPackageExtensionsTest
 		throws Exception
 	{
 		final Path jar = newScanJar(directory);
-		final URL packageUrl = URL.of(
-			URI.create(protocol + ":" + jar.toUri().toURL() + "!/generated/scan"),
-			new UnopenedStreamHandler());
-		final ClassLoader archiveClassLoader = new ArchiveClassLoader("generated/scan", packageUrl);
+		final URL packageUrl = ClassFixtures
+			.unopenedUrl(protocol + ":" + jar.toUri().toURL() + "!/generated/scan");
+		final ClassLoader archiveClassLoader = new ClassFixtures.PackageUrlClassLoader(
+			"generated/scan", packageUrl);
 
 		assertEquals(Set.of(JAR_PACKAGE + ".First", JAR_PACKAGE + ".Second"),
 			ClassFixtures.withContextClassLoader(archiveClassLoader,
@@ -447,40 +443,4 @@ class ScanPackageExtensionsTest
 		}
 	}
 
-	/**
-	 * Answers the lookup of one package with an archive URL, as the class loader of an application
-	 * server does for a package in a war or an ear
-	 */
-	private static final class ArchiveClassLoader extends ClassLoader
-	{
-		private final String packagePath;
-
-		private final URL packageUrl;
-
-		ArchiveClassLoader(final String packagePath, final URL packageUrl)
-		{
-			super(ClassLoader.getSystemClassLoader());
-			this.packagePath = packagePath;
-			this.packageUrl = packageUrl;
-		}
-
-		@Override
-		protected Enumeration<URL> findResources(final String name)
-		{
-			return Collections
-				.enumeration(packagePath.equals(name) ? List.of(packageUrl) : List.of());
-		}
-	}
-
-	/**
-	 * A stream handler for archive URLs that are only parsed, never opened
-	 */
-	private static final class UnopenedStreamHandler extends URLStreamHandler
-	{
-		@Override
-		protected URLConnection openConnection(final URL url) throws IOException
-		{
-			throw new IOException("the archive URL " + url + " is not opened in this test");
-		}
-	}
 }

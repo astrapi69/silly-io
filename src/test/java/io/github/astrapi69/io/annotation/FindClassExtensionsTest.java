@@ -28,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Named.named;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -35,13 +37,16 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.github.astrapi69.io.annotation.ClassFixtures.RootKind;
 import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPage;
 
@@ -114,7 +119,7 @@ class FindClassExtensionsTest
 	}
 
 	@Test
-	void getDirectoriesFromResources_givesNoDirectory_forAPackageInAJar() throws Exception
+	void getDirectoriesFromResources_givesNoEntry_forAPackageInAJar() throws Exception
 	{
 		final Path jar = ClassFixtures.newJarOfClasses(directory.resolve("package.jar"),
 			"plus.pkg.Plus");
@@ -123,7 +128,59 @@ class FindClassExtensionsTest
 			() -> FindClassExtensions.getDirectoriesFromResources("plus.pkg", true),
 			UrlStyle.ESCAPED.of(jar));
 
-		assertTrue(directories.stream().noneMatch(File::isDirectory), directories::toString);
+		assertEquals(List.of(), directories);
+	}
+
+	/**
+	 * The class path roots of the mixed cases, by the name each is written under, in their order
+	 *
+	 * @return the names of the roots, for each case
+	 */
+	static Stream<Arguments> mixedClassPaths()
+	{
+		return Stream.of(
+			arguments(named("the class directory first", List.of("classes", "lib.jar"))),
+			arguments(named("the jar first", List.of("lib.jar", "classes"))));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("mixedClassPaths")
+	void getDirectoriesFromResources_givesTheClassDirectoriesOnly_ofAClassPathWithAJar(
+		final List<String> rootNames) throws Exception
+	{
+		final Path classDirectory = RootKind.DIRECTORY.write(directory.resolve("classes"),
+			"mixed.pkg.InTheDirectory");
+		RootKind.JAR.write(directory.resolve("lib"), "mixed.pkg.InTheJar");
+		final URL[] roots = new URL[rootNames.size()];
+		for (int index = 0; index < roots.length; index++)
+		{
+			roots[index] = UrlStyle.ESCAPED.of(directory.resolve(rootNames.get(index)));
+		}
+
+		final List<File> directories = ClassFixtures.withClassPathRoots(
+			() -> FindClassExtensions.getDirectoriesFromResources("mixed.pkg", true), roots);
+
+		assertEquals(List.of(classDirectory.resolve("mixed").resolve("pkg")),
+			directories.stream().map(File::toPath).toList());
+	}
+
+	/**
+	 * A resource of a protocol that is neither a file nor an archive, as the virtual file system of
+	 * an application server gives one, gives the file of its URL path
+	 *
+	 * @throws Exception
+	 *             if the lookup fails
+	 */
+	@Test
+	void getDirectoriesFromResources_givesTheFileOfTheUrlPath_forAnotherProtocol() throws Exception
+	{
+		final File packageDirectory = directory.resolve("deployment").resolve("vfs").resolve("pkg")
+			.toFile();
+		final ClassLoader vfsClassLoader = new ClassFixtures.PackageUrlClassLoader("vfs/pkg",
+			ClassFixtures.unopenedUrl("vfs:" + packageDirectory.getPath()));
+
+		assertEquals(List.of(packageDirectory), ClassFixtures.withContextClassLoader(vfsClassLoader,
+			() -> FindClassExtensions.getDirectoriesFromResources("vfs.pkg", true)));
 	}
 
 	@Test
