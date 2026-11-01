@@ -28,13 +28,10 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -511,44 +508,6 @@ public final class AnnotationExtensions
 		throws ClassNotFoundException
 	{
 		return AnnotationExtensions.scanForAnnotatedClasses(directory, packagePath, null);
-	}
-
-	/**
-	 * Sets the annotation value for the given key of the given annotation to the given new value at
-	 * runtime.
-	 *
-	 * @param annotation
-	 *            the annotation
-	 * @param key
-	 *            the key
-	 * @param value
-	 *            the value to set
-	 * @return the old value or default value if not set
-	 * @throws NoSuchFieldException
-	 *             the no such field exception
-	 * @throws SecurityException
-	 *             Thrown if the security manager indicates a security violation.
-	 * @throws IllegalArgumentException
-	 *             the illegal argument exception
-	 * @throws IllegalAccessException
-	 *             the illegal access exception
-	 */
-	@SuppressWarnings("unchecked")
-	public static Object setAnnotationValue(final Annotation annotation, final String key,
-		final Object value) throws NoSuchFieldException, SecurityException,
-		IllegalArgumentException, IllegalAccessException
-	{
-		final Object invocationHandler = Proxy.getInvocationHandler(annotation);
-		final Field field = invocationHandler.getClass().getDeclaredField("memberValues");
-		field.setAccessible(true);
-		final Map<String, Object> memberValues = (Map<String, Object>)field.get(invocationHandler);
-		final Object oldValue = memberValues.get(key);
-		if (oldValue == null || oldValue.getClass() != value.getClass())
-		{
-			throw new IllegalArgumentException();
-		}
-		memberValues.put(key, value);
-		return oldValue;
 	}
 
 }

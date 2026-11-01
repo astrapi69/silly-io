@@ -36,12 +36,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,12 +145,6 @@ class AnnotationExtensionsTest
 			arguments(named("no annotation", null), Set.of(FailingStaticInitializer.class)));
 	}
 
-	static Stream<Arguments> invalidAnnotationValues()
-	{
-		return Stream.of(arguments(named("a value of another type", "resourceName"), 42),
-			arguments(named("a key the annotation does not have", "noSuchKey"), "value"));
-	}
-
 	static Stream<Arguments> rootScans()
 	{
 		final Set<String> everyClass = Set.of(ROOT_PACKAGE + ".Annotated", ROOT_PACKAGE + ".Plain",
@@ -213,12 +203,6 @@ class AnnotationExtensionsTest
 	private static File packageDirectory(final Class<?> classInThePackage) throws Exception
 	{
 		return Path.of(classInThePackage.getResource("").toURI()).toFile();
-	}
-
-	private static ImportResource newImportResource(final Map<String, Object> memberValues)
-	{
-		return (ImportResource)Proxy.newProxyInstance(ImportResource.class.getClassLoader(),
-			new Class<?>[] { ImportResource.class }, new MemberValuesHandler(memberValues));
 	}
 
 	@ParameterizedTest(name = "{0}: {1}")
@@ -343,34 +327,6 @@ class AnnotationExtensionsTest
 				"io.github.astrapi69.no.such", Set.of(Marker.class)));
 	}
 
-	@Test
-	void setAnnotationValue_replacesTheMemberValueAndReturnsTheOldOne() throws Exception
-	{
-		final Map<String, Object> memberValues = new HashMap<>();
-		memberValues.put("resourceName", "old.css");
-		final ImportResource importResource = newImportResource(memberValues);
-
-		final Object oldValue = AnnotationExtensions.setAnnotationValue(importResource,
-			"resourceName", "new.css");
-
-		assertEquals("old.css", oldValue);
-		assertEquals("new.css", importResource.resourceName());
-	}
-
-	@ParameterizedTest(name = "{0}")
-	@MethodSource("invalidAnnotationValues")
-	void setAnnotationValue_throwsIllegalArgumentException_andKeepsTheOldValue(final String key,
-		final Object value)
-	{
-		final Map<String, Object> memberValues = new HashMap<>();
-		memberValues.put("resourceName", "old.css");
-		final ImportResource importResource = newImportResource(memberValues);
-
-		assertThrows(IllegalArgumentException.class,
-			() -> AnnotationExtensions.setAnnotationValue(importResource, key, value));
-		assertEquals(Map.of("resourceName", "old.css"), memberValues);
-	}
-
 	/**
 	 * One of the package scans of {@link AnnotationExtensions}
 	 */
@@ -449,25 +405,5 @@ class AnnotationExtensionsTest
 
 	static class UnmarkedTypeChild extends UnmarkedType
 	{
-	}
-
-	/**
-	 * Keeps the member values of an annotation proxy in a map field named {@code memberValues}, as
-	 * the invocation handler of the JDK does
-	 */
-	private static final class MemberValuesHandler implements InvocationHandler
-	{
-		private final Map<String, Object> memberValues;
-
-		MemberValuesHandler(final Map<String, Object> memberValues)
-		{
-			this.memberValues = memberValues;
-		}
-
-		@Override
-		public Object invoke(final Object proxy, final Method method, final Object[] args)
-		{
-			return memberValues.get(method.getName());
-		}
 	}
 }
