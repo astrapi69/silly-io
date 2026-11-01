@@ -28,11 +28,12 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
  * The class {@link MultiplyExtensionsFilenameFilter} accepts File-objects that end with one of the
- * extension in the collection
+ * extension in the collection, in any case
  *
  * @version 1.0
  * @author Asterios Raptis
@@ -78,7 +79,7 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 		this.recursive = recursive;
 		for (final String extension : fileExtensions)
 		{
-			this.fileExtensions.add(extension.toLowerCase());
+			this.fileExtensions.add(extension.toLowerCase(Locale.ROOT));
 		}
 	}
 
@@ -120,9 +121,10 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 		{
 			return true;
 		}
+		final String filename = name.toLowerCase(Locale.ROOT);
 		for (final String extension : fileExtensions)
 		{
-			if (name.endsWith(extension))
+			if (filename.endsWith(extension))
 			{
 				return true;
 			}

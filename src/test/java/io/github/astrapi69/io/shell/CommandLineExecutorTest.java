@@ -24,16 +24,31 @@
  */
 package io.github.astrapi69.io.shell;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.meanbean.test.BeanTester;
 
 
@@ -44,6 +59,9 @@ public class CommandLineExecutorTest
 {
 
 	private static String executionPath;
+
+	@TempDir
+	Path directory;
 
 	@BeforeAll
 	static void setUp()
@@ -150,5 +168,116 @@ public class CommandLineExecutorTest
 	{
 		final BeanTester beanTester = new BeanTester();
 		beanTester.testBean(CommandLineExecutor.class);
+	}
+
+	static Stream<Arguments> shellsByOperatingSystem()
+	{
+		return Stream.of(arguments(OS.WINDOWS, List.of("cmd.exe", "/c", "echo", "Hello")),
+			arguments(OS.LINUX, List.of("/bin/bash", "-c", "echo", "Hello")),
+			arguments(OS.MAC, List.of("/bin/bash", "-c", "echo", "Hello")),
+			arguments(OS.UNIX, List.of("/bin/sh", "-c", "echo", "Hello")));
+	}
+
+	/**
+	 * Runs the given action while the system property {@code os.name} has the given value, and
+	 * restores the previous value afterwards
+	 */
+	private static void withOperatingSystemName(final String osName, final Executable action)
+		throws Throwable
+	{
+		final String previous = System.getProperty("os.name");
+		System.setProperty("os.name", osName);
+		try
+		{
+			action.execute();
+		}
+		finally
+		{
+			System.setProperty("os.name", previous);
+		}
+	}
+
+	private static boolean isCmdExeOnThePath()
+	{
+		final String path = System.getenv("PATH");
+		return path != null && Arrays.stream(path.split(File.pathSeparator))
+			.anyMatch(entry -> Files.isExecutable(Path.of(entry, "cmd.exe")));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("shellsByOperatingSystem")
+	void getCommandList_putsTheShellOfTheOperatingSystemBeforeTheCommands(final OS os,
+		final List<String> expected)
+	{
+		assertEquals(expected,
+			CommandLineExecutor.getCommandList(new String[] { "echo", "Hello" }, os));
+	}
+
+	@Test
+	void getCommandList_throwsUnsupportedOperationException_forAnOtherOperatingSystem()
+	{
+		final UnsupportedOperationException exception = assertThrows(
+			UnsupportedOperationException.class,
+			() -> CommandLineExecutor.getCommandList(new String[] { "echo" }, OS.OTHER));
+		assertEquals("Unsupported operating system: OTHER", exception.getMessage());
+	}
+
+	@Test
+	void execute_throwsUnsupportedOperationException_onAnOperatingSystemWithoutAKnownShell()
+		throws Throwable
+	{
+		withOperatingSystemName("Unknown OS", () -> {
+			final UnsupportedOperationException exception = assertThrows(
+				UnsupportedOperationException.class, () -> CommandLineExecutor
+					.execute(directory.toString(), "echo never", new ByteArrayOutputStream()));
+			assertEquals("Unsupported operating system: OTHER", exception.getMessage());
+		});
+	}
+
+	/**
+	 * The shell that runs the command, by the name of the operating system: bash on Linux and
+	 * macOS, and on the other Unix systems the {@code /bin/sh} that POSIX guarantees. The command
+	 * prints {@code $0}, which a shell started with {@code -c} and no further argument sets to the
+	 * path it was started with
+	 *
+	 * @return the operating system name and the path of its shell, for each case
+	 */
+	static Stream<Arguments> shellsByOperatingSystemName()
+	{
+		return Stream.of(arguments("FreeBSD", "/bin/sh"), arguments("OpenBSD", "/bin/sh"),
+			arguments("NetBSD", "/bin/sh"), arguments("SunOS", "/bin/sh"),
+			arguments("Linux", "/bin/bash"), arguments("Mac OS X", "/bin/bash"));
+	}
+
+	@ParameterizedTest(name = "{0}: {1}")
+	@MethodSource("shellsByOperatingSystemName")
+	void execute_runsTheCommandInTheShellOfTheOperatingSystem(final String osName,
+		final String shell) throws Throwable
+	{
+		assumeTrue(Files.isExecutable(Path.of(shell)), () -> "needs " + shell);
+
+		withOperatingSystemName(osName,
+			() -> assertEquals(shell + System.lineSeparator(), CommandLineExecutor
+				.execute(directory.toString(), "echo $0", new ByteArrayOutputStream())));
+	}
+
+	/**
+	 * On Windows the command goes to {@code cmd.exe}. Run on a system without it, so that starting
+	 * it fails and names the shell it tried
+	 *
+	 * @throws Throwable
+	 *             if the operating system name cannot be set
+	 */
+	@Test
+	void execute_handsTheCommandToCmdExe_onWindows() throws Throwable
+	{
+		assumeTrue(File.separatorChar == '/', "needs a system without cmd.exe");
+		assumeFalse(isCmdExeOnThePath(), "needs a system without cmd.exe on the PATH");
+
+		withOperatingSystemName("Windows 10", () -> {
+			final IOException exception = assertThrows(IOException.class, () -> CommandLineExecutor
+				.execute(directory.toString(), "echo never", new ByteArrayOutputStream()));
+			assertTrue(exception.getMessage().contains("\"cmd.exe\""), exception.getMessage());
+		});
 	}
 }

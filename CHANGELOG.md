@@ -2,6 +2,48 @@
 
 ---
 
+## Version 4.0
+
+### Breaking
+- Java 25 is the minimum, up from 17: the family builds, tests and releases on JDK 25 (astrapi69/mystic-crypt#234), so this release is 4.0 instead of 3.7 (#14).
+- `AnnotationExtensions.setAnnotationValue` is removed, without a deprecation first. Annotations are immutable by contract, and since JEP 403 (Java 17) the JDK internals it changed are strongly encapsulated: for every real annotation it threw `InaccessibleObjectException` unless the JVM ran with `--add-opens java.base/sun.reflect.annotation=ALL-UNNAMED`. No project of the family calls it (#29).
+- `ScanPackageExtensions.scanClassNames` is renamed `scanTopLevelClassNames`, both overloads: it lists top-level classes only, which the old name did not tell, after Guava's `ClassPath.getTopLevelClasses`. Its behaviour is unchanged (#47).
+- `ScanClassExtensions.scanClassNames` is renamed `scanTopLevelClasses`, both overloads: it loads top-level classes, not class names (#47).
+- `ScanClassExtensions.scanClassesFromPackage` is renamed `scanAllClassesFromPackage`, both overloads: it loads all classes of the directory, nested and anonymous ones included, after Guava's `ClassPath.getAllClasses` (#47).
+- `AnnotationExtensions.scanForAnnotatedClasses` is renamed `scanForAllAnnotatedClasses`: it finds all annotated classes of the directory, nested and anonymous ones included, as `getAllAnnotatedClasses` beside it does, whose name stays (#47).
+- `AnnotationExtensions.scanForAnnotatedClassesFromSet` is renamed `scanForAllAnnotatedClassesFromSet`, for the same reason (#47).
+- `AnnotationExtensions.scanForClasses` is renamed `scanForAllClasses`: it finds all classes of the directory, nested and anonymous ones included, as `getAllClasses` does (#47).
+
+### Changed
+- The tests cover 98.7% of the lines and 97.3% of the branches, up from 67.2% and 48.8%, and the build fails below 95% of the lines or 90% of the branches (`jacocoTestCoverageVerification` in `check`) (#20).
+- Built with Gradle 9.8.2 (#37). The grgit and hierynomus license plugins are gone: a release is tagged through git (`gradle/tagging.gradle`), and Spotless writes the license header from `src/main/resources/license-header.txt` (#14).
+- Releases go to Maven Central through the Central Portal, as in the rest of the family: the `com.gradleup.nmcp` plugin uploads, the maintainer releases each deployment in the Portal, and a `RELEASE-*` tag runs the new `publish.yml`, which signs with the signing subkey that the secret `GPG_KEY_ID` names. An upload leaves only from CI, a release only from its tag. The OSSRH staging endpoint this project published to is shut down; its settings are gone, among them the switch that held the checksums to md5 and sha1, and snapshots resolve from the Central Portal's snapshot repository (#13).
+- A test class that leaves no result fails the build (`gradle/test-results-complete.gradle`, #10), and `gradle/` is under version control (#3). The Gradle dependency graph goes to GitHub (#1).
+- Dependencies raised with versionCatalogUpdate, stable versions only: commons-io 2.22.0, junit-jupiter 6.1.3, silly-collection 28.2, and for the tests file-worker 19.1 and test-object 9.1 (#17).
+- The tests resolve jackson 2.22.4 through a constraint to jobj-copy 4.3, no longer the release candidate 2.16.0-rc1 that jobj-contract-verifier 5.2 brought, and the unused `hamcrest-all` is gone (#34). The 15 Dependabot alerts on that test-only jackson are closed as false alarms for users (#36).
+- The README names the family's funding channels instead of cryptocurrency addresses, and its dead badges and links are replaced (#5, #7).
+
+### Security
+- `LinuxShellExecutor.execute` runs the command in the execution directory through `ProcessBuilder.directory`, no longer through `cd <path>` in the command string, so a directory name can no longer run as a command (#22).
+
+### Fixed
+- `ScanPackageExtensions.scanTopLevelClassNames` lists the class files of the package only: no other jar entry (#23), no class of the parent package (#24), no sibling package that shares the prefix (#25), every root of the class path (#26), and top-level classes from a directory as from a jar (#33).
+- A class path whose directory holds a `+` or another character a URL escapes is read correctly; `URLDecoder` turned `+` into a space (#27).
+- `AnnotationExtensions.getAllClasses` and `getAllAnnotatedClasses` find the classes of a jar too (#28).
+- `ScanPackageExtensions.scanTopLevelClassNames` and the `AnnotationExtensions` scans read a jar below a directory whose name holds a `!` (`/home/u/x!y/lib.jar`): the archive is split from the entry at the first `!/`, as `JarURLConnection` splits it, no longer at the first `!` (#43).
+- `ScanPackageExtensions.scanTopLevelClassNames` no longer lists `package-info` and `module-info` as class names, from a directory as from a jar: neither class file holds a class a caller can load as a type (#45).
+- `AnnotationExtensions.getAllClasses`, `getAllAnnotatedClasses`, `getAllAnnotatedClassesFromSet`, `scanForAllClasses`, `scanForAllAnnotatedClasses`, `scanForAllAnnotatedClassesFromSet` and `ScanClassExtensions.scanAllClassesFromPackage` no longer load `package-info` and `module-info` as classes, from a class directory, and the `getAll` scans from a jar too, as the class-name scan of #45 lists neither. With `@Deprecated` on a package, `getAllAnnotatedClasses(.., Deprecated.class)` returned `[interface <package>.package-info]`; the annotations of a package are read with `Package.getAnnotation` (#50).
+- A recursive `ScanPackageExtensions.scanTopLevelClassNames` reads a jar once, for the package and every sub package below it, no longer once more for every package above a sub package (a tree four packages deep was read eight times), and it finds the classes of a sub package whose directory entry the jar lacks (#46).
+- `FindClassExtensions.getDirectoriesFromResources` gives no entry for a package inside a jar, a war or an ear, instead of a `File` built from the archive URL that never exists, so a package that lies in archives only gives an empty list. The Javadoc says so (#48).
+- Only a leading `~`, alone or before a `/`, stands for the home directory (#31).
+- `OS.getOperatingSystem` returns `UNIX` for AIX, HP-UX, IRIX, Solaris, SunOS, FreeBSD, OpenBSD and NetBSD (#32).
+- `CommandLineExecutor.execute` and `getCommandList` run `/bin/sh -c` for `UNIX`, the one shell POSIX guarantees, instead of `/bin/bash`, which a BSD keeps below `/usr/local/bin` or `/usr/pkg/bin` if at all; Linux and macOS keep `/bin/bash`. The Javadoc says that the command is a POSIX shell command on every system but Windows (#40).
+- `SuffixFileFilter`, `MultiplyExtensionsFileFilter` and `MultiplyExtensionsFilenameFilter` ignore the case of the extension and of the name (#30).
+- `SuffixFileFilter`, `MultiplyExtensionsFileFilter`, `MultiplyExtensionsFilenameFilter` and `SimpleFilenameFilter` lower-case with `Locale.ROOT` instead of the default locale: in the Turkish locale `.INI` lower-cased to `.ını`, with a dotless i, and matched no `config.ini` (#41).
+- `FilenameExtensions.getFilenamePrefix(File)` and `getFilenameSuffix(File)` look for the extension's dot in the file name only, no longer in the whole path. Below a directory whose name holds a dot (`~/.cache/x/data`), a file without an extension got the rest of the path as its suffix and a prefix that ended at that directory, so a rename built from the prefix moved the file out of its directory (#9).
+
+---
+
 ## Version 3.6
 
 ## [Unreleased]

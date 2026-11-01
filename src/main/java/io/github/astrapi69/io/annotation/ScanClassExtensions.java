@@ -139,36 +139,40 @@ public final class ScanClassExtensions
 	}
 
 	/**
-	 * Scan for classes in the given directory.
+	 * Loads all classes of the given directory, without its sub directories: every class file in
+	 * the directory counts, the ones of nested, local and anonymous classes included, and no
+	 * {@code package-info} or {@code module-info}, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
 	 * @param packagePath
 	 *            the package path
-	 * @return the list
+	 * @return all classes of the directory
 	 * @throws ClassNotFoundException
 	 *             occurs if a given class cannot be located by the specified class loader
 	 */
-	public static Set<Class<?>> scanClassesFromPackage(final File directory,
+	public static Set<Class<?>> scanAllClassesFromPackage(final File directory,
 		final String packagePath) throws ClassNotFoundException
 	{
-		return scanClassesFromPackage(directory, packagePath, false);
+		return scanAllClassesFromPackage(directory, packagePath, false);
 	}
 
 	/**
-	 * Scan recursive for classes in the given directory.
+	 * Loads all classes of the given directory, and of its sub directories when recursive: every
+	 * class file counts, the ones of nested, local and anonymous classes included, and no
+	 * {@code package-info} or {@code module-info}, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
 	 * @param packagePath
 	 *            the package path
 	 * @param recursive
-	 *            the recursive
-	 * @return the list
+	 *            the recursive flag
+	 * @return all classes of the directory
 	 * @throws ClassNotFoundException
 	 *             is thrown if a class in the given path cannot be located.
 	 */
-	public static Set<Class<?>> scanClassesFromPackage(final File directory,
+	public static Set<Class<?>> scanAllClassesFromPackage(final File directory,
 		final String packagePath, final boolean recursive) throws ClassNotFoundException
 	{
 		final Set<Class<?>> foundClasses = new LinkedHashSet<>();
@@ -186,11 +190,11 @@ public final class ScanClassExtensions
 			if (file.isDirectory() && recursive)
 			{
 				qualifiedClassname = packagePath + "." + file.getName();
-				foundClasses.addAll(scanClassesFromPackage(file, qualifiedClassname, recursive));
+				foundClasses.addAll(scanAllClassesFromPackage(file, qualifiedClassname, recursive));
 			}
 			else
 			{
-				if (!file.isDirectory())
+				if (!file.isDirectory() && ScanPackageExtensions.isTypeClassFile(file.getName()))
 				{
 					final String filename = FilenameExtensions.getFilenameWithoutExtension(file);
 					qualifiedClassname = packagePath + '.' + filename;
@@ -202,41 +206,45 @@ public final class ScanClassExtensions
 	}
 
 	/**
-	 * Scan class names from the given package name.
+	 * Loads the top-level classes of the given package, without its sub packages, as
+	 * {@link ScanPackageExtensions#scanTopLevelClassNames(String, boolean, boolean)} lists them: no
+	 * nested, local or anonymous class, and no {@code package-info} or {@code module-info}.
 	 *
 	 * @param packageName
 	 *            the package name
-	 * @return the Set with all class found in the given package name.
+	 * @return the top-level classes of the package
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 * @throws ClassNotFoundException
 	 *             is thrown if a class in the given path cannot be located.
 	 */
-	public static Set<Class<?>> scanClassNames(final String packageName)
+	public static Set<Class<?>> scanTopLevelClasses(final String packageName)
 		throws IOException, ClassNotFoundException
 	{
-		return scanClassNames(packageName, false);
+		return scanTopLevelClasses(packageName, false);
 	}
 
 	/**
-	 * Scan class names from the given package name.
+	 * Loads the top-level classes of the given package, and of its sub packages when recursive, as
+	 * {@link ScanPackageExtensions#scanTopLevelClassNames(String, boolean, boolean)} lists them: no
+	 * nested, local or anonymous class, and no {@code package-info} or {@code module-info}.
 	 *
 	 * @param packageName
 	 *            the package name
 	 * @param recursive
 	 *            the recursive flag
-	 * @return the Set with all class found in the given package name.
+	 * @return the top-level classes of the package
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 * @throws ClassNotFoundException
 	 *             is thrown if a class in the given path cannot be located.
 	 */
-	public static Set<Class<?>> scanClassNames(final String packageName, final boolean recursive)
-		throws IOException, ClassNotFoundException
+	public static Set<Class<?>> scanTopLevelClasses(final String packageName,
+		final boolean recursive) throws IOException, ClassNotFoundException
 	{
 		final Set<Class<?>> foundClasses = new LinkedHashSet<>();
-		final Set<String> qualifiedClassnames = ScanPackageExtensions.scanClassNames(packageName,
-			recursive, true);
+		final Set<String> qualifiedClassnames = ScanPackageExtensions
+			.scanTopLevelClassNames(packageName, recursive, true);
 		for (final String qualifiedClassname : qualifiedClassnames)
 		{
 			foundClasses.add(FindClassExtensions.forName(qualifiedClassname));

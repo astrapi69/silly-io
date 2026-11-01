@@ -25,6 +25,8 @@
 package io.github.astrapi69.io.shell;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Factory class for creating and configuring instances of {@link ProcessBuilder} with specified
@@ -42,7 +44,8 @@ public class ProcessBuilderFactory
 	 * @param shellFlag
 	 *            the shell flag to be used, such as '-c' for bash
 	 * @param executionPath
-	 *            the path where the command will be executed
+	 *            the path where the command will be executed, a leading {@code ~} alone or before a
+	 *            separator stands for the home directory
 	 * @param command
 	 *            the command to be executed
 	 * @return a configured {@link ProcessBuilder} instance
@@ -52,9 +55,9 @@ public class ProcessBuilderFactory
 	public static ProcessBuilder newProcessBuilder(String shellPath, String shellFlag,
 		String executionPath, String command)
 	{
-		if (executionPath.contains("~"))
+		if (startsWithTheHomeDirectory(executionPath))
 		{
-			executionPath = executionPath.replace("~", System.getProperty("user.home"));
+			executionPath = System.getProperty("user.home") + executionPath.substring(1);
 		}
 		File executionDirectory = new File(executionPath);
 		if (!executionDirectory.exists())
@@ -66,5 +69,22 @@ public class ProcessBuilderFactory
 		processBuilder.directory(executionDirectory);
 		processBuilder.command(shellPath, shellFlag, command);
 		return processBuilder;
+	}
+
+	/**
+	 * A {@code ~} stands for the home directory only where it starts the path, alone or before a
+	 * separator; anywhere else, as in {@code backup~1}, it is a character of a name
+	 *
+	 * @param executionPath
+	 *            the path to check
+	 * @return true if the path starts with the home directory
+	 */
+	private static boolean startsWithTheHomeDirectory(String executionPath)
+	{
+		// the first name of a relative path, split by the platform's own path syntax, so no branch
+		// is
+		// reachable on one platform only
+		Path path = Paths.get(executionPath);
+		return !path.isAbsolute() && path.getName(0).toString().equals("~");
 	}
 }

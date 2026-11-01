@@ -28,14 +28,16 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Proxy;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
+import io.github.astrapi69.io.file.FileExtension;
 import io.github.astrapi69.io.file.FilenameExtensions;
 import io.github.astrapi69.io.file.filter.ClassFileFilter;
 
@@ -50,7 +52,18 @@ public final class AnnotationExtensions
 
 	/**
 	 * Gets all annotated classes that belongs from the given package path and the given annotation
-	 * class.
+	 * class, from the class directories and the archives of the class path. All classes count:
+	 * every class file of the package and of its sub packages, the ones of nested, local and
+	 * anonymous classes included. Without an annotation class every class is returned. A
+	 * {@code package-info} and a {@code module-info} are skipped: they hold no class, and the
+	 * annotations of a package are read with {@link Package#getAnnotation(Class)}.
+	 * <p>
+	 * A jar must contain its directory entries, which {@code jar}, Gradle and Maven write by
+	 * default: the class loader finds a jar through the directory entry of the package, so the
+	 * classes of a jar without one are not found. A jar below a directory whose name ends in
+	 * {@code !}, as in {@code x!/lib.jar}, cannot be read: its URL is split at the first
+	 * {@code !/}, as {@link java.net.JarURLConnection} splits it, which ends the path of the
+	 * archive at {@code x}.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -74,14 +87,32 @@ public final class AnnotationExtensions
 		final Set<Class<?>> classes = new HashSet<>();
 		for (final File directory : directories)
 		{
-			classes.addAll(scanForAnnotatedClasses(directory, packagePath, annotationClass));
+			classes.addAll(scanForAllAnnotatedClasses(directory, packagePath, annotationClass));
+		}
+		for (final Class<?> archiveClass : scanArchivesForClasses(packagePath))
+		{
+			if (annotationClass == null || archiveClass.isAnnotationPresent(annotationClass))
+			{
+				classes.add(archiveClass);
+			}
 		}
 		return classes;
 	}
 
 	/**
 	 * Gets all annotated classes that belongs from the given package path and the given list with
-	 * annotation classes.
+	 * annotation classes, from the class directories and the archives of the class path. All
+	 * classes count: every class file of the package and of its sub packages, the ones of nested,
+	 * local and anonymous classes included. Without an annotation set every class is returned. A
+	 * {@code package-info} and a {@code module-info} are skipped: they hold no class, and the
+	 * annotations of a package are read with {@link Package#getAnnotation(Class)}.
+	 * <p>
+	 * A jar must contain its directory entries, which {@code jar}, Gradle and Maven write by
+	 * default: the class loader finds a jar through the directory entry of the package, so the
+	 * classes of a jar without one are not found. A jar below a directory whose name ends in
+	 * {@code !}, as in {@code x!/lib.jar}, cannot be read: its URL is split at the first
+	 * {@code !/}, as {@link java.net.JarURLConnection} splits it, which ends the path of the
+	 * archive at {@code x}.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -107,14 +138,105 @@ public final class AnnotationExtensions
 		final Set<Class<?>> classes = new HashSet<>();
 		for (final File directory : directories)
 		{
-			classes
-				.addAll(scanForAnnotatedClassesFromSet(directory, packagePath, annotationClasses));
+			classes.addAll(
+				scanForAllAnnotatedClassesFromSet(directory, packagePath, annotationClasses));
+		}
+		for (final Class<?> archiveClass : scanArchivesForClasses(packagePath))
+		{
+			resolveAnnotatedClasses(annotationClasses, classes, archiveClass);
 		}
 		return classes;
 	}
 
 	/**
-	 * Gets all the classes from the class loader that belongs to the given package path.
+	 * Loads the classes of the given package and of its sub packages from every archive of the
+	 * class path that holds the package. Every class file counts, the ones of nested classes too,
+	 * and no {@code package-info} or {@code module-info}, as the scan of a class directory reads
+	 * them
+	 *
+	 * @param packagePath
+	 *            the package path
+	 * @return the classes found in the archives
+	 * @throws ClassNotFoundException
+	 *             occurs if a given class cannot be located by the specified class loader
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static Set<Class<?>> scanArchivesForClasses(final String packagePath)
+		throws ClassNotFoundException, IOException
+	{
+		final String packageEntry = packagePath.replace('.', '/');
+		final Set<Class<?>> archiveClasses = new HashSet<>();
+		for (final URL resource : FindClassExtensions.getResources(packageEntry))
+		{
+			if (FindClassExtensions.isArchive(resource))
+			{
+				for (final String className : archiveClassNames(resource, packageEntry + "/"))
+				{
+					archiveClasses.add(loadClass(className));
+				}
+			}
+		}
+		return archiveClasses;
+	}
+
+	/**
+	 * Lists the binary names of the classes whose class files lie below the given entry prefix of
+	 * the archive the given URL points into, without a {@code package-info} or a
+	 * {@code module-info}
+	 *
+	 * @param archiveEntryUrl
+	 *            the URL of the package in a jar, a war or an ear
+	 * @param entryPrefix
+	 *            the path of the package in the archive, with its trailing slash
+	 * @return the binary names of the classes
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static Set<String> archiveClassNames(final URL archiveEntryUrl,
+		final String entryPrefix) throws IOException
+	{
+		final String classFileSuffix = FileExtension.CLASS.getExtension();
+		try (JarFile jarFile = new JarFile(FindClassExtensions.toArchiveFile(archiveEntryUrl)))
+		{
+			return jarFile.stream().map(JarEntry::getName)
+				.filter(entryName -> entryName.startsWith(entryPrefix)
+					&& entryName.endsWith(classFileSuffix)
+					&& ScanPackageExtensions
+						.isTypeClassFile(entryName.substring(entryName.lastIndexOf('/') + 1)))
+				.map(entryName -> FilenameExtensions.getFilenameWithoutExtension(entryName)
+					.replace('/', '.'))
+				.collect(Collectors.toSet());
+		}
+	}
+
+	/**
+	 * Loads the class of the given name as the scan of a class directory does: initialized, or
+	 * without initializing it when its initialization fails
+	 *
+	 * @param qualifiedClassname
+	 *            the binary name of the class
+	 * @return the class
+	 * @throws ClassNotFoundException
+	 *             occurs if the class cannot be located by the specified class loader
+	 */
+	private static Class<?> loadClass(final String qualifiedClassname) throws ClassNotFoundException
+	{
+		try
+		{
+			return FindClassExtensions.forName(qualifiedClassname);
+		}
+		catch (final LinkageError linkageError)
+		{
+			return Class.forName(qualifiedClassname, false, ClassloaderExtensions.getClassLoader());
+		}
+	}
+
+	/**
+	 * Gets all the classes from the class loader that belongs to the given package path: every
+	 * class file of the package and of its sub packages, the ones of nested, local and anonymous
+	 * classes included, and no {@code package-info} or {@code module-info}. A jar is read as
+	 * {@link #getAllAnnotatedClasses(String, Class)} reads it.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -136,7 +258,10 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Gets all the classes from the class loader that belongs to the given package path.
+	 * Gets all the classes from the class loader that belongs to the given package path and carry
+	 * one of the given annotations, as {@link #getAllAnnotatedClassesFromSet(String, Set)} does:
+	 * nested, local and anonymous classes included, and no {@code package-info} or
+	 * {@code module-info}.
 	 *
 	 * @param packagePath
 	 *            the package path
@@ -251,7 +376,10 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Scan recursive for annotated classes in the given directory.
+	 * Scan recursive for all annotated classes in the given directory: every class file below the
+	 * given directory counts, the ones of nested, local and anonymous classes included. Without an
+	 * annotation class every class is returned. A {@code package-info} and a {@code module-info}
+	 * are skipped, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
@@ -263,7 +391,7 @@ public final class AnnotationExtensions
 	 * @throws ClassNotFoundException
 	 *             occurs if a given class cannot be located by the specified class loader
 	 */
-	public static Set<Class<?>> scanForAnnotatedClasses(final File directory,
+	public static Set<Class<?>> scanForAllAnnotatedClasses(final File directory,
 		final String packagePath, final Class<? extends Annotation> annotationClass)
 		throws ClassNotFoundException
 	{
@@ -282,9 +410,9 @@ public final class AnnotationExtensions
 			{
 				qualifiedClassname = packagePath + "." + file.getName();
 				foundClasses
-					.addAll(scanForAnnotatedClasses(file, qualifiedClassname, annotationClass));
+					.addAll(scanForAllAnnotatedClasses(file, qualifiedClassname, annotationClass));
 			}
-			else
+			else if (ScanPackageExtensions.isTypeClassFile(file.getName()))
 			{
 				final String filename = FilenameExtensions.getFilenameWithoutExtension(file);
 				qualifiedClassname = packagePath + '.' + filename;
@@ -327,7 +455,10 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Scan recursive for annotated classes in the given directory.
+	 * Scan recursive for all annotated classes in the given directory: every class file below the
+	 * given directory counts, the ones of nested, local and anonymous classes included. Without an
+	 * annotation set every class is returned. A {@code package-info} and a {@code module-info} are
+	 * skipped, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
@@ -339,7 +470,7 @@ public final class AnnotationExtensions
 	 * @throws ClassNotFoundException
 	 *             occurs if a given class cannot be located by the specified class loader
 	 */
-	public static Set<Class<?>> scanForAnnotatedClassesFromSet(final File directory,
+	public static Set<Class<?>> scanForAllAnnotatedClassesFromSet(final File directory,
 		final String packagePath, final Set<Class<? extends Annotation>> annotationClasses)
 		throws ClassNotFoundException
 	{
@@ -358,9 +489,9 @@ public final class AnnotationExtensions
 			{
 				qualifiedClassname = packagePath + "." + file.getName();
 				foundClasses.addAll(
-					scanForAnnotatedClassesFromSet(file, qualifiedClassname, annotationClasses));
+					scanForAllAnnotatedClassesFromSet(file, qualifiedClassname, annotationClasses));
 			}
-			else
+			else if (ScanPackageExtensions.isTypeClassFile(file.getName()))
 			{
 				final String filename = FilenameExtensions.getFilenameWithoutExtension(file);
 				qualifiedClassname = packagePath + '.' + filename;
@@ -401,7 +532,9 @@ public final class AnnotationExtensions
 	}
 
 	/**
-	 * Scan recursive for classes in the given directory.
+	 * Scan recursive for all classes in the given directory: every class file below the given
+	 * directory counts, the ones of nested, local and anonymous classes included, and no
+	 * {@code package-info} or {@code module-info}, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
@@ -411,48 +544,10 @@ public final class AnnotationExtensions
 	 * @throws ClassNotFoundException
 	 *             occurs if a given class cannot be located by the specified class loader
 	 */
-	public static Set<Class<?>> scanForClasses(final File directory, final String packagePath)
+	public static Set<Class<?>> scanForAllClasses(final File directory, final String packagePath)
 		throws ClassNotFoundException
 	{
-		return AnnotationExtensions.scanForAnnotatedClasses(directory, packagePath, null);
-	}
-
-	/**
-	 * Sets the annotation value for the given key of the given annotation to the given new value at
-	 * runtime.
-	 *
-	 * @param annotation
-	 *            the annotation
-	 * @param key
-	 *            the key
-	 * @param value
-	 *            the value to set
-	 * @return the old value or default value if not set
-	 * @throws NoSuchFieldException
-	 *             the no such field exception
-	 * @throws SecurityException
-	 *             Thrown if the security manager indicates a security violation.
-	 * @throws IllegalArgumentException
-	 *             the illegal argument exception
-	 * @throws IllegalAccessException
-	 *             the illegal access exception
-	 */
-	@SuppressWarnings("unchecked")
-	public static Object setAnnotationValue(final Annotation annotation, final String key,
-		final Object value) throws NoSuchFieldException, SecurityException,
-		IllegalArgumentException, IllegalAccessException
-	{
-		final Object invocationHandler = Proxy.getInvocationHandler(annotation);
-		final Field field = invocationHandler.getClass().getDeclaredField("memberValues");
-		field.setAccessible(true);
-		final Map<String, Object> memberValues = (Map<String, Object>)field.get(invocationHandler);
-		final Object oldValue = memberValues.get(key);
-		if (oldValue == null || oldValue.getClass() != value.getClass())
-		{
-			throw new IllegalArgumentException();
-		}
-		memberValues.put(key, value);
-		return oldValue;
+		return AnnotationExtensions.scanForAllAnnotatedClasses(directory, packagePath, null);
 	}
 
 }

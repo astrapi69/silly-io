@@ -172,18 +172,14 @@ public final class FilenameExtensions
 	 */
 	public static String getFilenamePrefix(final File file)
 	{
-		final String fileName = file.getAbsolutePath();
-		final int filenameEndIndex = fileName.lastIndexOf(".");
-		final String fileNamePrefix;
-		if (filenameEndIndex != -1)
+		final String absolutePath = file.getAbsolutePath();
+		final String name = file.getName();
+		final int extensionStart = name.lastIndexOf(".");
+		if (extensionStart == -1)
 		{
-			fileNamePrefix = fileName.substring(0, filenameEndIndex);
+			return absolutePath;
 		}
-		else
-		{
-			fileNamePrefix = fileName;
-		}
-		return fileNamePrefix;
+		return absolutePath.substring(0, absolutePath.length() - (name.length() - extensionStart));
 	}
 
 	/**
@@ -254,11 +250,11 @@ public final class FilenameExtensions
 		String fileNameSuffix = null;
 		if (!file.isDirectory())
 		{
-			final String fileName = file.getAbsolutePath();
-			final int filenameEndIndex = fileName.lastIndexOf(".");
-			if (filenameEndIndex != -1)
+			final String name = file.getName();
+			final int extensionStart = name.lastIndexOf(".");
+			if (extensionStart != -1)
 			{
-				fileNameSuffix = fileName.substring(filenameEndIndex, fileName.length());
+				fileNameSuffix = name.substring(extensionStart);
 			}
 		}
 		return fileNameSuffix;

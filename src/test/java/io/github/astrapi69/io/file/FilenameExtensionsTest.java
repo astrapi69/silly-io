@@ -29,11 +29,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.meanbean.test.BeanTester;
@@ -506,5 +510,13 @@ public class FilenameExtensionsTest
 		beanTester.testBean(FilenameExtensions.class);
 	}
 
+	@Test
+	void getFilenameWithNewExtension_isNull_forADirectory(@TempDir final Path root)
+		throws IOException
+	{
+		final File directory = Files.createDirectory(root.resolve("folder.d")).toFile();
 
+		assertNull(FilenameExtensions.getFilenameWithNewExtension(directory, ".txt"));
+		assertNull(FilenameExtensions.getFilenameWithNewExtension(directory, FileExtension.TXT));
+	}
 }

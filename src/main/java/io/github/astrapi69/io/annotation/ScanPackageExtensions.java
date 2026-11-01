@@ -28,13 +28,13 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import io.github.astrapi69.io.file.FileExtension;
 import io.github.astrapi69.io.file.FilenameExtensions;
 import io.github.astrapi69.io.file.filter.ClassFileFilter;
 
@@ -45,21 +45,39 @@ public final class ScanPackageExtensions
 {
 
 	/**
-	 * Scan class names from the given package name.
+	 * The names of the class files that hold no class: the annotations and the documentation of a
+	 * package, and the declaration of a module
+	 */
+	private static final Set<String> NO_CLASS_NAMES = Set.of("package-info", "module-info");
+
+	/**
+	 * Scans the qualified names of the top-level classes of the given package, without its sub
+	 * packages, as {@link #scanTopLevelClassNames(String, boolean, boolean)} lists them.
 	 *
 	 * @param packageName
 	 *            the package name
-	 * @return the list
+	 * @return the qualified names of the top-level classes
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static Set<String> scanClassNames(final String packageName) throws IOException
+	public static Set<String> scanTopLevelClassNames(final String packageName) throws IOException
 	{
-		return scanClassNames(packageName, false, true);
+		return scanTopLevelClassNames(packageName, false, true);
 	}
 
 	/**
-	 * Scan class names from the given package name.
+	 * Scans the names of the top-level classes of the given package, in every directory and archive
+	 * of the class path that holds the package. Only top-level classes are listed: a class file
+	 * whose name holds a {@code $}, as the class files of nested and anonymous classes do, is
+	 * skipped, and so are a {@code package-info.class} and a {@code module-info.class}, which hold
+	 * no class.
+	 * <p>
+	 * A jar must contain its directory entries, which {@code jar}, Gradle and Maven write by
+	 * default: the class loader finds a jar through the directory entry of the package, so the
+	 * classes of a jar without one are not found. A jar below a directory whose name ends in
+	 * {@code !}, as in {@code x!/lib.jar}, cannot be read: its URL is split at the first
+	 * {@code !/}, as {@link java.net.JarURLConnection} splits it, which ends the path of the
+	 * archive at {@code x}.
 	 *
 	 * @param packageName
 	 *            the package name
@@ -67,105 +85,73 @@ public final class ScanPackageExtensions
 	 *            the recursive flag
 	 * @param qualifiedClassnames
 	 *            the flag if the class names should be qualified class names.
-	 * @return the list
+	 * @return the names of the top-level classes
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static Set<String> scanClassNames(final String packageName, final boolean recursive,
-		final boolean qualifiedClassnames) throws IOException
+	public static Set<String> scanTopLevelClassNames(final String packageName,
+		final boolean recursive, final boolean qualifiedClassnames) throws IOException
 	{
-		final ClassLoader classLoader = ClassloaderExtensions.getClassLoader();
 		final Set<String> classNames = new LinkedHashSet<>();
 		final String packagePath = packageName.replace(".", "/");
-		final URL packageURL = classLoader.getResource(packagePath);
-		if (packageURL == null)
+		for (final URL packageURL : FindClassExtensions.getResources(packagePath))
 		{
-			return classNames;
+			if (FindClassExtensions.isArchive(packageURL))
+			{
+				classNames
+					.addAll(scanArchive(packageURL, packageName, recursive, qualifiedClassnames));
+			}
+			else
+			{
+				classNames
+					.addAll(scanDirectory(packageURL, packageName, recursive, qualifiedClassnames));
+			}
 		}
-		if (packageURL.getProtocol().equals("jar") || packageURL.getProtocol().equals("ear")
-			|| packageURL.getProtocol().equals("war"))
+		return classNames;
+	}
+
+	/**
+	 * Scans the top-level class names of the given package in the archive that the given URL points
+	 * into. The archive is read once: a recursive scan takes the class files of the sub packages
+	 * from the same pass over its entries, whether the archive holds directory entries for them or
+	 * not
+	 *
+	 * @param packageURL
+	 *            the URL of the package in a jar, a war or an ear
+	 * @param packageName
+	 *            the package name
+	 * @param recursive
+	 *            the recursive flag
+	 * @param qualifiedClassnames
+	 *            the flag if the class names should be qualified class names
+	 * @return the class names found in the archive
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static Set<String> scanArchive(final URL packageURL, final String packageName,
+		final boolean recursive, final boolean qualifiedClassnames) throws IOException
+	{
+		final Set<String> classNames = new LinkedHashSet<>();
+		final String entryPrefix = packageName.replace(".", "/") + "/";
+		try (JarFile jarFile = new JarFile(FindClassExtensions.toArchiveFile(packageURL)))
 		{
-			String fileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-			fileName = fileName.substring(5, fileName.indexOf("!"));
-			final JarFile jarFile = new JarFile(fileName);
 			final Enumeration<JarEntry> jarEntries = jarFile.entries();
 			while (jarEntries.hasMoreElements())
 			{
-				final JarEntry entry = jarEntries.nextElement();
-				final boolean isDir = entry.isDirectory();
-				final String entryName = entry.getName();
-				if (isDir && recursive)
+				final String entryName = jarEntries.nextElement().getName();
+				if (entryName.startsWith(entryPrefix)
+					&& entryName.endsWith(FileExtension.CLASS.getExtension()))
 				{
-					String entryPath = entryName.replace("/", ".");
-					if (lastCharacter(entryPath).equals("."))
+					final String relativePath = entryName.substring(entryPrefix.length());
+					final String classFileName = relativePath
+						.substring(relativePath.lastIndexOf('/') + 1);
+					if ((recursive || !relativePath.contains("/"))
+						&& isTopLevelClassFile(classFileName))
 					{
-						entryPath = entryPath.substring(0, entryPath.length() - 1);
-					}
-					if (entryPath.startsWith(packageName)
-						&& packageName.length() < entryPath.length())
-					{
-						classNames
-							.addAll(scanClassNames(entryPath, recursive, qualifiedClassnames));
-					}
-				}
-				else
-				{
-					if (!isDir && entryName.startsWith(packagePath))
-					{
-						final String relativePath = entryName.substring(packagePath.length() + 1,
-							entryName.length());
-						if (!relativePath.contains("/") && !relativePath.contains("$"))
-						{
-							final String filenameWithoutExtension = FilenameExtensions
-								.getFilenameWithoutExtension(entryName.replace("/", "."));
-							if (qualifiedClassnames)
-							{
-								classNames.add(filenameWithoutExtension);
-							}
-							else
-							{
-								final String className = FilenameExtensions
-									.getFilenameWithoutExtension(relativePath);
-								classNames.add(className);
-							}
-						}
-					}
-				}
-			}
-			jarFile.close();
-		}
-		else
-		{
-			final String folderName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-			final File folder = new File(folderName);
-			// define the include filefilter for class files...
-			final FileFilter includeFileFilter = new ClassFileFilter();
-			final File[] files = folder.listFiles(includeFileFilter);
-			for (final File file : files)
-			{
-				String qualifiedClassname = null;
-				if (file.isDirectory() && recursive)
-				{
-					qualifiedClassname = packagePath + "." + file.getName();
-					classNames
-						.addAll(scanClassNames(qualifiedClassname, recursive, qualifiedClassnames));
-				}
-				else
-				{
-					if (!file.isDirectory())
-					{
-						final String filenameWithoutExtension = FilenameExtensions
-							.getFilenameWithoutExtension(file);
-
-						if (qualifiedClassnames)
-						{
-							qualifiedClassname = packageName + '.' + filenameWithoutExtension;
-							classNames.add(qualifiedClassname.replace("/", "."));
-						}
-						else
-						{
-							classNames.add(filenameWithoutExtension);
-						}
+						classNames.add(qualifiedClassnames
+							? FilenameExtensions.getFilenameWithoutExtension(entryName).replace('/',
+								'.')
+							: FilenameExtensions.getFilenameWithoutExtension(classFileName));
 					}
 				}
 			}
@@ -173,13 +159,91 @@ public final class ScanPackageExtensions
 		return classNames;
 	}
 
-	private static String lastCharacter(final String str)
+	/**
+	 * Scans the top-level class names of the given package in the class directory the given URL
+	 * points to
+	 *
+	 * @param packageURL
+	 *            the URL of the package directory
+	 * @param packageName
+	 *            the package name
+	 * @param recursive
+	 *            the recursive flag
+	 * @param qualifiedClassnames
+	 *            the flag if the class names should be qualified class names
+	 * @return the class names found in the directory
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static Set<String> scanDirectory(final URL packageURL, final String packageName,
+		final boolean recursive, final boolean qualifiedClassnames) throws IOException
 	{
-		if (str == null || str.length() == 0)
+		final Set<String> classNames = new LinkedHashSet<>();
+		final String packagePath = packageName.replace(".", "/");
+		final File folder = FindClassExtensions.toFile(packageURL.toString());
+		// define the include filefilter for class files...
+		final FileFilter includeFileFilter = new ClassFileFilter();
+		final File[] files = folder.listFiles(includeFileFilter);
+		for (final File file : files)
 		{
-			return "";
+			String qualifiedClassname = null;
+			if (file.isDirectory() && recursive)
+			{
+				qualifiedClassname = packagePath + "." + file.getName();
+				classNames.addAll(
+					scanTopLevelClassNames(qualifiedClassname, recursive, qualifiedClassnames));
+			}
+			else
+			{
+				if (!file.isDirectory() && isTopLevelClassFile(file.getName()))
+				{
+					final String filenameWithoutExtension = FilenameExtensions
+						.getFilenameWithoutExtension(file);
+
+					if (qualifiedClassnames)
+					{
+						qualifiedClassname = packageName + '.' + filenameWithoutExtension;
+						classNames.add(qualifiedClassname.replace("/", "."));
+					}
+					else
+					{
+						classNames.add(filenameWithoutExtension);
+					}
+				}
+			}
 		}
-		return str.substring(str.length() - 1);
+		return classNames;
+	}
+
+	/**
+	 * Checks if the class file of the given name holds a top-level class: a name with a {@code $},
+	 * as the class files of nested and anonymous classes have, is none, and neither is a
+	 * {@code package-info.class} or a {@code module-info.class} ({@link #isTypeClassFile(String)})
+	 *
+	 * @param classFileName
+	 *            the name of the class file, without its directory
+	 * @return true if the class file holds a top-level class
+	 */
+	private static boolean isTopLevelClassFile(final String classFileName)
+	{
+		final String className = FilenameExtensions.getFilenameWithoutExtension(classFileName);
+		return !className.contains("$") && isTypeClassFile(classFileName);
+	}
+
+	/**
+	 * Checks if the class file of the given name holds a class or an interface, nested or not: a
+	 * {@code package-info.class} holds the annotations and the documentation of a package and a
+	 * {@code module-info.class} the declaration of a module, so neither does, although a class
+	 * loader loads a {@code package-info.class} as an interface. The scans for classes skip both
+	 *
+	 * @param classFileName
+	 *            the name of the class file, without its directory
+	 * @return true if the class file holds a class or an interface
+	 */
+	static boolean isTypeClassFile(final String classFileName)
+	{
+		return !NO_CLASS_NAMES
+			.contains(FilenameExtensions.getFilenameWithoutExtension(classFileName));
 	}
 
 }
