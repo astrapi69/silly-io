@@ -25,7 +25,6 @@
 package io.github.astrapi69.io.shell;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,7 +44,9 @@ public final class LinuxShellExecutor
 	}
 
 	/**
-	 * Executes the given command in the given execution path with the given executable
+	 * Executes the given command in the given execution path with the given executable. The
+	 * execution path becomes the working directory of the process, it is never part of the command
+	 * the shell reads
 	 *
 	 * @param shellPath
 	 *            the path where the shell executable locates
@@ -63,20 +64,8 @@ public final class LinuxShellExecutor
 	public static String execute(String shellPath, String executionPath, String command)
 		throws IOException, InterruptedException
 	{
-		if (executionPath.contains("~"))
-		{
-			executionPath = executionPath.replace("~", System.getProperty("user.home"));
-		}
-		File executionDirectory = new File(executionPath);
-		if (!executionDirectory.exists())
-		{
-			throw new IllegalArgumentException("Execution directory does not exist");
-		}
-
-		String cdToExecutionPath = "cd " + executionPath;
-		String commands = cdToExecutionPath + " && " + command;
-		ProcessBuilder processBuilder = new ProcessBuilder();
-		processBuilder.command(shellPath, "-c", commands);
+		ProcessBuilder processBuilder = ProcessBuilderFactory.newProcessBuilder(shellPath, "-c",
+			executionPath, command);
 
 		Process process = processBuilder.start();
 		StringBuilder stringBuilder = new StringBuilder();

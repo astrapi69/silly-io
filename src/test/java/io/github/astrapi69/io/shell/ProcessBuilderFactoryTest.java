@@ -28,11 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * {@link ProcessBuilderFactory} builds a process for a command in a shell, run in an existing
@@ -64,6 +68,36 @@ class ProcessBuilderFactoryTest
 	}
 
 	@Test
+	void newProcessBuilder_replacesALeadingTildeBeforeASlashWithTheHomeDirectory()
+	{
+		final ProcessBuilder processBuilder = ProcessBuilderFactory.newProcessBuilder("/bin/bash",
+			"-c", "~/", "echo hello");
+
+		assertEquals(new File(System.getProperty("user.home")), processBuilder.directory());
+	}
+
+	/**
+	 * Only a {@code ~} that starts the path, alone or before a separator, stands for the home
+	 * directory; one anywhere else is a character of a name
+	 *
+	 * @param name
+	 *            the name of an existing directory with a {@code ~} in it
+	 * @throws IOException
+	 *             if the directory cannot be created
+	 */
+	@ParameterizedTest(name = "{0}")
+	@ValueSource(strings = { "backup~1", "~notes", "trailing~", "two~~tildes" })
+	void newProcessBuilder_keepsATildeThatDoesNotStartThePath(final String name) throws IOException
+	{
+		final Path existing = Files.createDirectory(directory.resolve(name));
+
+		final ProcessBuilder processBuilder = ProcessBuilderFactory.newProcessBuilder("/bin/bash",
+			"-c", existing.toString(), "echo hello");
+
+		assertEquals(existing.toFile(), processBuilder.directory());
+	}
+
+	@Test
 	void newProcessBuilder_throwsIllegalArgumentException_forADirectoryThatDoesNotExist()
 	{
 		final String missing = directory.resolve("missing").toString();
@@ -71,5 +105,18 @@ class ProcessBuilderFactoryTest
 		final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
 			() -> ProcessBuilderFactory.newProcessBuilder("/bin/bash", "-c", missing, "echo"));
 		assertEquals("Execution directory does not exist", exception.getMessage());
+	}
+
+	/**
+	 * A relative path without a leading {@code ~} is the directory it names, relative to the
+	 * working directory, as {@link File} reads it (#31)
+	 */
+	@Test
+	void newProcessBuilder_keepsARelativePathWithoutALeadingTilde()
+	{
+		final ProcessBuilder processBuilder = ProcessBuilderFactory.newProcessBuilder("/bin/bash",
+			"-c", ".", "echo hello");
+
+		assertEquals(new File("."), processBuilder.directory());
 	}
 }

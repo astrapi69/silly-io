@@ -27,7 +27,6 @@ package io.github.astrapi69.io.shell;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
@@ -36,6 +35,8 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.file.search.PathFinder;
@@ -107,6 +108,32 @@ public class LinuxShellExecutorTest
 			LinuxShellExecutor.execute("bash", directory.toString(), "pwd"));
 	}
 
+	/**
+	 * The name of the execution directory is data, never shell code: the command runs in the
+	 * directory, and nothing the name holds runs. A {@code $(echo ..)} that ran would move the
+	 * command to the parent directory, a {@code ; echo injected} that ran would print
+	 * {@code injected}
+	 *
+	 * @param name
+	 *            the name of the execution directory
+	 * @throws IOException
+	 *             if the directory cannot be created
+	 * @throws InterruptedException
+	 *             if the thread is interrupted while the command runs
+	 */
+	@ParameterizedTest(name = "{0}")
+	@ValueSource(strings = { "with space", "quote ' in it", "semicolon; echo injected",
+			"$(echo ..)", "`echo ..`" })
+	void execute_runsTheCommandInTheExecutionDirectory_andNothingItsNameHolds(final String name)
+		throws IOException, InterruptedException
+	{
+		assumeBash();
+		final Path executionDirectory = Files.createDirectory(directory.resolve(name));
+
+		assertEquals(executionDirectory + System.lineSeparator(),
+			LinuxShellExecutor.execute("bash", executionDirectory.toString(), "pwd"));
+	}
+
 	@Test
 	void execute_appendsTheExitCode_whenTheCommandFails() throws IOException, InterruptedException
 	{
@@ -120,9 +147,18 @@ public class LinuxShellExecutorTest
 	{
 		assumeBash();
 		final String home = System.getProperty("user.home");
-		assumeFalse(home.contains(" "), "the home directory is passed to cd unquoted");
 
 		assertEquals(home + System.lineSeparator(), LinuxShellExecutor.execute("bash", "~", "pwd"));
+	}
+
+	@Test
+	void execute_keepsATildeThatDoesNotStartThePath() throws IOException, InterruptedException
+	{
+		assumeBash();
+		final Path existing = Files.createDirectory(directory.resolve("backup~1"));
+
+		assertEquals(existing + System.lineSeparator(),
+			LinuxShellExecutor.execute("bash", existing.toString(), "pwd"));
 	}
 
 	@Test

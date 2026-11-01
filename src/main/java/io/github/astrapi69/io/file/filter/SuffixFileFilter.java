@@ -28,7 +28,8 @@ import java.io.File;
 import java.io.FileFilter;
 
 /**
- * The class {@link SuffixFileFilter} accepts File-objects that match to the given suffix
+ * The class {@link SuffixFileFilter} accepts File-objects that match to the given suffix, in any
+ * case
  *
  * @author Asterios Raptis
  * @version 1.0
@@ -126,7 +127,7 @@ public class SuffixFileFilter implements FileFilter
 			return true;
 		}
 		final String fileName = file.getName().toLowerCase();
-		return fileName.endsWith(suffix);
+		return fileName.endsWith(suffix.toLowerCase());
 	}
 
 	/**
