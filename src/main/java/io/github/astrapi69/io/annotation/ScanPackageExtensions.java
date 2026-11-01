@@ -112,7 +112,7 @@ public final class ScanPackageExtensions
 				else
 				{
 					if (!isDir && entryName.endsWith(FileExtension.CLASS.getExtension())
-						&& entryName.startsWith(packagePath))
+						&& entryName.startsWith(packagePath + "/"))
 					{
 						final String relativePath = entryName.substring(packagePath.length() + 1,
 							entryName.length());

@@ -24,6 +24,7 @@
  */
 package io.github.astrapi69.io.annotation;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -186,6 +187,19 @@ class ScanPackageExtensionsTest
 		assertEquals(Set.of(DEFECT_PACKAGE + ".A"),
 			scanJar(DEFECT_PACKAGE, false, true, entryNames));
 		assertEquals(Set.of("A"), scanJar(DEFECT_PACKAGE, false, false, entryNames));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@ValueSource(strings = { "gen/pkgX.class", "gen/pkg.class", "gen/pkg_1.class" })
+	void scanClassNames_skipsTheClassesOfTheParentPackageOfAJarPackage(final String parentEntry)
+		throws Exception
+	{
+		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", parentEntry };
+
+		assertAll(
+			() -> assertEquals(Set.of(DEFECT_PACKAGE + ".A"),
+				scanJar(DEFECT_PACKAGE, false, true, entryNames)),
+			() -> assertEquals(Set.of("A"), scanJar(DEFECT_PACKAGE, false, false, entryNames)));
 	}
 
 	@ParameterizedTest(name = "{0} archive")
