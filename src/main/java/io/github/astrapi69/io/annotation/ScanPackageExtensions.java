@@ -102,7 +102,9 @@ public final class ScanPackageExtensions
 	}
 
 	/**
-	 * Scans the class names of the given package in the archive that the given URL points into
+	 * Scans the class names of the given package in the archive that the given URL points into. The
+	 * archive is read once: a recursive scan takes the class files of the sub packages from the
+	 * same pass over its entries, whether the archive holds directory entries for them or not
 	 *
 	 * @param packageURL
 	 *            the URL of the package in a jar, a war or an ear
@@ -120,50 +122,26 @@ public final class ScanPackageExtensions
 		final boolean recursive, final boolean qualifiedClassnames) throws IOException
 	{
 		final Set<String> classNames = new LinkedHashSet<>();
-		final String packagePath = packageName.replace(".", "/");
+		final String entryPrefix = packageName.replace(".", "/") + "/";
 		try (JarFile jarFile = new JarFile(FindClassExtensions.toArchiveFile(packageURL)))
 		{
 			final Enumeration<JarEntry> jarEntries = jarFile.entries();
 			while (jarEntries.hasMoreElements())
 			{
-				final JarEntry entry = jarEntries.nextElement();
-				final boolean isDir = entry.isDirectory();
-				final String entryName = entry.getName();
-				if (isDir && recursive)
+				final String entryName = jarEntries.nextElement().getName();
+				if (entryName.startsWith(entryPrefix)
+					&& entryName.endsWith(FileExtension.CLASS.getExtension()))
 				{
-					String entryPath = entryName.replace("/", ".");
-					if (lastCharacter(entryPath).equals("."))
+					final String relativePath = entryName.substring(entryPrefix.length());
+					final String classFileName = relativePath
+						.substring(relativePath.lastIndexOf('/') + 1);
+					if ((recursive || !relativePath.contains("/"))
+						&& isTopLevelClassFile(classFileName))
 					{
-						entryPath = entryPath.substring(0, entryPath.length() - 1);
-					}
-					if (entryPath.startsWith(packageName + "."))
-					{
-						classNames
-							.addAll(scanClassNames(entryPath, recursive, qualifiedClassnames));
-					}
-				}
-				else
-				{
-					if (!isDir && entryName.endsWith(FileExtension.CLASS.getExtension())
-						&& entryName.startsWith(packagePath + "/"))
-					{
-						final String relativePath = entryName.substring(packagePath.length() + 1,
-							entryName.length());
-						if (!relativePath.contains("/") && isTopLevelClassFile(relativePath))
-						{
-							final String filenameWithoutExtension = FilenameExtensions
-								.getFilenameWithoutExtension(entryName.replace("/", "."));
-							if (qualifiedClassnames)
-							{
-								classNames.add(filenameWithoutExtension);
-							}
-							else
-							{
-								final String className = FilenameExtensions
-									.getFilenameWithoutExtension(relativePath);
-								classNames.add(className);
-							}
-						}
+						classNames.add(qualifiedClassnames
+							? FilenameExtensions.getFilenameWithoutExtension(entryName).replace('/',
+								'.')
+							: FilenameExtensions.getFilenameWithoutExtension(classFileName));
 					}
 				}
 			}
@@ -239,15 +217,6 @@ public final class ScanPackageExtensions
 	{
 		final String className = FilenameExtensions.getFilenameWithoutExtension(classFileName);
 		return !className.contains("$") && !NO_CLASS_NAMES.contains(className);
-	}
-
-	private static String lastCharacter(final String str)
-	{
-		if (str == null || str.length() == 0)
-		{
-			return "";
-		}
-		return str.substring(str.length() - 1);
 	}
 
 }

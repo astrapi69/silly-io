@@ -37,6 +37,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -362,6 +363,52 @@ class ScanPackageExtensionsTest
 			() -> assertEquals(Set.of("Info", "Deep"), scanRoots("info.pkg", true, false, root)));
 	}
 
+	/**
+	 * A recursive scan reads a jar once, for its package and every sub package below it: each
+	 * lookup of a package that finds the jar is followed by one read of the whole jar, so the scan
+	 * asks the class loader for the scanned package only
+	 *
+	 * @throws Exception
+	 *             if the jar cannot be written or the scan fails
+	 */
+	@Test
+	void scanClassNames_readsAJarOnce_whenRecursive() throws Exception
+	{
+		final Path jar = RootKind.JAR.write(directory.resolve("root"), "tree.pkg.Top",
+			"tree.pkg.a.A", "tree.pkg.a.b.B", "tree.pkg.a.b.c.C");
+		final List<String> lookups = new ArrayList<>();
+		try (URLClassLoader recordingClassLoader = new LookupRecordingClassLoader(
+			UrlStyle.ESCAPED.of(jar), lookups))
+		{
+			final Set<String> classNames = ClassFixtures.withContextClassLoader(
+				recordingClassLoader,
+				() -> ScanPackageExtensions.scanClassNames("tree.pkg", true, true));
+
+			assertEquals(
+				Set.of("tree.pkg.Top", "tree.pkg.a.A", "tree.pkg.a.b.B", "tree.pkg.a.b.c.C"),
+				classNames);
+			assertEquals(List.of("tree/pkg"), lookups);
+		}
+	}
+
+	@Test
+	void scanClassNames_listsTheSubPackagesOfAJar_withoutTheirDirectoryEntries_whenRecursive()
+		throws Exception
+	{
+		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", "gen/pkg/sub/B.class",
+				"gen/pkg/sub/deep/C.class" };
+
+		assertAll(
+			() -> assertEquals(
+				Set.of(DEFECT_PACKAGE + ".A", DEFECT_PACKAGE + ".sub.B",
+					DEFECT_PACKAGE + ".sub.deep.C"),
+				scanJar(DEFECT_PACKAGE, true, true, entryNames)),
+			() -> assertEquals(Set.of("A", "B", "C"),
+				scanJar(DEFECT_PACKAGE, true, false, entryNames)),
+			() -> assertEquals(Set.of(DEFECT_PACKAGE + ".A"),
+				scanJar(DEFECT_PACKAGE, false, true, entryNames)));
+	}
+
 	@ParameterizedTest(name = "{0} archive")
 	@ValueSource(strings = { "war", "ear" })
 	void scanClassNames_readsAPackageInAWarOrEarArchiveLikeAJar(final String protocol)
@@ -376,6 +423,27 @@ class ScanPackageExtensionsTest
 		assertEquals(Set.of(JAR_PACKAGE + ".First", JAR_PACKAGE + ".Second"),
 			ClassFixtures.withContextClassLoader(archiveClassLoader,
 				() -> ScanPackageExtensions.scanClassNames(JAR_PACKAGE)));
+	}
+
+	/**
+	 * Reads one class path root and records the name of every resource lookup it is asked for
+	 */
+	private static final class LookupRecordingClassLoader extends URLClassLoader
+	{
+		private final List<String> lookups;
+
+		LookupRecordingClassLoader(final URL rootUrl, final List<String> lookups)
+		{
+			super(new URL[] { rootUrl }, ClassLoader.getSystemClassLoader());
+			this.lookups = lookups;
+		}
+
+		@Override
+		public Enumeration<URL> getResources(final String name) throws IOException
+		{
+			lookups.add(name);
+			return super.getResources(name);
+		}
 	}
 
 	/**
