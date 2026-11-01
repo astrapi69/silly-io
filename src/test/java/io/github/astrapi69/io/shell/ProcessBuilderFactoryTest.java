@@ -106,4 +106,17 @@ class ProcessBuilderFactoryTest
 			() -> ProcessBuilderFactory.newProcessBuilder("/bin/bash", "-c", missing, "echo"));
 		assertEquals("Execution directory does not exist", exception.getMessage());
 	}
+
+	/**
+	 * A relative path without a leading {@code ~} is the directory it names, relative to the
+	 * working directory, as {@link File} reads it (#31)
+	 */
+	@Test
+	void newProcessBuilder_keepsARelativePathWithoutALeadingTilde()
+	{
+		final ProcessBuilder processBuilder = ProcessBuilderFactory.newProcessBuilder("/bin/bash",
+			"-c", ".", "echo hello");
+
+		assertEquals(new File("."), processBuilder.directory());
+	}
 }

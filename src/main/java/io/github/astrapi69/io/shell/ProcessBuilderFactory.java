@@ -25,6 +25,8 @@
 package io.github.astrapi69.io.shell;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Factory class for creating and configuring instances of {@link ProcessBuilder} with specified
@@ -79,7 +81,10 @@ public class ProcessBuilderFactory
 	 */
 	private static boolean startsWithTheHomeDirectory(String executionPath)
 	{
-		return executionPath.equals("~") || executionPath.startsWith("~/")
-			|| executionPath.startsWith("~" + File.separator);
+		// the first name of a relative path, split by the platform's own path syntax, so no branch
+		// is
+		// reachable on one platform only
+		Path path = Paths.get(executionPath);
+		return !path.isAbsolute() && path.getName(0).toString().equals("~");
 	}
 }
