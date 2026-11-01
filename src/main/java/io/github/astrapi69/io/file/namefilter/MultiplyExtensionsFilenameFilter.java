@@ -32,7 +32,7 @@ import java.util.Objects;
 
 /**
  * The class {@link MultiplyExtensionsFilenameFilter} accepts File-objects that end with one of the
- * extension in the collection
+ * extension in the collection, in any case
  *
  * @version 1.0
  * @author Asterios Raptis
@@ -120,9 +120,10 @@ public class MultiplyExtensionsFilenameFilter implements FilenameFilter
 		{
 			return true;
 		}
+		final String filename = name.toLowerCase();
 		for (final String extension : fileExtensions)
 		{
-			if (name.endsWith(extension))
+			if (filename.endsWith(extension))
 			{
 				return true;
 			}

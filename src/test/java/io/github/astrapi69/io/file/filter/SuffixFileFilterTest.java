@@ -29,9 +29,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import io.github.astrapi69.lang.ClassExtensions;
 
@@ -40,6 +46,33 @@ import io.github.astrapi69.lang.ClassExtensions;
  */
 public class SuffixFileFilterTest
 {
+
+	@TempDir
+	Path directory;
+
+	/**
+	 * The suffix and the file name are compared without their case, as {@code SimpleFilenameFilter}
+	 * compares them
+	 *
+	 * @param suffix
+	 *            the suffix of the filter
+	 * @param name
+	 *            the name of the file
+	 * @param expected
+	 *            whether the filter accepts the file
+	 * @throws IOException
+	 *             if the file cannot be created
+	 */
+	@ParameterizedTest(name = "suffix {0}, file {1}: {2}")
+	@CsvSource({ ".TXT, NOTES.TXT, true", ".TXT, notes.txt, true", ".txt, NOTES.TXT, true",
+			".Txt, notes.tXT, true", ".TXT, NOTES.MD, false" })
+	void accept_ignoresTheCaseOfTheSuffixAndOfTheName(final String suffix, final String name,
+		final boolean expected) throws IOException
+	{
+		final File file = Files.createFile(directory.resolve(name)).toFile();
+
+		assertEquals(expected, new SuffixFileFilter(suffix).accept(file));
+	}
 
 	@Test
 	public void testFactoryMethods() throws URISyntaxException
