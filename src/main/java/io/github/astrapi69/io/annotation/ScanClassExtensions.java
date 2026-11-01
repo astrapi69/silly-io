@@ -107,7 +107,7 @@ public final class ScanClassExtensions
 
 	private static boolean isNumeric(final CharSequence cs)
 	{
-		if (cs == null || cs.length() == 0)
+		if (cs.length() == 0)
 		{
 			return false;
 		}
