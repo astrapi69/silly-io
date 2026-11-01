@@ -175,7 +175,7 @@ public class CommandLineExecutorTest
 		return Stream.of(arguments(OS.WINDOWS, List.of("cmd.exe", "/c", "echo", "Hello")),
 			arguments(OS.LINUX, List.of("/bin/bash", "-c", "echo", "Hello")),
 			arguments(OS.MAC, List.of("/bin/bash", "-c", "echo", "Hello")),
-			arguments(OS.UNIX, List.of("/bin/bash", "-c", "echo", "Hello")));
+			arguments(OS.UNIX, List.of("/bin/sh", "-c", "echo", "Hello")));
 	}
 
 	/**
@@ -234,14 +234,31 @@ public class CommandLineExecutorTest
 		});
 	}
 
-	@Test
-	void execute_runsTheCommandInBash_onAUnixSystem() throws Throwable
+	/**
+	 * The shell that runs the command, by the name of the operating system: bash on Linux and
+	 * macOS, and on the other Unix systems the {@code /bin/sh} that POSIX guarantees. The command
+	 * prints {@code $0}, which a shell started with {@code -c} and no further argument sets to the
+	 * path it was started with
+	 *
+	 * @return the operating system name and the path of its shell, for each case
+	 */
+	static Stream<Arguments> shellsByOperatingSystemName()
 	{
-		assumeTrue(Files.isExecutable(Path.of("/bin/bash")), "needs /bin/bash");
+		return Stream.of(arguments("FreeBSD", "/bin/sh"), arguments("OpenBSD", "/bin/sh"),
+			arguments("NetBSD", "/bin/sh"), arguments("SunOS", "/bin/sh"),
+			arguments("Linux", "/bin/bash"), arguments("Mac OS X", "/bin/bash"));
+	}
 
-		withOperatingSystemName("FreeBSD",
-			() -> assertEquals("ok" + System.lineSeparator(), CommandLineExecutor
-				.execute(directory.toString(), "echo ok", new ByteArrayOutputStream())));
+	@ParameterizedTest(name = "{0}: {1}")
+	@MethodSource("shellsByOperatingSystemName")
+	void execute_runsTheCommandInTheShellOfTheOperatingSystem(final String osName,
+		final String shell) throws Throwable
+	{
+		assumeTrue(Files.isExecutable(Path.of(shell)), () -> "needs " + shell);
+
+		withOperatingSystemName(osName,
+			() -> assertEquals(shell + System.lineSeparator(), CommandLineExecutor
+				.execute(directory.toString(), "echo $0", new ByteArrayOutputStream())));
 	}
 
 	/**

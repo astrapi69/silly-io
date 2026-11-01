@@ -23,6 +23,7 @@
 - `LinuxShellExecutor.execute` runs the command in the execution directory through `ProcessBuilder.directory`, no longer through `cd <path>` in the command string, so a directory name can no longer run as a command (#22).
 - Only a leading `~`, alone or before a `/`, stands for the home directory (#31).
 - `OS.getOperatingSystem` returns `UNIX` for AIX, HP-UX, IRIX, Solaris, SunOS, FreeBSD, OpenBSD and NetBSD (#32).
+- `CommandLineExecutor.execute` and `getCommandList` run `/bin/sh -c` for `UNIX`, the one shell POSIX guarantees, instead of `/bin/bash`, which a BSD keeps below `/usr/local/bin` or `/usr/pkg/bin` if at all; Linux and macOS keep `/bin/bash`. The Javadoc says that the command is a POSIX shell command on every system but Windows (#40).
 - `SuffixFileFilter`, `MultiplyExtensionsFileFilter` and `MultiplyExtensionsFilenameFilter` ignore the case of the extension and of the name (#30).
 - `FilenameExtensions.getFilenamePrefix(File)` and `getFilenameSuffix(File)` look for the extension's dot in the file name only, no longer in the whole path. Below a directory whose name holds a dot (`~/.cache/x/data`), a file without an extension got the rest of the path as its suffix and a prefix that ended at that directory, so a rename built from the prefix moved the file out of its directory (#9).
 
