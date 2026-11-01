@@ -51,6 +51,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import io.github.astrapi69.io.annotation.ClassFixtures.RootKind;
 import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
 
 /**
@@ -309,49 +310,6 @@ class ScanPackageExtensionsTest
 		assertEquals(Set.of(JAR_PACKAGE + ".First", JAR_PACKAGE + ".Second"),
 			ClassFixtures.withContextClassLoader(archiveClassLoader,
 				() -> ScanPackageExtensions.scanClassNames(JAR_PACKAGE)));
-	}
-
-	/**
-	 * The two kinds of class path root a package is read from
-	 */
-	enum RootKind
-	{
-		/**
-		 * A directory with a class file per class, in the directory of its package
-		 */
-		DIRECTORY {
-			@Override
-			Path write(final Path location, final String... qualifiedClassNames) throws IOException
-			{
-				return ClassFixtures.newClassDirectory(location, qualifiedClassNames);
-			}
-		},
-
-		/**
-		 * A jar with the directory entries of its packages
-		 */
-		JAR {
-			@Override
-			Path write(final Path location, final String... qualifiedClassNames) throws IOException
-			{
-				Files.createDirectories(location.getParent());
-				return ClassFixtures.newJarOfClasses(
-					location.resolveSibling(location.getFileName() + ".jar"), qualifiedClassNames);
-			}
-		};
-
-		/**
-		 * Writes a root of this kind that holds the given classes
-		 *
-		 * @param location
-		 *            where the root is written, a jar gets the suffix {@code .jar}
-		 * @param qualifiedClassNames
-		 *            the binary names of the classes
-		 * @return the written root
-		 * @throws IOException
-		 *             if the root cannot be written
-		 */
-		abstract Path write(Path location, String... qualifiedClassNames) throws IOException;
 	}
 
 	/**

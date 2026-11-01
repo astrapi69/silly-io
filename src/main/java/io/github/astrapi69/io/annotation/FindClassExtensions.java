@@ -136,6 +136,33 @@ public class FindClassExtensions
 	}
 
 	/**
+	 * Checks if the given URL points into an archive, a jar, a war or an ear
+	 *
+	 * @param url
+	 *            the URL of a resource
+	 * @return true if the URL points into an archive
+	 */
+	static boolean isArchive(final URL url)
+	{
+		final String protocol = url.getProtocol();
+		return protocol.equals("jar") || protocol.equals("ear") || protocol.equals("war");
+	}
+
+	/**
+	 * Gives the archive file that the given URL points into: the file URL before the {@code !},
+	 * read as {@link #toFile(String)} reads it
+	 *
+	 * @param archiveEntryUrl
+	 *            the URL of an entry in a jar, a war or an ear
+	 * @return the archive file
+	 */
+	static File toArchiveFile(final URL archiveEntryUrl)
+	{
+		final String entryUrl = archiveEntryUrl.getFile();
+		return toFile(entryUrl.substring(0, entryUrl.indexOf("!")));
+	}
+
+	/**
 	 * Gets a list with urls from the given path for all resources.
 	 *
 	 * @param path

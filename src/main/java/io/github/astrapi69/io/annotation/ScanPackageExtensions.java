@@ -79,8 +79,7 @@ public final class ScanPackageExtensions
 		final String packagePath = packageName.replace(".", "/");
 		for (final URL packageURL : FindClassExtensions.getResources(packagePath))
 		{
-			if (packageURL.getProtocol().equals("jar") || packageURL.getProtocol().equals("ear")
-				|| packageURL.getProtocol().equals("war"))
+			if (FindClassExtensions.isArchive(packageURL))
 			{
 				classNames
 					.addAll(scanArchive(packageURL, packageName, recursive, qualifiedClassnames));
@@ -114,10 +113,7 @@ public final class ScanPackageExtensions
 	{
 		final Set<String> classNames = new LinkedHashSet<>();
 		final String packagePath = packageName.replace(".", "/");
-		final String archiveEntryUrl = packageURL.getFile();
-		final File archive = FindClassExtensions
-			.toFile(archiveEntryUrl.substring(0, archiveEntryUrl.indexOf("!")));
-		try (JarFile jarFile = new JarFile(archive))
+		try (JarFile jarFile = new JarFile(FindClassExtensions.toArchiveFile(packageURL)))
 		{
 			final Enumeration<JarEntry> jarEntries = jarFile.entries();
 			while (jarEntries.hasMoreElements())
