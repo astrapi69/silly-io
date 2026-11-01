@@ -152,6 +152,16 @@ public class LinuxShellExecutorTest
 	}
 
 	@Test
+	void execute_keepsATildeThatDoesNotStartThePath() throws IOException, InterruptedException
+	{
+		assumeBash();
+		final Path existing = Files.createDirectory(directory.resolve("backup~1"));
+
+		assertEquals(existing + System.lineSeparator(),
+			LinuxShellExecutor.execute("bash", existing.toString(), "pwd"));
+	}
+
+	@Test
 	void execute_throwsIllegalArgumentException_forAnExecutionDirectoryThatDoesNotExist()
 	{
 		final String missing = directory.resolve("missing").toString();
