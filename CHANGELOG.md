@@ -10,6 +10,7 @@
 - The tests write their files into a temporary directory, no longer into the working directory, where a run of PIT left them behind and the next build failed on them (#54).
 - The test runtime class path no longer holds this project's own jar: file-worker and jobj-copy depend on an older silly-io, which Gradle resolved to this project, beside the compiled classes that come first on the class path, so `test` and now `pitest` needed `mustRunAfter(jar)`. The workaround is gone with its cause (#54).
 - Unreachable code is gone, without a change in behaviour: `FindClassExtensions.forName` checked `Class.forName` for `null`, which it never returns; `ScanClassExtensions.normalizeSimpleClassName` handled a missing `.class` it had just checked for; `SerializedObjectExtensions.writeSerializedObjectToFile` flushed and closed a stream its try-with-resources closes (#54).
+- `ImportResourcesExtensions.join` is an implementation of this project (`Arrays.copyOf`, `System.arraycopy`), no longer the block taken word for word from Apache Commons Lang's `ArrayUtils.addAll`. Its behaviour is unchanged; the `ArrayStoreException` its Javadoc named never came out of it, as any one became an `IllegalArgumentException`, and the Javadoc says that now (#59).
 
 ---
 
