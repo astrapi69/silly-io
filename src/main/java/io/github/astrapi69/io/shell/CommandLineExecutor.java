@@ -31,7 +31,11 @@ import java.util.List;
 
 /**
  * The class CommandLineExecutor provides functionality for executing shell commands across
- * different operating systems
+ * different operating systems. On Windows a command runs in {@code cmd.exe /c}; on every other
+ * supported system it is a POSIX shell command: Linux and macOS run it in {@code /bin/bash -c}, the
+ * other Unix systems in {@code /bin/sh -c}, the one shell POSIX guarantees. Bash is no part of
+ * POSIX, and a BSD keeps it, if it is installed at all, below {@code /usr/local/bin} or
+ * {@code /usr/pkg/bin}
  */
 public final class CommandLineExecutor
 {
@@ -42,12 +46,13 @@ public final class CommandLineExecutor
 
 	/**
 	 * Executes the given command in the specified execution path with the shell appropriate for the
-	 * current operating system, and mirrors output to an additional output stream
+	 * current operating system, and mirrors output to an additional output stream: {@code cmd.exe}
+	 * on Windows, {@code /bin/bash} on Linux and macOS, {@code /bin/sh} on the other Unix systems
 	 *
 	 * @param executionPath
 	 *            the path where the command should be executed
 	 * @param command
-	 *            the command to execute
+	 *            the command to execute, a POSIX shell command on every system but Windows
 	 * @param additionalOutput
 	 *            the additional output stream to mirror the output to
 	 * @return the output if any
@@ -72,8 +77,11 @@ public final class CommandLineExecutor
 				break;
 			case MAC :
 			case LINUX :
-			case UNIX :
 				shellPath = "/bin/bash";
+				shellFlag = "-c";
+				break;
+			case UNIX :
+				shellPath = "/bin/sh";
 				shellFlag = "-c";
 				break;
 			default :
@@ -139,8 +147,9 @@ public final class CommandLineExecutor
 	}
 
 	/**
-	 * Gets the list of commands to be executed based on the given commands array and the current
-	 * operating system
+	 * Gets the list of commands to be executed based on the given commands array and the given
+	 * operating system: the shell that {@link #execute(String, String, OutputStream)} runs there
+	 * and its flag, followed by the commands
 	 *
 	 * @param commands
 	 *            the commands array
@@ -160,8 +169,11 @@ public final class CommandLineExecutor
 				break;
 			case MAC :
 			case LINUX :
-			case UNIX :
 				commandList.add("/bin/bash");
+				commandList.add("-c");
+				break;
+			case UNIX :
+				commandList.add("/bin/sh");
 				commandList.add("-c");
 				break;
 			default :

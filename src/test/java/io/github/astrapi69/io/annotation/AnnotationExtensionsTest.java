@@ -36,12 +36,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +50,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import io.github.astrapi69.io.annotation.ClassFixtures.RootKind;
 import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
@@ -149,12 +146,6 @@ class AnnotationExtensionsTest
 			arguments(named("no annotation", null), Set.of(FailingStaticInitializer.class)));
 	}
 
-	static Stream<Arguments> invalidAnnotationValues()
-	{
-		return Stream.of(arguments(named("a value of another type", "resourceName"), 42),
-			arguments(named("a key the annotation does not have", "noSuchKey"), "value"));
-	}
-
 	static Stream<Arguments> rootScans()
 	{
 		final Set<String> everyClass = Set.of(ROOT_PACKAGE + ".Annotated", ROOT_PACKAGE + ".Plain",
@@ -188,6 +179,62 @@ class AnnotationExtensionsTest
 	}
 
 	/**
+	 * The directory scans of {@link AnnotationExtensions}, each over the class directory of
+	 * {@link #nestedClassFiles()}: all classes count, the nested and anonymous ones included
+	 *
+	 * @return the scan and the binary names of the classes it finds, for each case
+	 */
+	static Stream<Arguments> allClassesDirectoryScans()
+	{
+		final Set<String> everyClass = Set.of("nest.pkg.Outer", "nest.pkg.Outer$Inner",
+			"nest.pkg.Outer$1", "nest.pkg.sub.Deep", "nest.pkg.sub.Deep$Inner");
+		final Set<String> importResourceClasses = Set.of("nest.pkg.Outer$Inner",
+			"nest.pkg.sub.Deep$Inner");
+		return Stream.of(
+			arguments(
+				named("scanForAllClasses", (DirectoryScan)AnnotationExtensions::scanForAllClasses),
+				everyClass),
+			arguments(named("scanForAllAnnotatedClasses without an annotation",
+				(DirectoryScan)(folder, packagePath) -> AnnotationExtensions
+					.scanForAllAnnotatedClasses(folder, packagePath, null)),
+				everyClass),
+			arguments(
+				named("scanForAllAnnotatedClasses with ImportResource",
+					(DirectoryScan)(folder, packagePath) -> AnnotationExtensions
+						.scanForAllAnnotatedClasses(folder, packagePath, ImportResource.class)),
+				importResourceClasses),
+			arguments(named("scanForAllAnnotatedClassesFromSet without an annotation set",
+				(DirectoryScan)(folder, packagePath) -> AnnotationExtensions
+					.scanForAllAnnotatedClassesFromSet(folder, packagePath, null)),
+				everyClass),
+			arguments(named("scanForAllAnnotatedClassesFromSet with ImportResource",
+				(DirectoryScan)(folder, packagePath) -> AnnotationExtensions
+					.scanForAllAnnotatedClassesFromSet(folder, packagePath,
+						Set.of(ImportResource.class))),
+				importResourceClasses));
+	}
+
+	/**
+	 * The classes of the directory scans for all classes: a top-level class with a nested class
+	 * that carries an {@link ImportResource} and an anonymous class, and in a sub package a
+	 * top-level class with an annotated nested class
+	 *
+	 * @return the class file of each class, by its binary name
+	 */
+	private static Map<String, byte[]> nestedClassFiles()
+	{
+		final Map<String, byte[]> classFiles = new LinkedHashMap<>();
+		classFiles.put("nest.pkg.Outer", ClassFixtures.newClassFile("nest.pkg.Outer"));
+		classFiles.put("nest.pkg.Outer$Inner",
+			ClassFixtures.newImportResourceClassFile("nest.pkg.Outer$Inner", "Inner.css"));
+		classFiles.put("nest.pkg.Outer$1", ClassFixtures.newClassFile("nest.pkg.Outer$1"));
+		classFiles.put("nest.pkg.sub.Deep", ClassFixtures.newClassFile("nest.pkg.sub.Deep"));
+		classFiles.put("nest.pkg.sub.Deep$Inner",
+			ClassFixtures.newImportResourceClassFile("nest.pkg.sub.Deep$Inner", "Deep.css"));
+		return classFiles;
+	}
+
+	/**
 	 * The classes of the root package scans: two carry an {@link ImportResource}, one of them in a
 	 * sub package, one is plain, one has the name the compiler gives a nested class, and one cannot
 	 * be initialized
@@ -213,12 +260,6 @@ class AnnotationExtensionsTest
 	private static File packageDirectory(final Class<?> classInThePackage) throws Exception
 	{
 		return Path.of(classInThePackage.getResource("").toURI()).toFile();
-	}
-
-	private static ImportResource newImportResource(final Map<String, Object> memberValues)
-	{
-		return (ImportResource)Proxy.newProxyInstance(ImportResource.class.getClassLoader(),
-			new Class<?>[] { ImportResource.class }, new MemberValuesHandler(memberValues));
 	}
 
 	@ParameterizedTest(name = "{0}: {1}")
@@ -283,6 +324,20 @@ class AnnotationExtensionsTest
 		assertEquals(List.of("plus.pkg.Plus"), classes.stream().map(Class::getName).toList());
 	}
 
+	@ParameterizedTest(name = "below {0}")
+	@ValueSource(strings = { "x!y", "!x", "x!y!z" })
+	void getAllClasses_findsTheClassesOfAJarBelowADirectoryWhoseNameHoldsAnExclamationMark(
+		final String directoryName) throws Exception
+	{
+		final Path jar = RootKind.JAR.write(directory.resolve(directoryName).resolve("root"),
+			"bang.pkg.Bang");
+
+		final Set<Class<?>> classes = ClassFixtures.withClassPathRoots(
+			() -> AnnotationExtensions.getAllClasses("bang.pkg"), UrlStyle.ESCAPED.of(jar));
+
+		assertEquals(List.of("bang.pkg.Bang"), classes.stream().map(Class::getName).toList());
+	}
+
 	@ParameterizedTest(name = "{0}, from a {1}")
 	@MethodSource("rootScans")
 	void getAllAnnotatedClasses_findsTheClassesOfAJarAsOfAClassDirectory(final PackageScan scan,
@@ -297,78 +352,67 @@ class AnnotationExtensionsTest
 			classes.stream().map(Class::getName).collect(Collectors.toUnmodifiableSet()));
 	}
 
-	@Test
-	void scanForClasses_findsEveryClassOfTheDirectory() throws Exception
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("allClassesDirectoryScans")
+	void scanForAllClasses_findsTheNestedAndAnonymousClassesToo(final DirectoryScan scan,
+		final Set<String> expected) throws Exception
 	{
-		assertEquals(ALL_SCANNED_CLASSES,
-			AnnotationExtensions.scanForClasses(packageDirectory(ScannedPage.class), SCAN_PACKAGE));
+		final Path root = ClassFixtures.newClassDirectory(directory.resolve("root"),
+			nestedClassFiles());
+
+		final Set<Class<?>> classes = ClassFixtures.withClassPathRoots(
+			() -> scan.scan(root.resolve("nest/pkg").toFile(), "nest.pkg"),
+			UrlStyle.ESCAPED.of(root));
+
+		assertEquals(expected,
+			classes.stream().map(Class::getName).collect(Collectors.toUnmodifiableSet()));
+	}
+
+	@Test
+	void scanForAllClasses_findsEveryClassOfTheDirectory() throws Exception
+	{
+		assertEquals(ALL_SCANNED_CLASSES, AnnotationExtensions
+			.scanForAllClasses(packageDirectory(ScannedPage.class), SCAN_PACKAGE));
 	}
 
 	@ParameterizedTest(name = "{0}")
 	@MethodSource("uninitializableClassScans")
-	void scanForAnnotatedClasses_findsAClassThatCannotBeInitialized(
+	void scanForAllAnnotatedClasses_findsAClassThatCannotBeInitialized(
 		final Class<? extends Annotation> annotationClass, final Set<Class<?>> expected)
 		throws Exception
 	{
-		assertEquals(expected, AnnotationExtensions.scanForAnnotatedClasses(
+		assertEquals(expected, AnnotationExtensions.scanForAllAnnotatedClasses(
 			packageDirectory(FailingStaticInitializer.class), BROKEN_PACKAGE, annotationClass));
 		assertEquals(expected,
-			AnnotationExtensions.scanForAnnotatedClassesFromSet(
+			AnnotationExtensions.scanForAllAnnotatedClassesFromSet(
 				packageDirectory(FailingStaticInitializer.class), BROKEN_PACKAGE,
 				annotationClass == null ? null : Set.of(annotationClass)));
 	}
 
 	@Test
-	void scanForAnnotatedClasses_isEmpty_forADirectoryThatDoesNotExist() throws Exception
+	void scanForAllAnnotatedClasses_isEmpty_forADirectoryThatDoesNotExist() throws Exception
 	{
 		final File missing = directory.resolve("missing").toFile();
 
-		assertTrue(AnnotationExtensions.scanForAnnotatedClasses(missing, "missing", Marker.class)
+		assertTrue(AnnotationExtensions.scanForAllAnnotatedClasses(missing, "missing", Marker.class)
 			.isEmpty());
 		assertTrue(AnnotationExtensions
-			.scanForAnnotatedClassesFromSet(missing, "missing", Set.of(Marker.class)).isEmpty());
+			.scanForAllAnnotatedClassesFromSet(missing, "missing", Set.of(Marker.class)).isEmpty());
 	}
 
 	@Test
-	void scanForAnnotatedClasses_throwsClassNotFoundException_forAClassFileNoClassLoaderKnows()
+	void scanForAllAnnotatedClasses_throwsClassNotFoundException_forAClassFileNoClassLoaderKnows()
 		throws Exception
 	{
 		Files.createFile(directory.resolve("Ghost.class"));
 		final File ghostDirectory = directory.toFile();
 
-		assertThrows(ClassNotFoundException.class, () -> AnnotationExtensions
-			.scanForAnnotatedClasses(ghostDirectory, "io.github.astrapi69.no.such", Marker.class));
 		assertThrows(ClassNotFoundException.class,
-			() -> AnnotationExtensions.scanForAnnotatedClassesFromSet(ghostDirectory,
+			() -> AnnotationExtensions.scanForAllAnnotatedClasses(ghostDirectory,
+				"io.github.astrapi69.no.such", Marker.class));
+		assertThrows(ClassNotFoundException.class,
+			() -> AnnotationExtensions.scanForAllAnnotatedClassesFromSet(ghostDirectory,
 				"io.github.astrapi69.no.such", Set.of(Marker.class)));
-	}
-
-	@Test
-	void setAnnotationValue_replacesTheMemberValueAndReturnsTheOldOne() throws Exception
-	{
-		final Map<String, Object> memberValues = new HashMap<>();
-		memberValues.put("resourceName", "old.css");
-		final ImportResource importResource = newImportResource(memberValues);
-
-		final Object oldValue = AnnotationExtensions.setAnnotationValue(importResource,
-			"resourceName", "new.css");
-
-		assertEquals("old.css", oldValue);
-		assertEquals("new.css", importResource.resourceName());
-	}
-
-	@ParameterizedTest(name = "{0}")
-	@MethodSource("invalidAnnotationValues")
-	void setAnnotationValue_throwsIllegalArgumentException_andKeepsTheOldValue(final String key,
-		final Object value)
-	{
-		final Map<String, Object> memberValues = new HashMap<>();
-		memberValues.put("resourceName", "old.css");
-		final ImportResource importResource = newImportResource(memberValues);
-
-		assertThrows(IllegalArgumentException.class,
-			() -> AnnotationExtensions.setAnnotationValue(importResource, key, value));
-		assertEquals(Map.of("resourceName", "old.css"), memberValues);
 	}
 
 	/**
@@ -387,6 +431,26 @@ class AnnotationExtensionsTest
 		 *             if the scan fails
 		 */
 		Set<Class<?>> scan(String packagePath) throws Exception;
+	}
+
+	/**
+	 * One of the directory scans of {@link AnnotationExtensions}
+	 */
+	@FunctionalInterface
+	interface DirectoryScan
+	{
+		/**
+		 * Scans the given directory of the given package
+		 *
+		 * @param folder
+		 *            the directory of the package
+		 * @param packagePath
+		 *            the package the directory holds
+		 * @return the classes the scan finds
+		 * @throws Exception
+		 *             if the scan fails
+		 */
+		Set<Class<?>> scan(File folder, String packagePath) throws Exception;
 	}
 
 	/**
@@ -449,25 +513,5 @@ class AnnotationExtensionsTest
 
 	static class UnmarkedTypeChild extends UnmarkedType
 	{
-	}
-
-	/**
-	 * Keeps the member values of an annotation proxy in a map field named {@code memberValues}, as
-	 * the invocation handler of the JDK does
-	 */
-	private static final class MemberValuesHandler implements InvocationHandler
-	{
-		private final Map<String, Object> memberValues;
-
-		MemberValuesHandler(final Map<String, Object> memberValues)
-		{
-			this.memberValues = memberValues;
-		}
-
-		@Override
-		public Object invoke(final Object proxy, final Method method, final Object[] args)
-		{
-			return memberValues.get(method.getName());
-		}
 	}
 }

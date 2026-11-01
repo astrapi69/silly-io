@@ -43,6 +43,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPage;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPanel;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPlain;
@@ -63,6 +64,8 @@ class ScanClassExtensionsTest
 	private static final Set<Class<?>> ALL_CLASSES = Set.of(ScannedPage.class, ScannedPanel.class,
 		ScannedPlain.class, ScannedSubPage.class);
 
+	private static final String NEST_PACKAGE = "nest.pkg";
+
 	@TempDir
 	Path directory;
 
@@ -78,6 +81,37 @@ class ScanClassExtensionsTest
 				ScanClassExtensionsTest.class, true),
 			arguments(named("a named nested class and its enclosing class", Nested.class),
 				ScanClassExtensionsTest.class, false));
+	}
+
+	/**
+	 * The scans of {@link ScanClassExtensions} over a class directory with a nested and an
+	 * anonymous class in the package and a nested class in a sub package: the top-level scans load
+	 * no class whose name holds a {@code $}, the scans for all classes load them too
+	 *
+	 * @return the scan and the binary names of the classes it loads, for each case
+	 */
+	static Stream<Arguments> classKindScans()
+	{
+		return Stream.of(
+			arguments(
+				named("scanTopLevelClasses",
+					(RootScan)root -> ScanClassExtensions.scanTopLevelClasses(NEST_PACKAGE)),
+				Set.of("nest.pkg.Outer")),
+			arguments(
+				named("scanTopLevelClasses, recursive",
+					(RootScan)root -> ScanClassExtensions.scanTopLevelClasses(NEST_PACKAGE, true)),
+				Set.of("nest.pkg.Outer", "nest.pkg.sub.Deep")),
+			arguments(
+				named("scanAllClassesFromPackage",
+					(RootScan)root -> ScanClassExtensions.scanAllClassesFromPackage(
+						root.resolve("nest/pkg").toFile(), NEST_PACKAGE)),
+				Set.of("nest.pkg.Outer", "nest.pkg.Outer$Inner", "nest.pkg.Outer$1")),
+			arguments(
+				named("scanAllClassesFromPackage, recursive",
+					(RootScan)root -> ScanClassExtensions.scanAllClassesFromPackage(
+						root.resolve("nest/pkg").toFile(), NEST_PACKAGE, true)),
+				Set.of("nest.pkg.Outer", "nest.pkg.Outer$Inner", "nest.pkg.Outer$1",
+					"nest.pkg.sub.Deep", "nest.pkg.sub.Deep$Inner")));
 	}
 
 	static Path scanDirectory() throws Exception
@@ -113,50 +147,53 @@ class ScanClassExtensionsTest
 	}
 
 	@Test
-	void scanClassesFromPackage_loadsTheClassesOfTheDirectoryOnly_byDefault() throws Exception
+	void scanAllClassesFromPackage_loadsTheClassesOfTheDirectoryOnly_byDefault() throws Exception
 	{
-		assertEquals(TOP_LEVEL_CLASSES, ScanClassExtensions.scanClassesFromPackage(
+		assertEquals(TOP_LEVEL_CLASSES, ScanClassExtensions.scanAllClassesFromPackage(
 			scanDirectory().toFile(), ScanPackageExtensionsTest.SCAN_PACKAGE));
 	}
 
 	@Test
-	void scanClassesFromPackage_loadsTheClassesOfTheSubDirectories_whenRecursive() throws Exception
+	void scanAllClassesFromPackage_loadsTheClassesOfTheSubDirectories_whenRecursive()
+		throws Exception
 	{
-		assertEquals(ALL_CLASSES, ScanClassExtensions.scanClassesFromPackage(
+		assertEquals(ALL_CLASSES, ScanClassExtensions.scanAllClassesFromPackage(
 			scanDirectory().toFile(), ScanPackageExtensionsTest.SCAN_PACKAGE, true));
 	}
 
 	@Test
-	void scanClassesFromPackage_isEmpty_forADirectoryThatDoesNotExist() throws Exception
+	void scanAllClassesFromPackage_isEmpty_forADirectoryThatDoesNotExist() throws Exception
 	{
 		assertTrue(ScanClassExtensions
-			.scanClassesFromPackage(directory.resolve("missing").toFile(), "missing", true)
+			.scanAllClassesFromPackage(directory.resolve("missing").toFile(), "missing", true)
 			.isEmpty());
 	}
 
 	@Test
-	void scanClassNames_loadsTheClassesOfThePackage() throws Exception
+	void scanTopLevelClasses_loadsTheClassesOfThePackage() throws Exception
 	{
 		assertEquals(TOP_LEVEL_CLASSES,
-			ScanClassExtensions.scanClassNames(ScanPackageExtensionsTest.SCAN_PACKAGE));
+			ScanClassExtensions.scanTopLevelClasses(ScanPackageExtensionsTest.SCAN_PACKAGE));
 	}
 
 	@Test
-	void scanClassNames_loadsTheClassesOfTheSubPackages_whenRecursive() throws Exception
+	void scanTopLevelClasses_loadsTheClassesOfTheSubPackages_whenRecursive() throws Exception
 	{
 		assertEquals(ALL_CLASSES,
-			ScanClassExtensions.scanClassNames(ScanPackageExtensionsTest.SCAN_PACKAGE, true));
+			ScanClassExtensions.scanTopLevelClasses(ScanPackageExtensionsTest.SCAN_PACKAGE, true));
 	}
 
 	@Test
-	void scanClassNames_loadsTheClassesOfAJarPackage_throughTheContextClassLoader() throws Exception
+	void scanTopLevelClasses_loadsTheClassesOfAJarPackage_throughTheContextClassLoader()
+		throws Exception
 	{
 		final Path jar = ScanPackageExtensionsTest.newScanJar(directory);
 		try (URLClassLoader jarClassLoader = new URLClassLoader(new URL[] { jar.toUri().toURL() },
 			ClassLoader.getSystemClassLoader()))
 		{
 			final Set<Class<?>> classes = ClassFixtures.withContextClassLoader(jarClassLoader,
-				() -> ScanClassExtensions.scanClassNames(ScanPackageExtensionsTest.JAR_PACKAGE));
+				() -> ScanClassExtensions
+					.scanTopLevelClasses(ScanPackageExtensionsTest.JAR_PACKAGE));
 
 			assertEquals(Set.of("generated.scan.First", "generated.scan.Second"),
 				Set.copyOf(classes.stream().map(Class::getName).toList()));
@@ -168,6 +205,39 @@ class ScanClassExtensionsTest
 	/**
 	 * A named nested class, whose name keeps its suffix when normalized
 	 */
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("classKindScans")
+	void scanTopLevelClassesAndScanAllClassesFromPackage_loadTheKindOfClassesTheirNamesSay(
+		final RootScan scan, final Set<String> expected) throws Exception
+	{
+		final Path root = ClassFixtures.newClassDirectory(directory.resolve("root"),
+			"nest.pkg.Outer", "nest.pkg.Outer$Inner", "nest.pkg.Outer$1", "nest.pkg.sub.Deep",
+			"nest.pkg.sub.Deep$Inner");
+
+		final Set<Class<?>> classes = ClassFixtures.withClassPathRoots(() -> scan.scan(root),
+			UrlStyle.ESCAPED.of(root));
+
+		assertEquals(expected, Set.copyOf(classes.stream().map(Class::getName).toList()));
+	}
+
+	/**
+	 * One of the class scans of {@link ScanClassExtensions} over a class path root
+	 */
+	@FunctionalInterface
+	interface RootScan
+	{
+		/**
+		 * Scans the given class path root
+		 *
+		 * @param root
+		 *            the class directory the scan reads
+		 * @return the classes the scan loads
+		 * @throws Exception
+		 *             if the scan fails
+		 */
+		Set<Class<?>> scan(Path root) throws Exception;
+	}
+
 	static final class Nested
 	{
 	}

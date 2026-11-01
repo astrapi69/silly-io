@@ -26,6 +26,7 @@ package io.github.astrapi69.io.file.namefilter;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -59,7 +60,7 @@ public class SimpleFilenameFilter implements FilenameFilter
 			throw new IllegalArgumentException(
 				"Argument fileSuffix cant be empty. " + "Please set the argument fileSuffix.");
 		}
-		this.fileSuffix = fileSuffix.toLowerCase();
+		this.fileSuffix = fileSuffix.toLowerCase(Locale.ROOT);
 		this.recursive = recursive;
 	}
 
@@ -114,7 +115,7 @@ public class SimpleFilenameFilter implements FilenameFilter
 				return true;
 			}
 		}
-		return name.toLowerCase().endsWith(this.fileSuffix);
+		return name.toLowerCase(Locale.ROOT).endsWith(this.fileSuffix);
 	}
 
 	/**

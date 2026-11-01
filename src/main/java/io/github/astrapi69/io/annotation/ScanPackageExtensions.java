@@ -45,23 +45,32 @@ public final class ScanPackageExtensions
 {
 
 	/**
-	 * Scan class names from the given package name.
+	 * The names of the class files that hold no class: the annotations and the documentation of a
+	 * package, and the declaration of a module
+	 */
+	private static final Set<String> NO_CLASS_NAMES = Set.of("package-info", "module-info");
+
+	/**
+	 * Scans the qualified names of the top-level classes of the given package, without its sub
+	 * packages, as {@link #scanTopLevelClassNames(String, boolean, boolean)} lists them.
 	 *
 	 * @param packageName
 	 *            the package name
-	 * @return the list
+	 * @return the qualified names of the top-level classes
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static Set<String> scanClassNames(final String packageName) throws IOException
+	public static Set<String> scanTopLevelClassNames(final String packageName) throws IOException
 	{
-		return scanClassNames(packageName, false, true);
+		return scanTopLevelClassNames(packageName, false, true);
 	}
 
 	/**
-	 * Scan class names from the given package name, in every directory and archive of the class
-	 * path that holds the package. Only top-level classes are listed: a class file whose name holds
-	 * a {@code $}, as the class files of nested and anonymous classes do, is skipped.
+	 * Scans the names of the top-level classes of the given package, in every directory and archive
+	 * of the class path that holds the package. Only top-level classes are listed: a class file
+	 * whose name holds a {@code $}, as the class files of nested and anonymous classes do, is
+	 * skipped, and so are a {@code package-info.class} and a {@code module-info.class}, which hold
+	 * no class.
 	 *
 	 * @param packageName
 	 *            the package name
@@ -69,12 +78,12 @@ public final class ScanPackageExtensions
 	 *            the recursive flag
 	 * @param qualifiedClassnames
 	 *            the flag if the class names should be qualified class names.
-	 * @return the list
+	 * @return the names of the top-level classes
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static Set<String> scanClassNames(final String packageName, final boolean recursive,
-		final boolean qualifiedClassnames) throws IOException
+	public static Set<String> scanTopLevelClassNames(final String packageName,
+		final boolean recursive, final boolean qualifiedClassnames) throws IOException
 	{
 		final Set<String> classNames = new LinkedHashSet<>();
 		final String packagePath = packageName.replace(".", "/");
@@ -95,7 +104,10 @@ public final class ScanPackageExtensions
 	}
 
 	/**
-	 * Scans the class names of the given package in the archive that the given URL points into
+	 * Scans the top-level class names of the given package in the archive that the given URL points
+	 * into. The archive is read once: a recursive scan takes the class files of the sub packages
+	 * from the same pass over its entries, whether the archive holds directory entries for them or
+	 * not
 	 *
 	 * @param packageURL
 	 *            the URL of the package in a jar, a war or an ear
@@ -113,50 +125,26 @@ public final class ScanPackageExtensions
 		final boolean recursive, final boolean qualifiedClassnames) throws IOException
 	{
 		final Set<String> classNames = new LinkedHashSet<>();
-		final String packagePath = packageName.replace(".", "/");
+		final String entryPrefix = packageName.replace(".", "/") + "/";
 		try (JarFile jarFile = new JarFile(FindClassExtensions.toArchiveFile(packageURL)))
 		{
 			final Enumeration<JarEntry> jarEntries = jarFile.entries();
 			while (jarEntries.hasMoreElements())
 			{
-				final JarEntry entry = jarEntries.nextElement();
-				final boolean isDir = entry.isDirectory();
-				final String entryName = entry.getName();
-				if (isDir && recursive)
+				final String entryName = jarEntries.nextElement().getName();
+				if (entryName.startsWith(entryPrefix)
+					&& entryName.endsWith(FileExtension.CLASS.getExtension()))
 				{
-					String entryPath = entryName.replace("/", ".");
-					if (lastCharacter(entryPath).equals("."))
+					final String relativePath = entryName.substring(entryPrefix.length());
+					final String classFileName = relativePath
+						.substring(relativePath.lastIndexOf('/') + 1);
+					if ((recursive || !relativePath.contains("/"))
+						&& isTopLevelClassFile(classFileName))
 					{
-						entryPath = entryPath.substring(0, entryPath.length() - 1);
-					}
-					if (entryPath.startsWith(packageName + "."))
-					{
-						classNames
-							.addAll(scanClassNames(entryPath, recursive, qualifiedClassnames));
-					}
-				}
-				else
-				{
-					if (!isDir && entryName.endsWith(FileExtension.CLASS.getExtension())
-						&& entryName.startsWith(packagePath + "/"))
-					{
-						final String relativePath = entryName.substring(packagePath.length() + 1,
-							entryName.length());
-						if (!relativePath.contains("/") && !relativePath.contains("$"))
-						{
-							final String filenameWithoutExtension = FilenameExtensions
-								.getFilenameWithoutExtension(entryName.replace("/", "."));
-							if (qualifiedClassnames)
-							{
-								classNames.add(filenameWithoutExtension);
-							}
-							else
-							{
-								final String className = FilenameExtensions
-									.getFilenameWithoutExtension(relativePath);
-								classNames.add(className);
-							}
-						}
+						classNames.add(qualifiedClassnames
+							? FilenameExtensions.getFilenameWithoutExtension(entryName).replace('/',
+								'.')
+							: FilenameExtensions.getFilenameWithoutExtension(classFileName));
 					}
 				}
 			}
@@ -165,7 +153,8 @@ public final class ScanPackageExtensions
 	}
 
 	/**
-	 * Scans the class names of the given package in the class directory the given URL points to
+	 * Scans the top-level class names of the given package in the class directory the given URL
+	 * points to
 	 *
 	 * @param packageURL
 	 *            the URL of the package directory
@@ -194,12 +183,12 @@ public final class ScanPackageExtensions
 			if (file.isDirectory() && recursive)
 			{
 				qualifiedClassname = packagePath + "." + file.getName();
-				classNames
-					.addAll(scanClassNames(qualifiedClassname, recursive, qualifiedClassnames));
+				classNames.addAll(
+					scanTopLevelClassNames(qualifiedClassname, recursive, qualifiedClassnames));
 			}
 			else
 			{
-				if (!file.isDirectory() && !file.getName().contains("$"))
+				if (!file.isDirectory() && isTopLevelClassFile(file.getName()))
 				{
 					final String filenameWithoutExtension = FilenameExtensions
 						.getFilenameWithoutExtension(file);
@@ -219,13 +208,19 @@ public final class ScanPackageExtensions
 		return classNames;
 	}
 
-	private static String lastCharacter(final String str)
+	/**
+	 * Checks if the class file of the given name holds a top-level class: a name with a {@code $},
+	 * as the class files of nested and anonymous classes have, is none, and neither is a
+	 * {@code package-info.class} or a {@code module-info.class}
+	 *
+	 * @param classFileName
+	 *            the name of the class file, without its directory
+	 * @return true if the class file holds a top-level class
+	 */
+	private static boolean isTopLevelClassFile(final String classFileName)
 	{
-		if (str == null || str.length() == 0)
-		{
-			return "";
-		}
-		return str.substring(str.length() - 1);
+		final String className = FilenameExtensions.getFilenameWithoutExtension(classFileName);
+		return !className.contains("$") && !NO_CLASS_NAMES.contains(className);
 	}
 
 }

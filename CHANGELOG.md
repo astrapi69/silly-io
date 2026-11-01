@@ -6,6 +6,13 @@
 
 ### Breaking
 - Java 25 is the minimum, up from 17: the family builds, tests and releases on JDK 25 (astrapi69/mystic-crypt#234), so this release is 4.0 instead of 3.7 (#14).
+- `AnnotationExtensions.setAnnotationValue` is removed, without a deprecation first. Annotations are immutable by contract, and since JEP 403 (Java 17) the JDK internals it changed are strongly encapsulated: for every real annotation it threw `InaccessibleObjectException` unless the JVM ran with `--add-opens java.base/sun.reflect.annotation=ALL-UNNAMED`. No project of the family calls it (#29).
+- `ScanPackageExtensions.scanClassNames` is renamed `scanTopLevelClassNames`, both overloads: it lists top-level classes only, which the old name did not tell, after Guava's `ClassPath.getTopLevelClasses`. Its behaviour is unchanged (#47).
+- `ScanClassExtensions.scanClassNames` is renamed `scanTopLevelClasses`, both overloads: it loads top-level classes, not class names (#47).
+- `ScanClassExtensions.scanClassesFromPackage` is renamed `scanAllClassesFromPackage`, both overloads: it loads all classes of the directory, nested and anonymous ones included, after Guava's `ClassPath.getAllClasses` (#47).
+- `AnnotationExtensions.scanForAnnotatedClasses` is renamed `scanForAllAnnotatedClasses`: it finds all annotated classes of the directory, nested and anonymous ones included, as `getAllAnnotatedClasses` beside it does, whose name stays (#47).
+- `AnnotationExtensions.scanForAnnotatedClassesFromSet` is renamed `scanForAllAnnotatedClassesFromSet`, for the same reason (#47).
+- `AnnotationExtensions.scanForClasses` is renamed `scanForAllClasses`: it finds all classes of the directory, nested and anonymous ones included, as `getAllClasses` does (#47).
 
 ### Changed
 - The tests cover 98.7% of the lines and 97.3% of the branches, up from 67.2% and 48.8%, and the build fails below 95% of the lines or 90% of the branches (`jacocoTestCoverageVerification` in `check`) (#20).
@@ -19,10 +26,16 @@
 - `ScanPackageExtensions.scanClassNames` lists the class files of the package only: no other jar entry (#23), no class of the parent package (#24), no sibling package that shares the prefix (#25), every root of the class path (#26), and top-level classes from a directory as from a jar (#33).
 - A class path whose directory holds a `+` or another character a URL escapes is read correctly; `URLDecoder` turned `+` into a space (#27).
 - `AnnotationExtensions.getAllClasses` and `getAllAnnotatedClasses` find the classes of a jar too (#28).
+- `ScanPackageExtensions.scanClassNames` and the `AnnotationExtensions` scans read a jar below a directory whose name holds a `!` (`/home/u/x!y/lib.jar`): the archive is split from the entry at the first `!/`, as `JarURLConnection` splits it, no longer at the first `!` (#43).
+- `ScanPackageExtensions.scanClassNames` no longer lists `package-info` and `module-info` as class names, from a directory as from a jar: neither class file holds a class a caller can load as a type (#45).
+- A recursive `ScanPackageExtensions.scanClassNames` reads a jar once, for the package and every sub package below it, no longer once more for every package above a sub package (a tree four packages deep was read eight times), and it finds the classes of a sub package whose directory entry the jar lacks (#46).
+- `FindClassExtensions.getDirectoriesFromResources` gives no entry for a package inside a jar, a war or an ear, instead of a `File` built from the archive URL that never exists, so a package that lies in archives only gives an empty list. The Javadoc says so (#48).
 - `LinuxShellExecutor.execute` runs the command in the execution directory through `ProcessBuilder.directory`, no longer through `cd <path>` in the command string, so a directory name can no longer run as a command (#22).
 - Only a leading `~`, alone or before a `/`, stands for the home directory (#31).
 - `OS.getOperatingSystem` returns `UNIX` for AIX, HP-UX, IRIX, Solaris, SunOS, FreeBSD, OpenBSD and NetBSD (#32).
+- `CommandLineExecutor.execute` and `getCommandList` run `/bin/sh -c` for `UNIX`, the one shell POSIX guarantees, instead of `/bin/bash`, which a BSD keeps below `/usr/local/bin` or `/usr/pkg/bin` if at all; Linux and macOS keep `/bin/bash`. The Javadoc says that the command is a POSIX shell command on every system but Windows (#40).
 - `SuffixFileFilter`, `MultiplyExtensionsFileFilter` and `MultiplyExtensionsFilenameFilter` ignore the case of the extension and of the name (#30).
+- `SuffixFileFilter`, `MultiplyExtensionsFileFilter`, `MultiplyExtensionsFilenameFilter` and `SimpleFilenameFilter` lower-case with `Locale.ROOT` instead of the default locale: in the Turkish locale `.INI` lower-cased to `.ını`, with a dotless i, and matched no `config.ini` (#41).
 - `FilenameExtensions.getFilenamePrefix(File)` and `getFilenameSuffix(File)` look for the extension's dot in the file name only, no longer in the whole path. Below a directory whose name holds a dot (`~/.cache/x/data`), a file without an extension got the rest of the path as its suffix and a prefix that ended at that directory, so a rename built from the prefix moved the file out of its directory (#9).
 
 ---
