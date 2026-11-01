@@ -140,7 +140,8 @@ public final class ScanClassExtensions
 
 	/**
 	 * Loads all classes of the given directory, without its sub directories: every class file in
-	 * the directory counts, the ones of nested, local and anonymous classes included.
+	 * the directory counts, the ones of nested, local and anonymous classes included, and no
+	 * {@code package-info} or {@code module-info}, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
@@ -158,7 +159,8 @@ public final class ScanClassExtensions
 
 	/**
 	 * Loads all classes of the given directory, and of its sub directories when recursive: every
-	 * class file counts, the ones of nested, local and anonymous classes included.
+	 * class file counts, the ones of nested, local and anonymous classes included, and no
+	 * {@code package-info} or {@code module-info}, which hold no class.
 	 *
 	 * @param directory
 	 *            the directory
@@ -192,7 +194,7 @@ public final class ScanClassExtensions
 			}
 			else
 			{
-				if (!file.isDirectory())
+				if (!file.isDirectory() && ScanPackageExtensions.isTypeClassFile(file.getName()))
 				{
 					final String filename = FilenameExtensions.getFilenameWithoutExtension(file);
 					qualifiedClassname = packagePath + '.' + filename;

@@ -55,6 +55,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import io.github.astrapi69.io.annotation.ClassFixtures.RootKind;
 import io.github.astrapi69.io.annotation.ClassFixtures.UrlStyle;
 import io.github.astrapi69.io.annotation.testdata.broken.FailingStaticInitializer;
+import io.github.astrapi69.io.annotation.testdata.info.InfoPlain;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPage;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPanel;
 import io.github.astrapi69.io.annotation.testdata.scan.ScannedPlain;
@@ -63,8 +64,8 @@ import io.github.astrapi69.io.annotation.testdata.scan.sub.ScannedSubPage;
 /**
  * {@link AnnotationExtensions} finds annotations on a class, its interfaces, its annotations and
  * its super classes, and scans the directories of a package for annotated classes. The scans read
- * the fixtures in {@code testdata.scan} and {@code testdata.broken} on the test class path; the
- * class hierarchy is made of the nested types below
+ * the fixtures in {@code testdata.scan}, {@code testdata.broken} and {@code testdata.info} on the
+ * test class path; the class hierarchy is made of the nested types below
  */
 class AnnotationExtensionsTest
 {
@@ -74,6 +75,8 @@ class AnnotationExtensionsTest
 	private static final String BROKEN_PACKAGE = "io.github.astrapi69.io.annotation.testdata.broken";
 
 	private static final String ROOT_PACKAGE = "gen.pkg";
+
+	private static final String INFO_PACKAGE = "info.pkg";
 
 	private static final Set<Class<?>> ALL_SCANNED_CLASSES = Set.of(ScannedPage.class,
 		ScannedPanel.class, ScannedPlain.class, ScannedSubPage.class);
@@ -148,11 +151,67 @@ class AnnotationExtensionsTest
 
 	static Stream<Arguments> rootScans()
 	{
-		final Set<String> everyClass = Set.of(ROOT_PACKAGE + ".Annotated", ROOT_PACKAGE + ".Plain",
-			ROOT_PACKAGE + ".Plain$Inner", ROOT_PACKAGE + ".Uninitializable",
-			ROOT_PACKAGE + ".sub.Deep");
-		final Set<String> importResourceClasses = Set.of(ROOT_PACKAGE + ".Annotated",
-			ROOT_PACKAGE + ".sub.Deep");
+		return packageScansOfEveryKindOfRoot(
+			Set.of(ROOT_PACKAGE + ".Annotated", ROOT_PACKAGE + ".Plain",
+				ROOT_PACKAGE + ".Plain$Inner", ROOT_PACKAGE + ".Uninitializable",
+				ROOT_PACKAGE + ".sub.Deep"),
+			Set.of(ROOT_PACKAGE + ".Annotated", ROOT_PACKAGE + ".sub.Deep"));
+	}
+
+	/**
+	 * The package scans over the classes of {@link #infoClassFiles()}: every one of them finds the
+	 * classes and no {@code package-info} or {@code module-info}
+	 *
+	 * @return the scan, the kind of root and the binary names of the classes it finds, for each
+	 *         case
+	 */
+	static Stream<Arguments> infoFileScans()
+	{
+		return packageScansOfEveryKindOfRoot(
+			Set.of(INFO_PACKAGE + ".Info", INFO_PACKAGE + ".sub.Deep"),
+			Set.of(INFO_PACKAGE + ".Info"));
+	}
+
+	/**
+	 * The scans over the package {@code testdata.info}, whose {@code package-info} carries
+	 * {@link Deprecated}: none of them takes it for a class, with the annotation or without one
+	 *
+	 * @return the scan and the classes it finds, for each case
+	 */
+	static Stream<Arguments> annotatedPackageScans()
+	{
+		return Stream.of(
+			arguments(named("getAllAnnotatedClasses with Deprecated",
+				(PackageScan)packagePath -> AnnotationExtensions.getAllAnnotatedClasses(packagePath,
+					Deprecated.class)),
+				Set.of()),
+			arguments(
+				named("getAllAnnotatedClassesFromSet with Deprecated",
+					(PackageScan)packagePath -> AnnotationExtensions
+						.getAllAnnotatedClassesFromSet(packagePath, Set.of(Deprecated.class))),
+				Set.of()),
+			arguments(named("getAllClasses", (PackageScan)AnnotationExtensions::getAllClasses),
+				Set.of(InfoPlain.class)),
+			arguments(
+				named("scanForAllClasses",
+					(PackageScan)packagePath -> AnnotationExtensions
+						.scanForAllClasses(packageDirectory(InfoPlain.class), packagePath)),
+				Set.of(InfoPlain.class)));
+	}
+
+	/**
+	 * The package scans of {@link AnnotationExtensions}, each from a class directory and from a jar
+	 *
+	 * @param everyClass
+	 *            the binary names of every class of the package
+	 * @param importResourceClasses
+	 *            the binary names of the classes that carry an {@link ImportResource}
+	 * @return the scan, the kind of root and the binary names of the classes it finds, for each
+	 *         case
+	 */
+	private static Stream<Arguments> packageScansOfEveryKindOfRoot(final Set<String> everyClass,
+		final Set<String> importResourceClasses)
+	{
 		final Stream<Arguments> scans = Stream.of(
 			arguments(named("getAllClasses", (PackageScan)AnnotationExtensions::getAllClasses),
 				everyClass),
@@ -257,6 +316,29 @@ class AnnotationExtensionsTest
 		return classFiles;
 	}
 
+	/**
+	 * The classes of the scans that skip a {@code package-info} and a {@code module-info}: a class,
+	 * a package-info and a module-info in the package and a package-info in a sub package carry an
+	 * {@link ImportResource}, so that a scan for it would find them if it took them for classes,
+	 * and the sub package holds a plain class too
+	 *
+	 * @return the class file of each class, by its binary name
+	 */
+	private static Map<String, byte[]> infoClassFiles()
+	{
+		final Map<String, byte[]> classFiles = new LinkedHashMap<>();
+		for (final String className : List.of(INFO_PACKAGE + ".Info",
+			INFO_PACKAGE + ".package-info", INFO_PACKAGE + ".module-info",
+			INFO_PACKAGE + ".sub.package-info"))
+		{
+			classFiles.put(className,
+				ClassFixtures.newImportResourceClassFile(className, "Info.css"));
+		}
+		classFiles.put(INFO_PACKAGE + ".sub.Deep",
+			ClassFixtures.newClassFile(INFO_PACKAGE + ".sub.Deep"));
+		return classFiles;
+	}
+
 	private static File packageDirectory(final Class<?> classInThePackage) throws Exception
 	{
 		return Path.of(classInThePackage.getResource("").toURI()).toFile();
@@ -343,13 +425,78 @@ class AnnotationExtensionsTest
 	void getAllAnnotatedClasses_findsTheClassesOfAJarAsOfAClassDirectory(final PackageScan scan,
 		final RootKind rootKind, final Set<String> expected) throws Exception
 	{
-		final Path root = rootKind.write(directory.resolve("root"), rootClassFiles());
+		assertEquals(expected, scanRoot(scan, rootKind, rootClassFiles(), ROOT_PACKAGE));
+	}
 
-		final Set<Class<?>> classes = ClassFixtures
-			.withClassPathRoots(() -> scan.scan(ROOT_PACKAGE), UrlStyle.ESCAPED.of(root));
+	/**
+	 * A {@code package-info.class} holds the annotations of its package and a
+	 * {@code module-info.class} the declaration of a module: neither is a class, so no scan returns
+	 * one, from a class directory or from a jar, in the package or in a sub package, even when it
+	 * carries the annotation the scan looks for
+	 *
+	 * @param scan
+	 *            the package scan
+	 * @param rootKind
+	 *            the kind of class path root that holds the package
+	 * @param expected
+	 *            the binary names of the classes the scan finds
+	 * @throws Exception
+	 *             if the root cannot be written or the scan fails
+	 */
+	@ParameterizedTest(name = "{0}, from a {1}")
+	@MethodSource("infoFileScans")
+	void getAllAnnotatedClasses_skipsPackageInfoAndModuleInfo_fromEveryKindOfRoot(
+		final PackageScan scan, final RootKind rootKind, final Set<String> expected)
+		throws Exception
+	{
+		assertEquals(expected, scanRoot(scan, rootKind, infoClassFiles(), INFO_PACKAGE));
+	}
 
-		assertEquals(expected,
-			classes.stream().map(Class::getName).collect(Collectors.toUnmodifiableSet()));
+	/**
+	 * The {@code package-info.class} the compiler writes for a package annotated with
+	 * {@link Deprecated} is no deprecated class: a package annotation is read with
+	 * {@link Package#getAnnotation(Class)}
+	 *
+	 * @param scan
+	 *            the scan over the package {@code testdata.info}
+	 * @param expected
+	 *            the classes the scan finds
+	 * @throws Exception
+	 *             if the scan fails
+	 */
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("annotatedPackageScans")
+	void getAllAnnotatedClasses_skipsThePackageInfoOfAnAnnotatedPackage(final PackageScan scan,
+		final Set<Class<?>> expected) throws Exception
+	{
+		assertEquals(expected, scan.scan(InfoPlain.class.getPackageName()));
+	}
+
+	/**
+	 * Writes a class path root of the given kind with the given class files and scans the given
+	 * package through a context class loader that reads that root
+	 *
+	 * @param scan
+	 *            the package scan
+	 * @param rootKind
+	 *            the kind of class path root to write
+	 * @param classFiles
+	 *            the class file of each class, by its binary name
+	 * @param packagePath
+	 *            the package to scan
+	 * @return the binary names of the classes the scan finds
+	 * @throws Exception
+	 *             if the root cannot be written or the scan fails
+	 */
+	private Set<String> scanRoot(final PackageScan scan, final RootKind rootKind,
+		final Map<String, byte[]> classFiles, final String packagePath) throws Exception
+	{
+		final Path root = rootKind.write(directory.resolve("root"), classFiles);
+
+		final Set<Class<?>> classes = ClassFixtures.withClassPathRoots(() -> scan.scan(packagePath),
+			UrlStyle.ESCAPED.of(root));
+
+		return classes.stream().map(Class::getName).collect(Collectors.toUnmodifiableSet());
 	}
 
 	@ParameterizedTest(name = "{0}")
