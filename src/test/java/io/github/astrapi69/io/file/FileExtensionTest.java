@@ -78,6 +78,7 @@ class FileExtensionTest
 		final File file = ClassExtensions.getResourceAsFile(propertiesFilename);
 
 		assertTrue(FileExtension.is(file, FileExtension.PROPERTIES));
+		assertFalse(FileExtension.is(file, FileExtension.JSON));
 	}
 
 	@Test
@@ -104,6 +105,8 @@ class FileExtensionTest
 
 		assertTrue(FileExtension.is(file, ".properties"));
 		assertTrue(FileExtension.is(file, "properties"));
+		assertFalse(FileExtension.is(file, ".json"));
+		assertFalse(FileExtension.is(file, "json"));
 	}
 
 	@Test

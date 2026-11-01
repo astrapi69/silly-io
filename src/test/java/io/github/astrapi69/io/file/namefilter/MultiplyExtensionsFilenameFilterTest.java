@@ -58,8 +58,8 @@ public class MultiplyExtensionsFilenameFilterTest
 	Path directory;
 
 	/**
-	 * The extensions and the file name are compared without their case, as
-	 * {@code SimpleFilenameFilter} compares them
+	 * The name has to end with one of the extensions, which are compared without their case and the
+	 * case of the name, as {@code SimpleFilenameFilter} compares them
 	 *
 	 * @param extension
 	 *            the extension of the filter
@@ -72,9 +72,9 @@ public class MultiplyExtensionsFilenameFilterTest
 	 */
 	@ParameterizedTest(name = "extension {0}, file {1}: {2}")
 	@CsvSource({ ".TXT, NOTES.TXT, true", ".txt, NOTES.TXT, true", ".TXT, notes.txt, true",
-			".Txt, notes.tXT, true", ".TXT, NOTES.MD, false" })
-	void accept_ignoresTheCaseOfTheExtensionsAndOfTheName(final String extension, final String name,
-		final boolean expected) throws IOException
+			".Txt, notes.tXT, true", ".TXT, NOTES.MD, false", ".TXT, NOTES.TXT.BAK, false" })
+	void accept_takesAnExtensionAtTheEndOfTheName_inAnyCase(final String extension,
+		final String name, final boolean expected) throws IOException
 	{
 		Files.createFile(directory.resolve(name));
 
@@ -131,20 +131,12 @@ public class MultiplyExtensionsFilenameFilterTest
 		assertEquals(expected, actual);
 
 		filename = "TestFind.class";
-		file = new File(".", filename);
+		file = new File(directory.toFile(), filename);
 		FileUtils.writeStringToFile(file, "", Charset.defaultCharset());
 		dir = file.getParentFile();
 		actual = filenameFilter.accept(dir, filename);
 		expected = false;
 		assertEquals(expected, actual);
-		try
-		{
-			file.deleteOnExit();
-		}
-		catch (final Exception e)
-		{
-			// ignore...
-		}
 
 	}
 

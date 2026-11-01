@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.NotSerializableException;
@@ -103,21 +104,13 @@ public class SerializerTest extends BaseTestCase
 	public void testReadSerializedObjectFromFile()
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
-		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
+		final File writeInMe = new File(directory.toFile(), "testWriteSerializedObjectToFile.dat");
 		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
 		assertTrue(actual);
 		final Object readedObjectFromFile = Serializer.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
 		assertTrue(actual);
-		try
-		{
-			writeInMe.deleteOnExit();
-		}
-		catch (final Exception e)
-		{
-			// ignore...
-		}
 	}
 
 	/**
@@ -156,7 +149,7 @@ public class SerializerTest extends BaseTestCase
 	public void testWriteSerializedObjectToFile()
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
-		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
+		final File writeInMe = new File(directory.toFile(), "testWriteSerializedObjectToFile.dat");
 		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
 		assertTrue(actual);
 		final Object readedObjectFromFile = Serializer.readSerializedObjectFromFile(writeInMe);
@@ -191,6 +184,8 @@ public class SerializerTest extends BaseTestCase
 			.toObject(new byte[] { 1, 2, 3, 4 });
 		final Executable readBase64ThatIsNoStream = () -> Serializer.toObject("AQIDBA==");
 		final Executable readTextThatIsNoBase64 = () -> Serializer.toObject("not base64!");
+		final Executable readAnEmptyByteArray = () -> Serializer.toObject(new byte[0]);
+		final Executable readAnEmptyBase64String = () -> Serializer.toObject("");
 		return Stream.of(
 			arguments(named("reading a file that does not exist", readMissingFile),
 				FileNotFoundException.class),
@@ -208,7 +203,11 @@ public class SerializerTest extends BaseTestCase
 			arguments(named("reading Base64 that is no object stream", readBase64ThatIsNoStream),
 				StreamCorruptedException.class),
 			arguments(named("reading text that is no Base64", readTextThatIsNoBase64),
-				IllegalArgumentException.class));
+				IllegalArgumentException.class),
+			arguments(named("reading an empty byte array", readAnEmptyByteArray),
+				EOFException.class),
+			arguments(named("reading an empty Base64 string", readAnEmptyBase64String),
+				EOFException.class));
 	}
 
 	/**
