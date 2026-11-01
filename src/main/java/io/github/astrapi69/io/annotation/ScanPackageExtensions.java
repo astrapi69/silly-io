@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import io.github.astrapi69.io.file.FileExtension;
 import io.github.astrapi69.io.file.FilenameExtensions;
 import io.github.astrapi69.io.file.filter.ClassFileFilter;
 
@@ -110,7 +111,8 @@ public final class ScanPackageExtensions
 				}
 				else
 				{
-					if (!isDir && entryName.startsWith(packagePath))
+					if (!isDir && entryName.endsWith(FileExtension.CLASS.getExtension())
+						&& entryName.startsWith(packagePath))
 					{
 						final String relativePath = entryName.substring(packagePath.length() + 1,
 							entryName.length());

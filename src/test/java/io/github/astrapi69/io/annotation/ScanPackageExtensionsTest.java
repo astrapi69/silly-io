@@ -34,6 +34,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -57,6 +58,8 @@ class ScanPackageExtensionsTest
 	static final String SCAN_PACKAGE = "io.github.astrapi69.io.annotation.testdata.scan";
 
 	static final String JAR_PACKAGE = "generated.scan";
+
+	static final String DEFECT_PACKAGE = "gen.pkg";
 
 	@TempDir
 	Path directory;
@@ -103,6 +106,35 @@ class ScanPackageExtensionsTest
 			"generated/scan/sub/Deep.class", "other/", "other/Elsewhere.class");
 	}
 
+	/**
+	 * Scans the given package in a jar of the given entries, written into a file of its own and
+	 * reached through a context class loader of the test's own
+	 *
+	 * @param packageName
+	 *            the package to scan
+	 * @param recursive
+	 *            the recursive flag of the scan
+	 * @param qualifiedClassnames
+	 *            the flag of the scan for qualified class names
+	 * @param entryNames
+	 *            the entries of the jar, as {@link ClassFixtures#newJar} reads them
+	 * @return the class names the scan lists
+	 * @throws Exception
+	 *             if the jar cannot be written or the scan fails
+	 */
+	private Set<String> scanJar(final String packageName, final boolean recursive,
+		final boolean qualifiedClassnames, final String... entryNames) throws Exception
+	{
+		final Path jar = ClassFixtures.newJar(Files.createTempFile(directory, "scan", ".jar"),
+			entryNames);
+		try (URLClassLoader jarClassLoader = new URLClassLoader(new URL[] { jar.toUri().toURL() },
+			ClassLoader.getSystemClassLoader()))
+		{
+			return ClassFixtures.withContextClassLoader(jarClassLoader, () -> ScanPackageExtensions
+				.scanClassNames(packageName, recursive, qualifiedClassnames));
+		}
+	}
+
 	@ParameterizedTest(name = "recursive {0}, qualified names {1}")
 	@MethodSource("directoryScans")
 	void scanClassNames_listsTheClassesOfADirectoryPackage(final boolean recursive,
@@ -141,6 +173,19 @@ class ScanPackageExtensionsTest
 				ClassFixtures.withContextClassLoader(jarClassLoader, () -> ScanPackageExtensions
 					.scanClassNames(JAR_PACKAGE, recursive, qualifiedClassnames)));
 		}
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@ValueSource(strings = { "gen/pkg/readme.txt", "gen/pkg/messages.properties", "gen/pkg/LICENSE",
+			"gen/pkg/Old.class.bak" })
+	void scanClassNames_listsOnlyTheClassFilesOfAJarPackage(final String otherEntry)
+		throws Exception
+	{
+		final String[] entryNames = { "gen/", "gen/pkg/", "gen/pkg/A.class", otherEntry };
+
+		assertEquals(Set.of(DEFECT_PACKAGE + ".A"),
+			scanJar(DEFECT_PACKAGE, false, true, entryNames));
+		assertEquals(Set.of("A"), scanJar(DEFECT_PACKAGE, false, false, entryNames));
 	}
 
 	@ParameterizedTest(name = "{0} archive")

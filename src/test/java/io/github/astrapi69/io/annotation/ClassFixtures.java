@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.lang.classfile.ClassFile;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.ConstantDescs;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
@@ -65,8 +66,8 @@ final class ClassFixtures
 
 	/**
 	 * Writes a jar with the given entries, in the given order. A name that ends with a slash is a
-	 * directory entry, every other name ends with {@code .class} and holds a generated class of the
-	 * name its path gives
+	 * directory entry, a name that ends with {@code .class} holds a generated class of the name its
+	 * path gives, and every other name is a file that holds its own name as text
 	 *
 	 * @param jar
 	 *            the jar file to write
@@ -83,9 +84,13 @@ final class ClassFixtures
 			for (final String entryName : entryNames)
 			{
 				jarOutputStream.putNextEntry(new JarEntry(entryName));
-				if (!entryName.endsWith("/"))
+				if (entryName.endsWith(CLASS_FILE_SUFFIX))
 				{
 					jarOutputStream.write(newClassFile(toClassName(entryName)));
+				}
+				else if (!entryName.endsWith("/"))
+				{
+					jarOutputStream.write(entryName.getBytes(StandardCharsets.UTF_8));
 				}
 				jarOutputStream.closeEntry();
 			}
@@ -125,10 +130,6 @@ final class ClassFixtures
 
 	private static String toClassName(final String entryName)
 	{
-		if (!entryName.endsWith(CLASS_FILE_SUFFIX))
-		{
-			throw new IllegalArgumentException("not a class file entry: " + entryName);
-		}
 		return entryName.substring(0, entryName.length() - CLASS_FILE_SUFFIX.length()).replace('/',
 			'.');
 	}
