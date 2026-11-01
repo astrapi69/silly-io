@@ -336,6 +336,32 @@ class ScanPackageExtensionsTest
 			() -> assertEquals(Set.of("Outer", "Deep"), scanRoots("nest.pkg", true, false, root)));
 	}
 
+	/**
+	 * A {@code package-info.class} holds the annotations of its package and a
+	 * {@code module-info.class} the declaration of a module: neither is a class a caller can load
+	 * as a type, so neither is listed, in the package or in a sub package
+	 *
+	 * @param rootKind
+	 *            the kind of class path root that holds the package
+	 * @throws Exception
+	 *             if the root cannot be written or the scan fails
+	 */
+	@ParameterizedTest(name = "from a {0}")
+	@EnumSource(RootKind.class)
+	void scanClassNames_skipsPackageInfoAndModuleInfo_fromEveryKindOfRoot(final RootKind rootKind)
+		throws Exception
+	{
+		final Path root = rootKind.write(directory.resolve("root"), "info.pkg.Info",
+			"info.pkg.package-info", "info.pkg.module-info", "info.pkg.sub.Deep",
+			"info.pkg.sub.package-info");
+
+		assertAll(
+			() -> assertEquals(Set.of("info.pkg.Info"), scanRoots("info.pkg", false, true, root)),
+			() -> assertEquals(Set.of("info.pkg.Info", "info.pkg.sub.Deep"),
+				scanRoots("info.pkg", true, true, root)),
+			() -> assertEquals(Set.of("Info", "Deep"), scanRoots("info.pkg", true, false, root)));
+	}
+
 	@ParameterizedTest(name = "{0} archive")
 	@ValueSource(strings = { "war", "ear" })
 	void scanClassNames_readsAPackageInAWarOrEarArchiveLikeAJar(final String protocol)

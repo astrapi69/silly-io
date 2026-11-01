@@ -45,6 +45,12 @@ public final class ScanPackageExtensions
 {
 
 	/**
+	 * The names of the class files that hold no class: the annotations and the documentation of a
+	 * package, and the declaration of a module
+	 */
+	private static final Set<String> NO_CLASS_NAMES = Set.of("package-info", "module-info");
+
+	/**
 	 * Scan class names from the given package name.
 	 *
 	 * @param packageName
@@ -61,7 +67,8 @@ public final class ScanPackageExtensions
 	/**
 	 * Scan class names from the given package name, in every directory and archive of the class
 	 * path that holds the package. Only top-level classes are listed: a class file whose name holds
-	 * a {@code $}, as the class files of nested and anonymous classes do, is skipped.
+	 * a {@code $}, as the class files of nested and anonymous classes do, is skipped, and so are a
+	 * {@code package-info.class} and a {@code module-info.class}, which hold no class.
 	 *
 	 * @param packageName
 	 *            the package name
@@ -142,7 +149,7 @@ public final class ScanPackageExtensions
 					{
 						final String relativePath = entryName.substring(packagePath.length() + 1,
 							entryName.length());
-						if (!relativePath.contains("/") && !relativePath.contains("$"))
+						if (!relativePath.contains("/") && isTopLevelClassFile(relativePath))
 						{
 							final String filenameWithoutExtension = FilenameExtensions
 								.getFilenameWithoutExtension(entryName.replace("/", "."));
@@ -199,7 +206,7 @@ public final class ScanPackageExtensions
 			}
 			else
 			{
-				if (!file.isDirectory() && !file.getName().contains("$"))
+				if (!file.isDirectory() && isTopLevelClassFile(file.getName()))
 				{
 					final String filenameWithoutExtension = FilenameExtensions
 						.getFilenameWithoutExtension(file);
@@ -217,6 +224,21 @@ public final class ScanPackageExtensions
 			}
 		}
 		return classNames;
+	}
+
+	/**
+	 * Checks if the class file of the given name holds a top-level class: a name with a {@code $},
+	 * as the class files of nested and anonymous classes have, is none, and neither is a
+	 * {@code package-info.class} or a {@code module-info.class}
+	 *
+	 * @param classFileName
+	 *            the name of the class file, without its directory
+	 * @return true if the class file holds a top-level class
+	 */
+	private static boolean isTopLevelClassFile(final String classFileName)
+	{
+		final String className = FilenameExtensions.getFilenameWithoutExtension(classFileName);
+		return !className.contains("$") && !NO_CLASS_NAMES.contains(className);
 	}
 
 	private static String lastCharacter(final String str)

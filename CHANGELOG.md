@@ -21,6 +21,7 @@
 - A class path whose directory holds a `+` or another character a URL escapes is read correctly; `URLDecoder` turned `+` into a space (#27).
 - `AnnotationExtensions.getAllClasses` and `getAllAnnotatedClasses` find the classes of a jar too (#28).
 - `ScanPackageExtensions.scanClassNames` and the `AnnotationExtensions` scans read a jar below a directory whose name holds a `!` (`/home/u/x!y/lib.jar`): the archive is split from the entry at the first `!/`, as `JarURLConnection` splits it, no longer at the first `!` (#43).
+- `ScanPackageExtensions.scanClassNames` no longer lists `package-info` and `module-info` as class names, from a directory as from a jar: neither class file holds a class a caller can load as a type (#45).
 - `LinuxShellExecutor.execute` runs the command in the execution directory through `ProcessBuilder.directory`, no longer through `cd <path>` in the command string, so a directory name can no longer run as a command (#22).
 - Only a leading `~`, alone or before a `/`, stands for the home directory (#31).
 - `OS.getOperatingSystem` returns `UNIX` for AIX, HP-UX, IRIX, Solaris, SunOS, FreeBSD, OpenBSD and NetBSD (#32).
