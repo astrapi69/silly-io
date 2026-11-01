@@ -9,13 +9,17 @@
 
 ### Changed
 - The tests cover 98.7% of the lines and 97.3% of the branches, up from 67.2% and 48.8%, and the build fails below 95% of the lines or 90% of the branches (`jacocoTestCoverageVerification` in `check`) (#20).
-- Built with Gradle 9.7.0. The grgit and hierynomus license plugins are gone: a release is tagged through git (`gradle/tagging.gradle`), and Spotless writes the license header from `src/main/resources/license-header.txt` (#14).
+- Built with Gradle 9.8.2. The grgit and hierynomus license plugins are gone: a release is tagged through git (`gradle/tagging.gradle`), and Spotless writes the license header from `src/main/resources/license-header.txt` (#14).
 - Releases go to Maven Central through the Central Portal, as in the rest of the family: the `com.gradleup.nmcp` plugin uploads, the maintainer releases each deployment in the Portal, and a `RELEASE-*` tag runs the new `publish.yml`, which signs with the signing subkey that the secret `GPG_KEY_ID` names. An upload leaves only from CI, a release only from its tag. The OSSRH staging endpoint this project published to is shut down; its settings are gone, among them the switch that held the checksums to md5 and sha1, and snapshots resolve from the Central Portal's snapshot repository (#13).
 - A test class that leaves no result fails the build (`gradle/test-results-complete.gradle`, #10), and `gradle/` is under version control (#3). The Gradle dependency graph goes to GitHub (#1).
 - Dependencies raised with versionCatalogUpdate, stable versions only: commons-io 2.22.0, junit-jupiter 6.1.3, silly-collection 28.2, and for the tests file-worker 19.1 and test-object 9.1 (#17).
 - The README names the family's funding channels instead of cryptocurrency addresses, and its dead badges and links are replaced (#5, #7).
 
 ### Fixed
+- `LinuxShellExecutor.execute` runs the command in the execution directory through `ProcessBuilder.directory`, no longer through `cd <path>` in the command string, so a directory name can no longer run as a command (#22).
+- Only a leading `~`, alone or before a `/`, stands for the home directory (#31).
+- `OS.getOperatingSystem` returns `UNIX` for AIX, HP-UX, IRIX, Solaris, SunOS, FreeBSD, OpenBSD and NetBSD (#32).
+- `SuffixFileFilter`, `MultiplyExtensionsFileFilter` and `MultiplyExtensionsFilenameFilter` ignore the case of the extension and of the name (#30).
 - `FilenameExtensions.getFilenamePrefix(File)` and `getFilenameSuffix(File)` look for the extension's dot in the file name only, no longer in the whole path. Below a directory whose name holds a dot (`~/.cache/x/data`), a file without an extension got the rest of the path as its suffix and a prefix that ended at that directory, so a rename built from the prefix moved the file out of its directory (#9).
 
 ---

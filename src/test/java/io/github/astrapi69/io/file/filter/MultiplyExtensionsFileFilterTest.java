@@ -33,10 +33,15 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import io.github.astrapi69.collection.list.ListFactory;
 import io.github.astrapi69.evaluate.object.evaluator.ToStringEvaluator;
@@ -48,6 +53,32 @@ import io.github.astrapi69.lang.ClassExtensions;
 public class MultiplyExtensionsFileFilterTest
 {
 
+	@TempDir
+	Path directory;
+
+	/**
+	 * The extensions and the file name are compared without their case, as
+	 * {@code SimpleFilenameFilter} compares them
+	 *
+	 * @param extension
+	 *            the extension of the filter
+	 * @param name
+	 *            the name of the file
+	 * @param expected
+	 *            whether the filter accepts the file
+	 * @throws IOException
+	 *             if the file cannot be created
+	 */
+	@ParameterizedTest(name = "extension {0}, file {1}: {2}")
+	@CsvSource({ ".TXT, NOTES.TXT, true", ".txt, NOTES.TXT, true", ".TXT, notes.txt, true",
+			".Txt, notes.tXT, true", ".TXT, NOTES.MD, false" })
+	void accept_ignoresTheCaseOfTheExtensionsAndOfTheName(final String extension, final String name,
+		final boolean expected) throws IOException
+	{
+		final File file = Files.createFile(directory.resolve(name)).toFile();
+
+		assertEquals(expected, new MultiplyExtensionsFileFilter(extension).accept(file));
+	}
 
 	/**
 	 * Test method for {@link MultiplyExtensionsFileFilter#accept(File)}

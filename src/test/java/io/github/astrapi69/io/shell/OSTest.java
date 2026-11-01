@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Unit test class for {@link OS}
@@ -162,7 +163,7 @@ public class OSTest
 	@ParameterizedTest(name = "{0}: {1}")
 	@CsvSource({ "Windows 11, WINDOWS, Windows, true, false, false",
 			"Linux, LINUX, Linux, false, false, true", "Mac OS X, MAC, Mac OS, false, true, false",
-			"Darwin, MAC, Mac OS, false, true, false",
+			"Darwin, MAC, Mac OS, false, true, false", "FreeBSD, UNIX, Unix, false, false, false",
 			"Unknown OS, OTHER, Other, false, false, false" })
 	void theQueries_followTheOperatingSystemNameProperty(final String osName, final OS expectedOS,
 		final String expectedName, final boolean windows, final boolean mac, final boolean linux)
@@ -185,6 +186,22 @@ public class OSTest
 		System.setProperty("os.name", "Unknown OS");
 
 		assertEquals(expected, OS.getOperatingSystem(osName));
+	}
+
+	/**
+	 * The Unix systems besides Linux and macOS, by the names their JDKs give them, as Apache
+	 * Commons Lang's {@code SystemUtils.IS_OS_UNIX} counts them, and a name that says Unix; in
+	 * either case
+	 *
+	 * @param osName
+	 *            the name of a Unix system
+	 */
+	@ParameterizedTest(name = "{0}")
+	@ValueSource(strings = { "FreeBSD", "OpenBSD", "NetBSD", "SunOS", "Solaris", "AIX", "HP-UX",
+			"Irix", "Digital Unix", "freebsd" })
+	void getOperatingSystem_returnsUnix_forAUnixSystem(final String osName)
+	{
+		assertEquals(OS.UNIX, OS.getOperatingSystem(osName));
 	}
 
 	@Test
