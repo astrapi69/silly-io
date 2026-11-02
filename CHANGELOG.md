@@ -16,6 +16,9 @@
 - `ImportResourcesExtensions.join` is an implementation of this project (`Arrays.copyOf`, `System.arraycopy`), no longer the block taken word for word from Apache Commons Lang's `ArrayUtils.addAll`. Its behaviour is unchanged; the `ArrayStoreException` its Javadoc named never came out of it, as any one became an `IllegalArgumentException`, and the Javadoc says that now (#59).
 - `ScanClassExtensions.normalizeSimpleClassName` no longer checks for `null` the part after the last `$` it passes to its private `isNumeric`: `String.substring` never returns `null` (#59).
 
+### Fixed
+- `StreamExtensions.getByteArray(File)` closes the stream it opens. It left it open, so every call held a file descriptor until the garbage collector got to the stream, and on Windows the file stayed locked as long. The overloads that take an `InputStream` still leave it open, as it belongs to the caller (#61).
+
 ---
 
 ## Version 4.0
