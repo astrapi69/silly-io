@@ -145,9 +145,21 @@ class ScanClassExtensionsTest
 		assertEquals(expected, ScanClassExtensions.normalizeQualifiedClassName(qualifiedClassname));
 	}
 
+	/**
+	 * Only a part after the last {@code $} that is all digits is dropped, each char taken by itself
+	 * as {@link Character#isDigit(char)} sees it: an Arabic-Indic digit counts, the mathematical
+	 * bold digit one outside the basic plane does not, as its two surrogates are no digits (#60)
+	 *
+	 * @param className
+	 *            the class name to normalize
+	 * @param expected
+	 *            the normalized name
+	 */
 	@ParameterizedTest(name = "{0} -> {1}")
 	@CsvSource({ "Foo.class, Foo", "Foo$3.class, Foo", "Foo$Bar.class, Foo$Bar", "Foo$1a, Foo$1a",
-			"Foo$, Foo$", "Foo, Foo", "Foo.classes, Foo.classes", "'', ''" })
+			"Foo$, Foo$", "Foo, Foo", "Foo.classes, Foo.classes", "'', ''", "Foo$007, Foo",
+			"Foo$a1, Foo$a1", "'Foo$1 ', 'Foo$1 '", "Foo$-1, Foo$-1", "Foo$Bar$2.class, Foo$Bar",
+			"Foo$1$Bar, Foo$1$Bar", "$1, ''", "Foo$٣.class, Foo", "Foo$𝟏, Foo$𝟏" })
 	void normalizeSimpleClassName_dropsTheClassSuffixAndAnonymousClassNumbers(
 		final String className, final String expected)
 	{
