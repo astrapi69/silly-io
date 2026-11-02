@@ -26,7 +26,10 @@ package io.github.astrapi69.io.annotation;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Named.named;
@@ -205,5 +208,32 @@ public class ImportResourcesExtensionsTest
 			() -> ImportResourcesExtensions.join(integers, strings));
 		assertEquals("Cannot store java.lang.String in an array of java.lang.Integer",
 			exception.getMessage());
+		assertInstanceOf(ArrayStoreException.class, exception.getCause());
+	}
+
+	/**
+	 * Characterizes {@link ImportResourcesExtensions#join(Object[], Object[])} beyond the elements:
+	 * without one array it returns the other one itself, and otherwise a new array, whose component
+	 * type is the runtime component type of the first array
+	 */
+	@Test
+	void join_returnsTheOtherArrayItself_orANewArrayOfTheFirstArraysComponentType()
+	{
+		final String[] strings = { "a" };
+		final String[] empty = new String[0];
+
+		assertSame(strings, ImportResourcesExtensions.join(null, strings));
+		assertSame(strings, ImportResourcesExtensions.join(strings, (String[])null));
+
+		final String[] joinedWithEmpty = ImportResourcesExtensions.join(strings, empty);
+		assertNotSame(strings, joinedWithEmpty);
+		assertArrayEquals(strings, joinedWithEmpty);
+
+		final Object[] covariant = new String[] { "s" };
+		assertEquals(String[].class, ImportResourcesExtensions.join(covariant, "t").getClass());
+		final CharSequence[] charSequences = { "x" };
+		final CharSequence[] joined = ImportResourcesExtensions.join(charSequences, "y");
+		assertEquals(CharSequence[].class, joined.getClass());
+		assertArrayEquals(new CharSequence[] { "x", "y" }, joined);
 	}
 }

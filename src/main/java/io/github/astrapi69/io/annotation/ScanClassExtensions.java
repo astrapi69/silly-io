@@ -40,6 +40,9 @@ import io.github.astrapi69.io.file.filter.ClassFileFilter;
  */
 public final class ScanClassExtensions
 {
+	private ScanClassExtensions()
+	{
+	}
 
 	/**
 	 * Equal the given class objects by they qualified class names.
@@ -107,7 +110,7 @@ public final class ScanClassExtensions
 
 	private static boolean isNumeric(final CharSequence cs)
 	{
-		if (cs == null || cs.length() == 0)
+		if (cs.length() == 0)
 		{
 			return false;
 		}

@@ -2,7 +2,10 @@
 
 ---
 
-## Version 4.1-SNAPSHOT
+## Version 5.0-SNAPSHOT
+
+### Breaking
+- `AnnotationExtensions`, `ClassloaderExtensions`, `FindClassExtensions`, `ProcessBuilderFactory`, `ScanClassExtensions` and `ScanPackageExtensions` have a private constructor. Every member of them is static, and their implicit public constructor was the last line the tests did not reach. It is binary incompatible: code compiled against 4.0 that calls one of these constructors fails with an `IllegalAccessError`, and a subclass of `ClassloaderExtensions`, `FindClassExtensions` or `ProcessBuilderFactory` no longer compiles. No project of the family does either. So this release is 5.0 instead of 4.1 (#59).
 
 ### Changed
 - Mutation testing with PIT 1.30.1 (`./gradlew pitest`, `gradle/mutation-testing.gradle`): the tests kill 371 of the 374 mutants, 99%, and the CI build fails below 97% (`mutationThreshold` in `build.gradle`; PIT rounds the score half up to a whole percent before it compares). The three survivors are equivalent: the `writeSerializedObjectToFile` methods return `true` or throw (#55), and `ByteArrayOutputStream.close` does nothing. The README's mutation score badge shows the score of `develop`, which CI publishes on the `gh-pages` branch from each push to it, also when the score fails the floor; a push to `master` publishes master's (#54).
@@ -10,6 +13,8 @@
 - The tests write their files into a temporary directory, no longer into the working directory, where a run of PIT left them behind and the next build failed on them (#54).
 - The test runtime class path no longer holds this project's own jar: file-worker and jobj-copy depend on an older silly-io, which Gradle resolved to this project, beside the compiled classes that come first on the class path, so `test` and now `pitest` needed `mustRunAfter(jar)`. The workaround is gone with its cause (#54).
 - Unreachable code is gone, without a change in behaviour: `FindClassExtensions.forName` checked `Class.forName` for `null`, which it never returns; `ScanClassExtensions.normalizeSimpleClassName` handled a missing `.class` it had just checked for; `SerializedObjectExtensions.writeSerializedObjectToFile` flushed and closed a stream its try-with-resources closes (#54).
+- `ImportResourcesExtensions.join` is an implementation of this project (`Arrays.copyOf`, `System.arraycopy`), no longer the block taken word for word from Apache Commons Lang's `ArrayUtils.addAll`. Its behaviour is unchanged; the `ArrayStoreException` its Javadoc named never came out of it, as any one became an `IllegalArgumentException`, and the Javadoc says that now (#59).
+- `ScanClassExtensions.normalizeSimpleClassName` no longer checks for `null` the part after the last `$` it passes to its private `isNumeric`: `String.substring` never returns `null` (#59).
 
 ---
 
