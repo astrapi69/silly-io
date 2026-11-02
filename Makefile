@@ -1,12 +1,8 @@
 
-# pinned on purpose with := (not ?=): the shell's JAVA_HOME (e.g. sdkman's "current") may point at
-# an older JDK, and this project's toolchain is JDK 25 (gradle.properties projectSourceCompatibility)
-# Another JDK 25: make JAVA_HOME=/path/to/jdk-25 <target>
-JAVA_HOME := $(HOME)/.sdkman/candidates/java/25-tem
-
-# every target goes through this, so the JDK pin lives in one place. Recursive (=), so that a
-# missing JDK stops a target that runs Gradle with a message saying so, and not help
-GRADLE = $(if $(wildcard $(JAVA_HOME)/bin/java),JAVA_HOME=$(JAVA_HOME) ./gradlew,$(error JAVA_HOME=$(JAVA_HOME) holds no JDK; run make JAVA_HOME=/path/to/jdk-25 $(MAKECMDGOALS)))
+# No JDK is chosen here: the Gradle toolchain (build.gradle, java.toolchain, JDK 25 from
+# gradle.properties projectSourceCompatibility) compiles, tests, runs PIT and writes the javadoc, so
+# the JDK that runs Gradle only has to be one Gradle 9 runs on, 17 or later
+GRADLE := ./gradlew
 
 # the version a release tag would carry
 VERSION := $(shell sed -n 's/^projectVersion=//p' gradle.properties)
