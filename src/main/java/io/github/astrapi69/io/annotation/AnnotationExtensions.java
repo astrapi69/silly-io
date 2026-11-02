@@ -49,6 +49,9 @@ import io.github.astrapi69.io.file.filter.ClassFileFilter;
  */
 public final class AnnotationExtensions
 {
+	private AnnotationExtensions()
+	{
+	}
 
 	/**
 	 * Gets all annotated classes that belongs from the given package path and the given annotation

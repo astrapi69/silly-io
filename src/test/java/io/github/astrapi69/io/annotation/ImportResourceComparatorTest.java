@@ -128,6 +128,7 @@ public class ImportResourceComparatorTest
 			arguments(named("a null first object, null is greater", null), text, true, 1),
 			arguments(named("a null second object, null is smaller", text), null, false, 1),
 			arguments(named("a null second object, null is greater", text), null, true, -1),
+			arguments(named("two null objects, null is greater", null), null, true, 0),
 			arguments(named("two different objects", text), "other", false, null),
 			arguments(named("two different objects, null is greater", text), "other", true, null));
 	}

@@ -31,9 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.Date;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.meanbean.test.BeanTester;
 
 import io.github.astrapi69.date.CreateDateExtensions;
@@ -49,6 +51,9 @@ import io.github.astrapi69.test.object.Person;
 public class SerializedObjectExtensionsTest extends BaseTestCase
 {
 
+	@TempDir
+	Path directory;
+
 	/**
 	 * Test method for {@link SerializedObjectExtensions#readSerializedObjectFromFile(File)}
 	 *
@@ -62,7 +67,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	public void testReadSerializedObjectFromFile() throws IOException, ClassNotFoundException
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
-		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
+		final File writeInMe = new File(directory.toFile(), "testWriteSerializedObjectToFile.dat");
 		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromNiko,
 			writeInMe);
 		assertTrue(actual);
@@ -71,14 +76,6 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
 		assertTrue(actual);
-		try
-		{
-			writeInMe.deleteOnExit();
-		}
-		catch (final Exception e)
-		{
-			// ignore...
-		}
 	}
 
 	/**
@@ -190,7 +187,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	{
 
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
-		final File writeInMe = new File(".", "testWriteSerializedObjectToFile.dat");
+		final File writeInMe = new File(directory.toFile(), "testWriteSerializedObjectToFile.dat");
 		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromNiko,
 			writeInMe);
 		assertTrue(actual);

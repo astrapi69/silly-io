@@ -136,6 +136,7 @@ class AnnotationExtensionsTest
 				Set.of(ScannedPanel.class)),
 			arguments(named("Marker, which no scanned class carries", Set.of(Marker.class)),
 				Set.of()),
+			arguments(named("an empty annotation set", Set.of()), Set.of()),
 			arguments(named("no annotation set", null), ALL_SCANNED_CLASSES));
 	}
 
@@ -536,15 +537,28 @@ class AnnotationExtensionsTest
 				annotationClass == null ? null : Set.of(annotationClass)));
 	}
 
+	/**
+	 * Characterizes the result for a directory that does not exist: an empty set that the caller
+	 * can add to, as the result for any other directory is
+	 *
+	 * @throws Exception
+	 *             is not expected
+	 */
 	@Test
-	void scanForAllAnnotatedClasses_isEmpty_forADirectoryThatDoesNotExist() throws Exception
+	void scanForAllAnnotatedClasses_isEmptyAndModifiable_forADirectoryThatDoesNotExist()
+		throws Exception
 	{
 		final File missing = directory.resolve("missing").toFile();
 
-		assertTrue(AnnotationExtensions.scanForAllAnnotatedClasses(missing, "missing", Marker.class)
-			.isEmpty());
-		assertTrue(AnnotationExtensions
-			.scanForAllAnnotatedClassesFromSet(missing, "missing", Set.of(Marker.class)).isEmpty());
+		for (final Set<Class<?>> result : List.of(
+			AnnotationExtensions.scanForAllAnnotatedClasses(missing, "missing", Marker.class),
+			AnnotationExtensions.scanForAllAnnotatedClassesFromSet(missing, "missing",
+				Set.of(Marker.class))))
+		{
+			assertTrue(result.isEmpty());
+			assertTrue(result.add(Object.class));
+			assertEquals(Set.of(Object.class), result);
+		}
 	}
 
 	@Test

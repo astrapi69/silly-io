@@ -40,6 +40,9 @@ import io.github.astrapi69.io.file.filter.ClassFileFilter;
  */
 public final class ScanClassExtensions
 {
+	private ScanClassExtensions()
+	{
+	}
 
 	/**
 	 * Equal the given class objects by they qualified class names.
@@ -88,7 +91,9 @@ public final class ScanClassExtensions
 		String result = className;
 		if (className.endsWith(FileExtension.CLASS.getExtension()))
 		{
-			result = replaceLast(className, FileExtension.CLASS.getExtension(), "");
+			result = className
+				.substring(0, className.length() - FileExtension.CLASS.getExtension().length())
+				.trim();
 		}
 		final int lastIndexOf$ = result.lastIndexOf("$");
 		if (lastIndexOf$ != -1)
@@ -103,27 +108,9 @@ public final class ScanClassExtensions
 		return result;
 	}
 
-	private static final String replaceLast(String original, String findString, String replacement)
-	{
-		int index = original.lastIndexOf(findString);
-		if (index == -1)
-		{
-			return original;
-		}
-		else
-		{
-			StringBuffer originalFiltered = new StringBuffer();
-			originalFiltered.append(original.substring(0, index));
-			originalFiltered.append(replacement);
-			originalFiltered.append(original.substring(index + findString.length()));
-			String result = originalFiltered.toString().trim();
-			return result;
-		}
-	}
-
 	private static boolean isNumeric(final CharSequence cs)
 	{
-		if (cs == null || cs.length() == 0)
+		if (cs.length() == 0)
 		{
 			return false;
 		}

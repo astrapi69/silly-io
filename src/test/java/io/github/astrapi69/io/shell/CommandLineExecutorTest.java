@@ -91,6 +91,8 @@ public class CommandLineExecutorTest
 		assertTrue(result.contains("Hello, World!"), "Expected output not found in the result");
 		assertTrue(additionalOutput.toString().contains("Hello, World!"),
 			"Expected output not found in additional output stream");
+		assertEquals(result, additionalOutput.toString(),
+			"The additional output stream mirrors the output, line separators included");
 	}
 
 	/**

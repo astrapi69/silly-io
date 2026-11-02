@@ -42,6 +42,9 @@ import java.util.List;
  */
 public class FindClassExtensions
 {
+	private FindClassExtensions()
+	{
+	}
 
 
 	/**
@@ -55,24 +58,14 @@ public class FindClassExtensions
 	 */
 	public static Class<?> forName(final String className) throws ClassNotFoundException
 	{
-		Class<?> clazz = null;
 		try
 		{
-			clazz = Class.forName(className);
+			return Class.forName(className);
 		}
 		catch (final Throwable throwable)
 		{
-			clazz = Class.forName(className, true, ClassloaderExtensions.getClassLoader());
-			if (clazz == null)
-			{
-				clazz = Class.forName(className, false, ClassloaderExtensions.getClassLoader());
-				if (clazz == null)
-				{
-					throw throwable;
-				}
-			}
+			return Class.forName(className, true, ClassloaderExtensions.getClassLoader());
 		}
-		return clazz;
 	}
 
 	/**

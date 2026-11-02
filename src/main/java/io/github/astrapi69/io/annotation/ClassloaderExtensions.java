@@ -31,6 +31,9 @@ package io.github.astrapi69.io.annotation;
  */
 public class ClassloaderExtensions
 {
+	private ClassloaderExtensions()
+	{
+	}
 
 	/**
 	 * Gets the current class loader.

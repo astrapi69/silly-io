@@ -167,8 +167,6 @@ public final class SerializedObjectExtensions
 			ObjectOutputStream oos = new ObjectOutputStream(fos))
 		{
 			oos.writeObject(obj);
-			oos.flush();
-			oos.close();
 			written = true;
 		}
 		return written;

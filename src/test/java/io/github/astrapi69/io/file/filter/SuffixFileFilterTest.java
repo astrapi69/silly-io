@@ -51,8 +51,8 @@ public class SuffixFileFilterTest
 	Path directory;
 
 	/**
-	 * The suffix and the file name are compared without their case, as {@code SimpleFilenameFilter}
-	 * compares them
+	 * The name has to end with the suffix, which is compared without its case and the case of the
+	 * name, as {@code SimpleFilenameFilter} compares them
 	 *
 	 * @param suffix
 	 *            the suffix of the filter
@@ -65,8 +65,8 @@ public class SuffixFileFilterTest
 	 */
 	@ParameterizedTest(name = "suffix {0}, file {1}: {2}")
 	@CsvSource({ ".TXT, NOTES.TXT, true", ".TXT, notes.txt, true", ".txt, NOTES.TXT, true",
-			".Txt, notes.tXT, true", ".TXT, NOTES.MD, false" })
-	void accept_ignoresTheCaseOfTheSuffixAndOfTheName(final String suffix, final String name,
+			".Txt, notes.tXT, true", ".TXT, NOTES.MD, false", ".TXT, NOTES.TXT.BAK, false" })
+	void accept_takesTheSuffixAtTheEndOfTheName_inAnyCase(final String suffix, final String name,
 		final boolean expected) throws IOException
 	{
 		final File file = Files.createFile(directory.resolve(name)).toFile();

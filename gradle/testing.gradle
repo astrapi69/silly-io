@@ -1,5 +1,4 @@
 test {
-    mustRunAfter(jar)
     useJUnitPlatform()
 }
 

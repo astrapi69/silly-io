@@ -102,6 +102,15 @@ class FindClassExtensionsTest
 			directories.stream().map(File::toPath).toList());
 	}
 
+	@ParameterizedTest(name = "{0}, as a package: {1}")
+	@CsvSource({ "io.github.astrapi69.no.such.pkg, true",
+			"io/github/astrapi69/no/such/pkg, false" })
+	void getDirectoriesFromResources_givesNoEntry_forAPathThatIsNotOnTheClassPath(final String path,
+		final boolean isPackage) throws Exception
+	{
+		assertEquals(List.of(), FindClassExtensions.getDirectoriesFromResources(path, isPackage));
+	}
+
 	@ParameterizedTest(name = "below \"{0}\", {1} URL")
 	@MethodSource("io.github.astrapi69.io.annotation.ClassFixtures#urlEscapedDirectories")
 	void getDirectoriesFromResources_findsAPackageDirectoryWhosePathHoldsACharacterThatAUrlEscapes(

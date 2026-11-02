@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -146,7 +147,7 @@ class ScanClassExtensionsTest
 
 	@ParameterizedTest(name = "{0} -> {1}")
 	@CsvSource({ "Foo.class, Foo", "Foo$3.class, Foo", "Foo$Bar.class, Foo$Bar", "Foo$1a, Foo$1a",
-			"Foo$, Foo$", "Foo, Foo" })
+			"Foo$, Foo$", "Foo, Foo", "Foo.classes, Foo.classes", "'', ''" })
 	void normalizeSimpleClassName_dropsTheClassSuffixAndAnonymousClassNumbers(
 		final String className, final String expected)
 	{
@@ -207,12 +208,27 @@ class ScanClassExtensionsTest
 				InfoPlain.class.getPackageName()));
 	}
 
+	/**
+	 * Characterizes the result for a directory that does not exist: an empty set that the caller
+	 * can add to, as the result for any other directory is
+	 *
+	 * @throws Exception
+	 *             is not expected
+	 */
 	@Test
-	void scanAllClassesFromPackage_isEmpty_forADirectoryThatDoesNotExist() throws Exception
+	void scanAllClassesFromPackage_isEmptyAndModifiable_forADirectoryThatDoesNotExist()
+		throws Exception
 	{
-		assertTrue(ScanClassExtensions
-			.scanAllClassesFromPackage(directory.resolve("missing").toFile(), "missing", true)
-			.isEmpty());
+		final File missing = directory.resolve("missing").toFile();
+
+		for (final Set<Class<?>> result : List.of(
+			ScanClassExtensions.scanAllClassesFromPackage(missing, "missing"),
+			ScanClassExtensions.scanAllClassesFromPackage(missing, "missing", true)))
+		{
+			assertTrue(result.isEmpty());
+			assertTrue(result.add(Object.class));
+			assertEquals(Set.of(Object.class), result);
+		}
 	}
 
 	@Test
