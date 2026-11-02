@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -426,6 +427,45 @@ public class StreamExtensionsTest extends BaseTestCase
 		final Path file = Files.write(directory.resolve("bytes.bin"), new byte[] { 9, 8, 7 });
 
 		assertArrayEquals(new byte[] { 9, 8, 7 }, StreamExtensions.getByteArray(file.toFile()));
+	}
+
+	/**
+	 * {@code getByteArray(File)} opens the stream itself, so it has to close it: once it returns,
+	 * no file descriptor of this process points at the file any more. Linux lists the descriptors
+	 * of the process under {@code /proc/self/fd}; elsewhere the test is skipped
+	 *
+	 * @throws IOException
+	 *             if the file cannot be written or the descriptors cannot be listed
+	 */
+	@Test
+	void getByteArray_closesTheStreamItOpens() throws IOException
+	{
+		final Path descriptors = Path.of("/proc/self/fd");
+		assumeTrue(Files.isDirectory(descriptors), () -> "needs " + descriptors);
+		final Path file = Files.write(directory.resolve("bytes.bin"), new byte[] { 9, 8, 7 })
+			.toRealPath();
+
+		StreamExtensions.getByteArray(file.toFile());
+
+		assertEquals(0, descriptorsOf(descriptors, file));
+	}
+
+	private static long descriptorsOf(final Path descriptors, final Path file) throws IOException
+	{
+		try (Stream<Path> links = Files.list(descriptors))
+		{
+			return links.filter(link -> {
+				try
+				{
+					return Files.readSymbolicLink(link).equals(file);
+				}
+				catch (final IOException exception)
+				{
+					// the descriptor of the listing itself is gone once it is read
+					return false;
+				}
+			}).count();
+		}
 	}
 
 	@Test

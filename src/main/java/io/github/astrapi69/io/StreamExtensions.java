@@ -58,7 +58,7 @@ public final class StreamExtensions
 	}
 
 	/**
-	 * Returns the given file as a byte array
+	 * Returns the given file as a byte array, and closes the stream it reads the file through
 	 *
 	 * @param file
 	 *            the file
@@ -68,7 +68,10 @@ public final class StreamExtensions
 	 */
 	public static byte[] getByteArray(final File file) throws IOException
 	{
-		return getByteArray(getInputStream(file));
+		try (InputStream in = getInputStream(file))
+		{
+			return getByteArray(in);
+		}
 	}
 
 	/**

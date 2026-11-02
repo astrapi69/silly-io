@@ -20,6 +20,9 @@
 - `ScanClassExtensions.normalizeSimpleClassName` no longer checks for `null` the part after the last `$` it passes to its private `isNumeric`: `String.substring` never returns `null` (#59).
 - The coverage floor is 99% of the lines and 99% of the branches, up from 95% and 90%: the tests reach all 932 lines and all 346 branches (`jacocoTestCoverageVerification` in `gradle/testing.gradle`, #59).
 
+### Fixed
+- `StreamExtensions.getByteArray(File)` closes the stream it opens. It left it open, so every call held a file descriptor until the garbage collector got to the stream, and on Windows the file stayed locked as long. The overloads that take an `InputStream` still leave it open, as it belongs to the caller (#61).
+
 ---
 
 ## Version 4.0
