@@ -100,7 +100,7 @@ public final class ScanClassExtensions
 		{
 			final String prefix = result.substring(0, lastIndexOf$);
 			final String compilerClassName = result.substring(lastIndexOf$ + 1, result.length());
-			if (isNumeric(compilerClassName))
+			if (isDigits(compilerClassName))
 			{
 				return prefix;
 			}
@@ -108,21 +108,18 @@ public final class ScanClassExtensions
 		return result;
 	}
 
-	private static boolean isNumeric(final CharSequence cs)
+	/**
+	 * Tells whether the given name is one or more digits, as the compiler names anonymous classes:
+	 * {@code 1} in {@code Foo$1}. Each char counts by itself, as {@link Character#isDigit(char)}
+	 * sees it
+	 *
+	 * @param name
+	 *            the part of a class name after its last {@code $}
+	 * @return true if the name is not empty and holds digits only
+	 */
+	private static boolean isDigits(final String name)
 	{
-		if (cs.length() == 0)
-		{
-			return false;
-		}
-		final int sz = cs.length();
-		for (int i = 0; i < sz; i++)
-		{
-			if (!Character.isDigit(cs.charAt(i)))
-			{
-				return false;
-			}
-		}
-		return true;
+		return !name.isEmpty() && name.chars().allMatch(Character::isDigit);
 	}
 
 	/**
