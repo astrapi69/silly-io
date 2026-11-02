@@ -381,7 +381,24 @@ public class StreamExtensionsTest extends BaseTestCase
 				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toFile()))),
 			arguments(named("a path name",
 				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toString()))),
-			arguments(named("a Path", (OutputStreamOpener)StreamExtensions::getOutputStream)));
+			arguments(named("a Path", (OutputStreamOpener)StreamExtensions::getOutputStream)),
+			arguments(named("an existing File, createFile false",
+				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toFile(),
+					false))),
+			arguments(named("an existing File, createFile true",
+				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toFile(),
+					true))));
+	}
+
+	static Stream<Arguments> writerOpeners()
+	{
+		return Stream.of(
+			arguments(named("getWriter(File)",
+				(WriterOpener)file -> StreamExtensions.getWriter(file.toFile()))),
+			arguments(named("getWriter(File, null, false)",
+				(WriterOpener)file -> StreamExtensions.getWriter(file.toFile(), null, false))),
+			arguments(named("getWriter(File, UTF-8, true)",
+				(WriterOpener)file -> StreamExtensions.getWriter(file.toFile(), "UTF-8", true))));
 	}
 
 	@ParameterizedTest(name = "{0}")
@@ -420,6 +437,21 @@ public class StreamExtensionsTest extends BaseTestCase
 		}
 
 		assertEquals("new", Files.readString(file));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("writerOpeners")
+	void getWriter_replacesTheContentOfAnExistingFile(final WriterOpener opener) throws IOException
+	{
+		final Path file = Files.writeString(directory.resolve("output.txt"),
+			"an older and longer content");
+
+		try (Writer writer = opener.open(file))
+		{
+			writer.write("neu");
+		}
+
+		assertEquals("neu", Files.readString(file));
 	}
 
 	@Test
@@ -506,5 +538,13 @@ public class StreamExtensionsTest extends BaseTestCase
 	interface OutputStreamOpener
 	{
 		OutputStream open(Path file) throws IOException;
+	}
+
+	/**
+	 * Opens a writer on a file
+	 */
+	interface WriterOpener
+	{
+		Writer open(Path file) throws IOException;
 	}
 }
