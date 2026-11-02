@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -53,6 +52,8 @@ import java.util.Date;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -432,16 +433,16 @@ public class StreamExtensionsTest extends BaseTestCase
 	/**
 	 * {@code getByteArray(File)} opens the stream itself, so it has to close it: once it returns,
 	 * no file descriptor of this process points at the file any more. Linux lists the descriptors
-	 * of the process under {@code /proc/self/fd}; elsewhere the test is skipped
+	 * of the process under {@code /proc/self/fd}, so the test runs on Linux only
 	 *
 	 * @throws IOException
 	 *             if the file cannot be written or the descriptors cannot be listed
 	 */
 	@Test
+	@EnabledOnOs(OS.LINUX)
 	void getByteArray_closesTheStreamItOpens() throws IOException
 	{
 		final Path descriptors = Path.of("/proc/self/fd");
-		assumeTrue(Files.isDirectory(descriptors), () -> "needs " + descriptors);
 		final Path file = Files.write(directory.resolve("bytes.bin"), new byte[] { 9, 8, 7 })
 			.toRealPath();
 
