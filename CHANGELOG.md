@@ -2,7 +2,10 @@
 
 ---
 
-## Version 4.1-SNAPSHOT
+## Version 5.0-SNAPSHOT
+
+### Breaking
+- `AnnotationExtensions`, `ClassloaderExtensions`, `FindClassExtensions`, `ProcessBuilderFactory`, `ScanClassExtensions` and `ScanPackageExtensions` have a private constructor. Every member of them is static, and their implicit public constructor was the last line the tests did not reach. It is binary incompatible: code compiled against 4.0 that calls one of these constructors fails with an `IllegalAccessError`, and a subclass of `ClassloaderExtensions`, `FindClassExtensions` or `ProcessBuilderFactory` no longer compiles. No project of the family does either. So this release is 5.0 instead of 4.1 (#59).
 
 ### Changed
 - Mutation testing with PIT 1.30.1 (`./gradlew pitest`, `gradle/mutation-testing.gradle`): the tests kill 371 of the 374 mutants, 99%, and the CI build fails below 97% (`mutationThreshold` in `build.gradle`; PIT rounds the score half up to a whole percent before it compares). The three survivors are equivalent: the `writeSerializedObjectToFile` methods return `true` or throw (#55), and `ByteArrayOutputStream.close` does nothing. The README's mutation score badge shows the score of `develop`, which CI publishes on the `gh-pages` branch from each push to it, also when the score fails the floor; a push to `master` publishes master's (#54).

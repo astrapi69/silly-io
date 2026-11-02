@@ -42,6 +42,9 @@ import java.util.List;
  */
 public class FindClassExtensions
 {
+	private FindClassExtensions()
+	{
+	}
 
 
 	/**

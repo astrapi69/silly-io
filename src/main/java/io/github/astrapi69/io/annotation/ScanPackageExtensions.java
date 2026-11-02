@@ -43,6 +43,9 @@ import io.github.astrapi69.io.file.filter.ClassFileFilter;
  */
 public final class ScanPackageExtensions
 {
+	private ScanPackageExtensions()
+	{
+	}
 
 	/**
 	 * The names of the class files that hold no class: the annotations and the documentation of a

@@ -40,6 +40,9 @@ import io.github.astrapi69.io.file.filter.ClassFileFilter;
  */
 public final class ScanClassExtensions
 {
+	private ScanClassExtensions()
+	{
+	}
 
 	/**
 	 * Equal the given class objects by they qualified class names.
