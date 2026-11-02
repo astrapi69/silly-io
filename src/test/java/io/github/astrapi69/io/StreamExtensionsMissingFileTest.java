@@ -35,7 +35,6 @@ import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -46,8 +45,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * What each overload of {@link StreamExtensions} does with a file that does not exist, and with a
- * file whose parent directory does not exist (#56). An expected exception of {@code null} means
- * that the overload creates the file. The files are created in a temporary directory
+ * file whose parent directory does not exist, as the JDK's streams do (#56): an input overload
+ * throws {@link FileNotFoundException}, an output overload creates the file and throws
+ * {@link FileNotFoundException} when the parent directory is missing. An expected exception of
+ * {@code null} means that the overload creates the file. The files are created in a temporary
+ * directory
  */
 class StreamExtensionsMissingFileTest
 {
@@ -69,22 +71,22 @@ class StreamExtensionsMissingFileTest
 				FileNotFoundException.class),
 			overload("getInputStream(String)",
 				file -> StreamExtensions.getInputStream(file.toString()),
-				NoSuchFileException.class),
+				FileNotFoundException.class),
 			overload("getInputStream(Path)", StreamExtensions::getInputStream,
-				NoSuchFileException.class),
+				FileNotFoundException.class),
 			overload("getReader(File)", file -> StreamExtensions.getReader(file.toFile()),
 				FileNotFoundException.class));
 	}
 
 	static Stream<Arguments> outputOverloadsOnAMissingFile()
 	{
-		return Stream.of(overload("getOutputStream(File)",
-			file -> StreamExtensions.getOutputStream(file.toFile()), FileNotFoundException.class),
+		return Stream.of(
+			overload("getOutputStream(File)",
+				file -> StreamExtensions.getOutputStream(file.toFile()), null),
 			overload("getOutputStream(String)",
 				file -> StreamExtensions.getOutputStream(file.toString()), null),
 			overload("getOutputStream(Path)", StreamExtensions::getOutputStream, null),
-			overload("getWriter(File)", file -> StreamExtensions.getWriter(file.toFile()),
-				FileNotFoundException.class));
+			overload("getWriter(File)", file -> StreamExtensions.getWriter(file.toFile()), null));
 	}
 
 	static Stream<Arguments> outputOverloadsInAMissingDirectory()
@@ -93,9 +95,9 @@ class StreamExtensionsMissingFileTest
 			file -> StreamExtensions.getOutputStream(file.toFile()), FileNotFoundException.class),
 			overload("getOutputStream(String)",
 				file -> StreamExtensions.getOutputStream(file.toString()),
-				NoSuchFileException.class),
+				FileNotFoundException.class),
 			overload("getOutputStream(Path)", StreamExtensions::getOutputStream,
-				NoSuchFileException.class),
+				FileNotFoundException.class),
 			overload("getWriter(File)", file -> StreamExtensions.getWriter(file.toFile()),
 				FileNotFoundException.class));
 	}
