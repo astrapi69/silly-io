@@ -46,6 +46,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import io.github.astrapi69.io.file.CaseSensitivity;
+
 /**
  * Every factory method and constructor of the {@link FileFilter} classes builds a filter that
  * accepts the files it names, rejects the others, and accepts a directory only when it is
@@ -101,6 +103,14 @@ class FileFiltersTest
 				fileFilter("PrefixFileFilter.of(prefix, false)",
 					() -> PrefixFileFilter.of("report", false)),
 				"report-1.txt", "summary.txt", false),
+			arguments(
+				fileFilter("PrefixFileFilter.of(prefix, true, INSENSITIVE)",
+					() -> PrefixFileFilter.of("report", true, CaseSensitivity.INSENSITIVE)),
+				"Report-1.txt", "summary.txt", true),
+			arguments(
+				fileFilter("new PrefixFileFilter(prefix, false, INSENSITIVE)",
+					() -> new PrefixFileFilter("report", false, CaseSensitivity.INSENSITIVE)),
+				"Report-1.txt", "summary.txt", false),
 			arguments(
 				fileFilter("MultiplyExtensionsFileFilter.of(collection)",
 					() -> MultiplyExtensionsFileFilter.of(extensions)),
