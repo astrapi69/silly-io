@@ -15,6 +15,7 @@
 - Unreachable code is gone, without a change in behaviour: `FindClassExtensions.forName` checked `Class.forName` for `null`, which it never returns; `ScanClassExtensions.normalizeSimpleClassName` handled a missing `.class` it had just checked for; `SerializedObjectExtensions.writeSerializedObjectToFile` flushed and closed a stream its try-with-resources closes (#54).
 - `ImportResourcesExtensions.join` is an implementation of this project (`Arrays.copyOf`, `System.arraycopy`), no longer the block taken word for word from Apache Commons Lang's `ArrayUtils.addAll`. Its behaviour is unchanged; the `ArrayStoreException` its Javadoc named never came out of it, as any one became an `IllegalArgumentException`, and the Javadoc says that now (#59).
 - `ScanClassExtensions.normalizeSimpleClassName` no longer checks for `null` the part after the last `$` it passes to its private `isNumeric`: `String.substring` never returns `null` (#59).
+- The coverage floor is 99% of the lines and 99% of the branches, up from 95% and 90%: the tests reach all 932 lines and all 346 branches (`jacocoTestCoverageVerification` in `gradle/testing.gradle`, #59).
 
 ---
 
