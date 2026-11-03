@@ -105,8 +105,7 @@ public class SerializerTest extends BaseTestCase
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
 		final File writeInMe = new File(directory.toFile(), "testWriteSerializedObjectToFile.dat");
-		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
-		assertTrue(actual);
+		Serializer.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
 		final Object readedObjectFromFile = Serializer.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
@@ -150,8 +149,7 @@ public class SerializerTest extends BaseTestCase
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
 		final File writeInMe = new File(directory.toFile(), "testWriteSerializedObjectToFile.dat");
-		actual = Serializer.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
-		assertTrue(actual);
+		Serializer.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
 		final Object readedObjectFromFile = Serializer.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);

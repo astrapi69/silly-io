@@ -90,9 +90,7 @@ public class StreamExtensionsTest extends BaseTestCase
 	{
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
 		final File writeInMe = new File(directory.toFile(), "testGetByteArrayInputStream.dat");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
-			writeInMe);
-		assertTrue(actual);
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo, writeInMe);
 		final byte[] ba;
 		try (InputStream is = writeInMe.toURI().toURL().openStream())
 		{
@@ -119,9 +117,7 @@ public class StreamExtensionsTest extends BaseTestCase
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
 		final File writeInMe = new File(directory.toFile(),
 			"testGetByteArrayInputStreamByteArrayOutputStream.dat");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
-			writeInMe);
-		assertTrue(actual);
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo, writeInMe);
 		final byte[] ba;
 		try (InputStream is = writeInMe.toURI().toURL().openStream())
 		{
@@ -144,9 +140,7 @@ public class StreamExtensionsTest extends BaseTestCase
 	{
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
 		final File writeInMe = new File(directory.toFile(), "testGetInputStreamFile.dat");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
-			writeInMe);
-		assertTrue(actual);
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo, writeInMe);
 		try (InputStream inputStream = StreamExtensions.getInputStream(writeInMe))
 		{
 			assertNotNull(inputStream);
@@ -333,8 +327,7 @@ public class StreamExtensionsTest extends BaseTestCase
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
 		final File writeInMe = new File(directory.toFile(),
 			"testWriteInputStreamToOutputStreamInputStreamOutputStream.in");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
-			writeInMe);
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo, writeInMe);
 		File fileout = new File(directory.toFile(),
 			"testWriteInputStreamToOutputStreamInputStreamOutputStream.out");
 		try (InputStream inputStream = StreamExtensions.getInputStream(writeInMe, true);

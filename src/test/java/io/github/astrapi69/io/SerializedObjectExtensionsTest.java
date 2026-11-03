@@ -26,10 +26,13 @@ package io.github.astrapi69.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Date;
@@ -68,9 +71,7 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 	{
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
 		final File writeInMe = new File(directory.toFile(), "testWriteSerializedObjectToFile.dat");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromNiko,
-			writeInMe);
-		assertTrue(actual);
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
 		final Object readedObjectFromFile = SerializedObjectExtensions
 			.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
@@ -188,15 +189,26 @@ public class SerializedObjectExtensionsTest extends BaseTestCase
 
 		final Date birthdayFromNiko = CreateDateExtensions.newDate(2007, 11, 8);
 		final File writeInMe = new File(directory.toFile(), "testWriteSerializedObjectToFile.dat");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromNiko,
-			writeInMe);
-		assertTrue(actual);
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromNiko, writeInMe);
 		final Object readedObjectFromFile = SerializedObjectExtensions
 			.readSerializedObjectFromFile(writeInMe);
 		final Date readedObj = (Date)readedObjectFromFile;
 		actual = birthdayFromNiko.equals(readedObj);
 		assertTrue(actual);
 
+	}
+
+	/**
+	 * Without a result to tell success, a failure has to throw: a directory cannot be opened as a
+	 * file, and an {@link Object} is not serializable (#55)
+	 */
+	@Test
+	void writeSerializedObjectToFile_throws_whenTheObjectCannotBeWritten()
+	{
+		assertThrows(FileNotFoundException.class, () -> SerializedObjectExtensions
+			.writeSerializedObjectToFile("text", directory.toFile()));
+		assertThrows(NotSerializableException.class, () -> SerializedObjectExtensions
+			.writeSerializedObjectToFile(new Object(), directory.resolve("object.ser").toFile()));
 	}
 
 }
