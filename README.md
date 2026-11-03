@@ -21,8 +21,19 @@ silly-io collects the file and stream code that otherwise gets written again in 
 keeps it tested: every line and every branch is covered, and PIT checks that the tests notice when
 the code changes.
 
+## Why silly-io
+
+It brings no runtime dependency: its jar is all a project adds, built for Java 25 and needing
+nothing beyond the JDK. Every line and branch of it is tested, and a mutation score close to 100%
+says that the tests check what the code does, not only that they run it. Copying, moving and
+deleting files and directory trees are in [file-worker](https://github.com/astrapi69/file-worker),
+which builds on silly-io. If you need much more, such as watching or tailing files or handling byte
+order marks, or if you are on a JDK older than 25, Apache Commons IO is the better choice: it is
+far larger, runs on Java 8 and is used almost everywhere.
+
 ## Table of contents
 
+- [Why silly-io](#why-silly-io)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Upgrading from 4.x](#upgrading-from-4x)
@@ -32,6 +43,7 @@ the code changes.
 - [Verifying the release signatures](#verifying-the-release-signatures)
 - [Releasing](#releasing)
 - [Contributing](#contributing)
+- [How this project is made](#how-this-project-is-made)
 - [License](#license)
 - [Support this project](#support-this-project)
 - [Credits](#credits)
@@ -97,18 +109,23 @@ to change:
 
 ## Quick start
 
+The examples are checked: each block runs, with the values its comments name as assertions, in
+[`ReadmeExamplesTest`](src/test/java/io/github/astrapi69/io/ReadmeExamplesTest.java), and the
+example types of `com.example.model` are in the test sources.
+
 **Streams, readers and writers.** An input overload throws `FileNotFoundException` for a missing
 file; an output overload creates it, and throws `FileNotFoundException` when its directory is
 missing. The overloads with a `createFile` flag do what the flag says.
 
 ```java
-try (Writer writer = StreamExtensions.getWriter(new File("build/report.txt")))
+File report = new File(directory, "report.txt");
+try (Writer writer = StreamExtensions.getWriter(report)) // creates the file
 {
     writer.write("hello");
 }
-byte[] content = StreamExtensions.getByteArray(new File("build/report.txt")); // and closes the file
+byte[] content = StreamExtensions.getByteArray(report); // "hello", and closes the file
 
-try (InputStream in = StreamExtensions.getInputStream(Path.of("settings.properties")))
+try (InputStream in = StreamExtensions.getInputStream(new File(directory, "missing.txt").toPath()))
 {
     // ...
 }
@@ -121,11 +138,12 @@ catch (FileNotFoundException missing)
 **File and filename filters.**
 
 ```java
-File[] texts   = directory.listFiles(SuffixFileFilter.of(".txt", false));
-File[] sources = directory.listFiles(MultiplyExtensionsFileFilter.of(".java", ".xml"));
+// directory holds Report-2026.txt, notes.xml and Main.java
+File[] texts   = directory.listFiles(SuffixFileFilter.of(".txt", false));              // Report-2026.txt
+File[] sources = directory.listFiles(MultiplyExtensionsFileFilter.of(".java", ".xml")); // Main.java, notes.xml
 File[] reports = directory.listFiles(
-    PrefixFileFilter.of("report", false, CaseSensitivity.INSENSITIVE)); // Report-2026.txt too
-String[] xml   = directory.list(SimpleFilenameFilter.of(".xml"));
+    PrefixFileFilter.of("report", false, CaseSensitivity.INSENSITIVE));                // Report-2026.txt
+String[] xml   = directory.list(SimpleFilenameFilter.of(".xml"));                      // notes.xml
 ```
 
 The suffix and extension filters ignore case; `PrefixFileFilter` compares with case unless it gets
@@ -144,20 +162,27 @@ FilenameExtensions.getFilenameWithNewExtension(report, ".bak"); // "Report-2026.
 **Serialization.**
 
 ```java
-SerializedObjectExtensions.writeSerializedObjectToFile(customers, file); // throws if it cannot
-List<?> read = (List<?>)SerializedObjectExtensions.readSerializedObjectFromFile(file);
-String base64 = Serializer.toBase64EncodedString(customer); // Serializer: unchecked exceptions
+ArrayList<String> names = new ArrayList<>(List.of("Ada", "Grace"));
+SerializedObjectExtensions.writeSerializedObjectToFile(names, file); // throws if it cannot
+Object read = SerializedObjectExtensions.readSerializedObjectFromFile(file); // [Ada, Grace]
+String base64 = Serializer.toBase64EncodedString("hi"); // "rO0ABXQAAmhp"
 ```
+
+`Serializer` has the same methods, with unchecked exceptions.
 
 **Classes and annotations.**
 
 ```java
-Set<Class<?>> classes  = ScanClassExtensions.scanTopLevelClasses("com.example.model");
-Set<Class<?>> entities = AnnotationExtensions.getAllAnnotatedClasses("com.example.model", Entity.class);
+// com.example.model holds the annotation Entity, the class Customer annotated with it, and Order
+Set<Class<?>> classes  = ScanClassExtensions.scanTopLevelClasses("com.example.model");  // Customer, Entity, Order
+Set<Class<?>> entities = AnnotationExtensions.getAllAnnotatedClasses("com.example.model",
+    Entity.class);                                                                    // Customer
 Entity entity = AnnotationExtensions.getAnnotation(Customer.class, Entity.class);
-// getAnnotation searches the class, its interfaces, the types of its annotations and its
-// superclasses, in that order
 ```
+
+`getAnnotation` searches the class, its interfaces, the types of its annotations and its
+superclasses, in that order, so it also finds an annotation that sits on an interface or a
+superclass.
 
 **The operating system.**
 
@@ -181,7 +206,8 @@ The [Javadoc](https://www.javadoc.io/doc/io.github.astrapi69/silly-io) has the d
 
 ## Quality
 
-Measured by the release gate of 5.0 (JDK 25, `RELEASE-5.0`):
+As of 5.0, measured by its release gate (JDK 25, the tree of `RELEASE-5.0`); each release takes
+the numbers of its own gate:
 
 | | |
 |---|---|
@@ -225,16 +251,19 @@ What a release consists of, in the order it is run:
 
 1. **One pull request** with the CHANGELOG entry and `projectVersion` without `-SNAPSHOT`
    (`docs: changelog for X.Y, and the version that carries it`), the full build green on it.
-2. **Tag the merge commit** with `./gradlew tagRelease`, which names it `RELEASE-X.Y`, and push the
+2. **The release gate** on that pull request's tree: the tests, `pitest` with its floor and
+   `jacocoTestCoverageVerification` in one run, on JDK 25. Its numbers go into the CHANGELOG entry
+   and into the README's Quality section, in the same pull request, before it is merged.
+3. **Tag the merge commit** with `./gradlew tagRelease`, which names it `RELEASE-X.Y`, and push the
    tag. `publish.yml` uploads to the Central Portal, where the maintainer releases it. A pushed tag is
    never moved or deleted; a failed run is fixed on the branch and re-run.
-3. **Verify on Central**: the jar, pom, `.module`, `-sources.jar` and `-javadoc.jar`, their sha1, and
+4. **Verify on Central**: the jar, pom, `.module`, `-sources.jar` and `-javadoc.jar`, their sha1, and
    `gpg --verify` on the `.asc`.
-4. **GitHub release** from the CHANGELOG entry.
-5. **`master` follows the release**: a fast-forward onto the tag where possible, otherwise
+5. **GitHub release** from the CHANGELOG entry.
+6. **`master` follows the release**: a fast-forward onto the tag where possible, otherwise
    `git merge --no-ff "RELEASE-X.Y^{commit}"` on `master`, never a force push. Afterwards
    `git diff RELEASE-X.Y master` is empty: `master` is always the latest release, nothing else.
-6. **Open the next cycle**: `projectVersion` to the next `-SNAPSHOT`.
+7. **Open the next cycle**: `projectVersion` to the next `-SNAPSHOT`.
 
 ## Contributing
 
@@ -255,6 +284,12 @@ The versions follow the
 [Simplified Semantic Versioning](https://github.com/lightblueseas/mvn-parent-projects/wiki/Simplified-Semantic-Versioning)
 guidelines, `<major>.<minor>.<patch>`. Questions, bug reports and feature requests belong on the
 [issues page](https://github.com/astrapi69/silly-io/issues).
+
+## How this project is made
+
+silly-io was written by its maintainer over many years, before there were AI tools; release 5.0
+was implemented mostly by AI agents, under the maintainer's review. What they did, and what the
+maintainer decides: [AI_USAGE.md](AI_USAGE.md).
 
 ## License
 
