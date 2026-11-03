@@ -47,8 +47,9 @@ public enum OS
 	/** Constant for Windows operating systems */
 	WINDOWS("Windows");
 
-	/** Pattern to match Linux OS names */
-	private static final Pattern LINUX_PATTERN = Pattern.compile(".*[L|l]inux.*");
+	/** Pattern to match Linux OS names, in any case */
+	private static final Pattern LINUX_PATTERN = Pattern.compile(".*linux.*",
+		Pattern.CASE_INSENSITIVE);
 
 	/** Pattern to match Mac OS names */
 	private static final Pattern MAC_PATTERN = Pattern.compile(".*(mac|darwin).*",
@@ -70,8 +71,9 @@ public enum OS
 	/** System property name for OS architecture */
 	private static final String OS_ARCHITECTURE = "os.arch";
 
-	/** Pattern to match Windows OS names */
-	private static final Pattern WINDOWS_PATTERN = Pattern.compile(".*[W|w]indows.*");
+	/** Pattern to match Windows OS names, in any case */
+	private static final Pattern WINDOWS_PATTERN = Pattern.compile(".*windows.*",
+		Pattern.CASE_INSENSITIVE);
 
 	/** The OS name */
 	private final String os;
@@ -139,7 +141,8 @@ public enum OS
 
 	/**
 	 * Gets the operating system by matching OS name patterns. If an OS name is provided, it uses
-	 * that value; otherwise, it uses the system property.
+	 * that value; otherwise, it uses the system property. The names are matched in any case:
+	 * {@code LINUX}, {@code Linux} and {@code GNU/Linux} are all {@link #LINUX}.
 	 *
 	 * @param osName
 	 *            the name of the operating system to check, or null to use the system property

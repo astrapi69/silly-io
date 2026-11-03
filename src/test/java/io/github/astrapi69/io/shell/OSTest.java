@@ -189,6 +189,26 @@ public class OSTest
 	}
 
 	/**
+	 * Each system matches by its name in any case, Linux and Windows as Mac OS and the Unix
+	 * systems; the {@code |} that the character classes {@code [L|l]} and {@code [W|w]} let through
+	 * before is no letter of either name (#57)
+	 *
+	 * @param osName
+	 *            the name
+	 * @param expected
+	 *            the operating system it names
+	 */
+	@ParameterizedTest(name = "{0}: {1}")
+	@CsvSource({ "Linux, LINUX", "linux, LINUX", "LINUX, LINUX", "GNU/Linux, LINUX", "|inux, OTHER",
+			"Windows 11, WINDOWS", "windows 11, WINDOWS", "WINDOWS 11, WINDOWS", "|indows, OTHER",
+			"Mac OS X, MAC", "MAC OS X, MAC", "SunOS, UNIX", "SUNOS, UNIX" })
+	void getOperatingSystem_matchesTheNameOfEachSystem_inAnyCase(final String osName,
+		final OS expected)
+	{
+		assertEquals(expected, OS.getOperatingSystem(osName));
+	}
+
+	/**
 	 * The Unix systems besides Linux and macOS, by the names their JDKs give them, as Apache
 	 * Commons Lang's {@code SystemUtils.IS_OS_UNIX} counts them, and a name that says Unix; in
 	 * either case
