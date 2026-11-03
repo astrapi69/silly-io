@@ -189,10 +189,9 @@ public class OSTest
 	}
 
 	/**
-	 * How the case of the name counts: Mac OS and the Unix systems match in any case, Linux and
-	 * Windows only with their first letter in either case and the rest in lower case, and the
-	 * {@code |} that the character classes {@code [L|l]} and {@code [W|w]} hold stands for that
-	 * first letter (#57)
+	 * Each system matches by its name in any case, Linux and Windows as Mac OS and the Unix
+	 * systems; the {@code |} that the character classes {@code [L|l]} and {@code [W|w]} let through
+	 * before is no letter of either name (#57)
 	 *
 	 * @param osName
 	 *            the name
@@ -200,10 +199,11 @@ public class OSTest
 	 *            the operating system it names
 	 */
 	@ParameterizedTest(name = "{0}: {1}")
-	@CsvSource({ "Linux, LINUX", "linux, LINUX", "LINUX, OTHER", "GNU/Linux, LINUX", "|inux, LINUX",
-			"Windows 11, WINDOWS", "windows 11, WINDOWS", "WINDOWS 11, OTHER", "|indows, WINDOWS",
+	@CsvSource({ "Linux, LINUX", "linux, LINUX", "LINUX, LINUX", "GNU/Linux, LINUX", "|inux, OTHER",
+			"Windows 11, WINDOWS", "windows 11, WINDOWS", "WINDOWS 11, WINDOWS", "|indows, OTHER",
 			"Mac OS X, MAC", "MAC OS X, MAC", "SunOS, UNIX", "SUNOS, UNIX" })
-	void getOperatingSystem_andTheCaseOfTheName(final String osName, final OS expected)
+	void getOperatingSystem_matchesTheNameOfEachSystem_inAnyCase(final String osName,
+		final OS expected)
 	{
 		assertEquals(expected, OS.getOperatingSystem(osName));
 	}
