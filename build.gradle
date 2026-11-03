@@ -28,9 +28,9 @@ apply from: "gradle/apply-gradle-files.gradle"
 
 // Mutation-score floor the CI build fails below: .github/workflows/gradle.yml
 // runs `./gradlew pitest` after the build; PIT rounds the score half up to a whole percent before it
-// compares. Measured 99 % (371 of 374 mutants killed) on
-// 2026-11-01 (#54). The three that survive are equivalent: the writeSerializedObjectToFile methods
-// return true or throw (#55), and ByteArrayOutputStream.close does nothing.
+// compares. Measured 99 % (373 of 374 mutants killed) on
+// 2026-11-03, when the writeSerializedObjectToFile methods stopped returning a boolean that was
+// always true (#55). The one that survives is equivalent: ByteArrayOutputStream.close does nothing.
 // Kept here, not in gradle/mutation-testing.gradle, so that the floor sits in the file a reader
 // (and awesome-well-tested's check) looks at.
 pitest {

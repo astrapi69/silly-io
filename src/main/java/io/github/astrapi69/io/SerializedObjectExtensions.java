@@ -149,27 +149,25 @@ public final class SerializedObjectExtensions
 	}
 
 	/**
-	 * Writes the given object to the given File
+	 * Writes the given object to the given File. It returns once the object is written, and throws
+	 * if it cannot be written
 	 *
 	 * @param obj
 	 *            The object to write to the File
 	 * @param file
 	 *            In this file will be the object saved
-	 * @return true if the object was written to the file otherwise false
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred
+	 *             if the file cannot be opened or written, or the object, or one it refers to, is
+	 *             not serializable ({@link java.io.NotSerializableException})
 	 */
-	public static boolean writeSerializedObjectToFile(final Object obj, final File file)
+	public static void writeSerializedObjectToFile(final Object obj, final File file)
 		throws IOException
 	{
-		boolean written = false;
 		try (FileOutputStream fos = new FileOutputStream(file);
 			ObjectOutputStream oos = new ObjectOutputStream(fos))
 		{
 			oos.writeObject(obj);
-			written = true;
 		}
-		return written;
 	}
 
 }
