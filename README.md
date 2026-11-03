@@ -1,4 +1,8 @@
-# Overview
+# silly-io
+
+**Small Java helpers for files and streams: streams, readers and writers that treat a missing file
+as the JDK does, file and filename filters, file names, sizes and extensions, object serialization,
+class and annotation scanning, and the operating system it runs on. No runtime dependencies.**
 
 <div style="text-align: center">
 
@@ -6,89 +10,214 @@
 [![Coverage Status](https://codecov.io/gh/astrapi69/silly-io/branch/develop/graph/badge.svg)](https://codecov.io/gh/astrapi69/silly-io)
 [![Mutation Score](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fastrapi69%2Fsilly-io%2Fgh-pages%2Fbadges%2Fmutation-score-develop.json)](https://pitest.org/)
 [![Open Issues](https://img.shields.io/github/issues/astrapi69/silly-io.svg?style=flat)](https://github.com/astrapi69/silly-io/issues)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)
-[![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)
-[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](http://opensource.org/licenses/MIT)
-[![Donate](https://img.shields.io/badge/donate-❤-ff2244.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GVBTWLRAZ7HB8)
-[![Hits Of Code](https://hitsofcode.com/github/astrapi69/silly-io?branch=develop)](https://hitsofcode.com/github/astrapi69/silly-io/view?branch=develop)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)
+[![Javadoc](https://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](https://www.javadoc.io/doc/io.github.astrapi69/silly-io)
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://opensource.org/licenses/MIT)
+[![Java](https://img.shields.io/badge/Java-25-orange)](https://openjdk.org/projects/jdk/25/)
 
 </div>
 
-Utility library that provides java classes for create In- and OuputStream and Reader or Writer for file operations
+silly-io collects the file and stream code that otherwise gets written again in every project, and
+keeps it tested: every line and every branch is covered, and PIT checks that the tests notice when
+the code changes.
 
-> Please support this project by simply putting a Github <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/astrapi69/silly-io" data-icon="octicon-star" aria-label="Star astrapi69/silly-io on GitHub">Star ⭐</a>
->
-> Share this library with friends on Twitter and everywhere else you can
->
-> If you love this project [![donation](https://img.shields.io/badge/donate-❤-ff2244.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GVBTWLRAZ7HB8)
+## Table of contents
 
-## gradle dependency
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Upgrading from 4.x](#upgrading-from-4x)
+- [Quick start](#quick-start)
+- [Features](#features)
+- [Quality](#quality)
+- [Verifying the release signatures](#verifying-the-release-signatures)
+- [Releasing](#releasing)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support this project](#support-this-project)
+- [Credits](#credits)
 
-Replace the variable ${latestVersion} with the current latest version: [![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)
+## Requirements
 
-You can first define the version in the ext section and add than the following gradle dependency
-to your project `build.gradle` if you want to import the core functionality of silly-io:
+**JDK 25 or newer**, at build and at runtime: the published jar holds Java 25 bytecode and does not
+load on an older JVM. The library has no runtime dependencies; its jar is all it needs.
 
-define version in file gradle.properties
+## Installation
 
+Latest release on Maven Central: 5.0
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)
+
+**Gradle** (version catalog, `gradle/libs.versions.toml`):
+
+```toml
+[versions]
+silly-io-version = "5.0"
+
+[libraries]
+silly-io = { module = "io.github.astrapi69:silly-io", version.ref = "silly-io-version" }
 ```
-sillyIoVersion=${latestVersion}
+
+```groovy
+dependencies {
+    implementation libs.silly.io
+}
 ```
 
-or in build.gradle ext area
+**Gradle** (plain):
 
-```
-    sillyIoVersion = "${latestVersion}"
-```
-
-and then add the dependency to the dependencies area
-
-```
-    implementation("io.github.astrapi69:silly-io:$sillyIoVersion")
+```groovy
+dependencies {
+    implementation "io.github.astrapi69:silly-io:5.0"
+}
 ```
 
-## Maven dependency
+**Maven**:
 
-The library is on Maven Central. Check out [Maven Central](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io) for the latest release.
+```xml
+<dependency>
+    <groupId>io.github.astrapi69</groupId>
+    <artifactId>silly-io</artifactId>
+    <version>5.0</version>
+</dependency>
+```
 
-Add the following maven dependency to your project `pom.xml` if you want to import the core functionality of silly-io:
+## Upgrading from 4.x
 
-Than you can add the dependency to your dependencies:
+5.0 has four breaking changes. The CHANGELOG's
+[Migration from 4.x](CHANGELOG.md#migration-from-4x) gives for each what it was, what it is and what
+to change:
 
-    <properties>
-            ...
-        <!-- SILLY-IO version -->
-        <silly-io.version>${latestVersion}</silly-io.version>
-            ...
-    </properties>
-            ...
-        <dependencies>
-            ...
-            <!-- SILLY-IO DEPENDENCY -->
-            <dependency>
-                <groupId>io.github.astrapi69</groupId>
-                <artifactId>silly-io</artifactId>
-                <version>${silly-io.version}</version>
-            </dependency>
-            ...
-        </dependencies>
+- six utility classes of static methods have a private constructor (`AnnotationExtensions`,
+  `ClassloaderExtensions`, `FindClassExtensions`, `ProcessBuilderFactory`, `ScanClassExtensions`,
+  `ScanPackageExtensions`);
+- `writeSerializedObjectToFile` returns nothing; a failure throws, as it did;
+- the stream overloads treat a missing file as the JDK does: an input overload throws
+  `FileNotFoundException`, an output overload creates the file;
+- `OS.getOperatingSystem(String)` matches Linux and Windows in any case.
 
-## Support this project
+## Quick start
 
-If silly-io is useful to you, a star on [GitHub](https://github.com/astrapi69/silly-io) helps others find it.
-Sharing it or reporting a bug helps just as much.
+**Streams, readers and writers.** An input overload throws `FileNotFoundException` for a missing
+file; an output overload creates it, and throws `FileNotFoundException` when its directory is
+missing. The overloads with a `createFile` flag do what the flag says.
 
-If you would like to contribute financially, the channels are on the repository's Sponsor button, which
-reads [.github/FUNDING.yml](.github/FUNDING.yml): GitHub Sponsors, Liberapay, Ko-fi and PayPal.
+```java
+try (Writer writer = StreamExtensions.getWriter(new File("build/report.txt")))
+{
+    writer.write("hello");
+}
+byte[] content = StreamExtensions.getByteArray(new File("build/report.txt")); // and closes the file
 
-## Note
+try (InputStream in = StreamExtensions.getInputStream(Path.of("settings.properties")))
+{
+    // ...
+}
+catch (FileNotFoundException missing)
+{
+    // the same exception for a File, a Path or a path name
+}
+```
 
-No animals were harmed in the making of this library.
+**File and filename filters.**
 
-## License
+```java
+File[] texts   = directory.listFiles(SuffixFileFilter.of(".txt", false));
+File[] sources = directory.listFiles(MultiplyExtensionsFileFilter.of(".java", ".xml"));
+File[] reports = directory.listFiles(
+    PrefixFileFilter.of("report", false, CaseSensitivity.INSENSITIVE)); // Report-2026.txt too
+String[] xml   = directory.list(SimpleFilenameFilter.of(".xml"));
+```
 
-The source code comes under the liberal MIT License, making silly-io great for all types of applications.
+The suffix and extension filters ignore case; `PrefixFileFilter` compares with case unless it gets
+`CaseSensitivity.INSENSITIVE`. With `true` as the recursive flag a filter also accepts directories,
+so that a walk can descend into them.
+
+**File names.**
+
+```java
+File report = new File("Report-2026.txt");
+FilenameExtensions.getFileExtension(report);                    // "txt"
+FilenameExtensions.getFilenameWithoutExtension(report);         // "Report-2026"
+FilenameExtensions.getFilenameWithNewExtension(report, ".bak"); // "Report-2026.bak"
+```
+
+**Serialization.**
+
+```java
+SerializedObjectExtensions.writeSerializedObjectToFile(customers, file); // throws if it cannot
+List<?> read = (List<?>)SerializedObjectExtensions.readSerializedObjectFromFile(file);
+String base64 = Serializer.toBase64EncodedString(customer); // Serializer: unchecked exceptions
+```
+
+**Classes and annotations.**
+
+```java
+Set<Class<?>> classes  = ScanClassExtensions.scanTopLevelClasses("com.example.model");
+Set<Class<?>> entities = AnnotationExtensions.getAllAnnotatedClasses("com.example.model", Entity.class);
+Entity entity = AnnotationExtensions.getAnnotation(Customer.class, Entity.class);
+// getAnnotation searches the class, its interfaces, the types of its annotations and its
+// superclasses, in that order
+```
+
+**The operating system.**
+
+```java
+OS os = OS.get();         // LINUX, MAC, UNIX, WINDOWS or OTHER
+boolean linux = OS.isLinux();
+```
+
+## Features
+
+| Package `io.github.astrapi69.io...` | What it holds |
+|---|---|
+| (root) | `StreamExtensions`: input and output streams, readers and writers for a `File`, a `Path` or a path name, byte arrays, copying between streams. `SerializedObjectExtensions` and `Serializer`: objects to files, byte arrays and Base64, and back; `Serializer` throws unchecked exceptions. `StringOutputStream` |
+| `file` | `FilenameExtensions` (extensions, prefixes and suffixes, a name with a new extension, sanitized names), `FileExtension` and `FileCharacter` constants, `FileSize`, `CaseSensitivity` |
+| `file.filter` | `FileFilter`s: `SuffixFileFilter`, `PrefixFileFilter`, `MultiplyExtensionsFileFilter`, `TxtFileFilter`, `ClassFileFilter` |
+| `file.namefilter` | `FilenameFilter`s: `SimpleFilenameFilter`, `MultiplyExtensionsFilenameFilter` |
+| `annotation` | `ScanClassExtensions` and `ScanPackageExtensions` (the classes of a package, from directories and jars), `AnnotationExtensions` (annotated classes, annotations through the hierarchy), `ImportResource`, `ImportResources` and `ImportResourcesExtensions`, `ClassloaderExtensions`, `FindClassExtensions` |
+| `shell` | `OS`, `CommandLineExecutor`, `LinuxShellExecutor`, `ProcessBuilderFactory`, `TeeOutputStream` |
+
+The [Javadoc](https://www.javadoc.io/doc/io.github.astrapi69/silly-io) has the details.
+
+## Quality
+
+Measured by the release gate of 5.0 (JDK 25, `RELEASE-5.0`):
+
+| | |
+|---|---|
+| tests | 560 in 34 test classes, none skipped |
+| line and branch coverage (JaCoCo) | 946 of 946 lines, 344 of 344 branches; the build fails below 99% |
+| mutation score (PIT) | 373 of 374 mutants killed; the build fails below 97%. The survivor, the call of `ByteArrayOutputStream.close`, which does nothing, is equivalent |
+
+The CI build runs both checks on every pull request, and publishes the mutation score of `develop`
+as the badge above.
+
+## Verifying the release signatures
+
+The releases on Maven Central are signed with the OpenPGP key
+
+```text
+5B2F A6B1 1E29 8BC0 9287  F423 D8C4 0351 8C49 CA75
+```
+
+Since 4.0 they are signed by its signing subkey
+
+```text
+6D67 F844 2A6F CC96 BD7C  1B5E 9FCF 7C97 10E2 BD8D
+```
+
+valid until 2028-10-09; up to 3.6 they were signed by the primary key itself. The key, with the
+subkey, is on keys.openpgp.org. Fetch it once, then verify the signature next to each file:
+
+```sh
+gpg --keyserver hkps://keys.openpgp.org --recv-keys 5B2FA6B11E298BC09287F423D8C403518C49CA75
+gpg --verify silly-io-5.0.jar.asc silly-io-5.0.jar
+```
+
+gpg answers `Good signature` and prints the `Primary key fingerprint`, and for a release signed by
+the subkey the `Subkey fingerprint`; both have to be the ones above. The warning that the key "is not
+certified with a trusted signature" only says that you have not marked it as trusted in your own
+keyring.
 
 ## Releasing
 
@@ -107,48 +236,45 @@ What a release consists of, in the order it is run:
    `git diff RELEASE-X.Y master` is empty: `master` is always the latest release, nothing else.
 6. **Open the next cycle**: `projectVersion` to the next `-SNAPSHOT`.
 
-## Semantic Versioning
+## Contributing
 
-The versions of silly-io are maintained with the Simplified Semantic Versioning guidelines.
+Pull requests are welcome: fork [astrapi69/silly-io](https://github.com/astrapi69/silly-io/fork) and
+[open a pull request](https://github.com/astrapi69/silly-io/pull/new/develop) against `develop`.
+[CONTRIBUTING.md](.github/CONTRIBUTING.md) says how a stack of pull requests is merged.
 
-Release version numbers will be incremented in the following format:
+Please add tests for your change; the coverage and mutation floors above hold for it too. The
+`Makefile` runs the usual tasks (`make help` lists them):
 
-`<major>.<minor>.<patch>`
+```shell
+make build      # clean build: tests, coverage check, formatting check
+make spotless   # format, and write the license headers
+make pitest     # mutation testing, fails below the floor
+```
 
-For detailed information on versioning for this project you can visit this
-[wiki page](https://github.com/lightblueseas/mvn-parent-projects/wiki/Simplified-Semantic-Versioning).
+The versions follow the
+[Simplified Semantic Versioning](https://github.com/lightblueseas/mvn-parent-projects/wiki/Simplified-Semantic-Versioning)
+guidelines, `<major>.<minor>.<patch>`. Questions, bug reports and feature requests belong on the
+[issues page](https://github.com/astrapi69/silly-io/issues).
 
-## Want to Help and improve it? ###
+## License
 
-The source code for silly-io are on GitHub. Please feel free to fork and send pull requests!
+MIT - see [LICENSE](LICENSE).
 
-Create your own fork of [astrapi69/silly-io/fork](https://github.com/astrapi69/silly-io/fork)
+## Support this project
 
-To share your changes, [submit a pull request](https://github.com/astrapi69/silly-io/pull/new/develop).
+If silly-io is useful to you, a star on [GitHub](https://github.com/astrapi69/silly-io) helps others
+find it. Sharing it or reporting a bug helps just as much.
 
-Don't forget to add new units tests on your changes.
-
-## Contacting the Developers
-
-Do not hesitate to contact the silly-io developers with your questions, concerns, comments, bug reports, or feature requests.
-- Feature requests, questions and bug reports can be reported at the [issues page](https://github.com/astrapi69/silly-io/issues).
+If you would like to contribute financially, the channels are on the repository's Sponsor button,
+which reads [.github/FUNDING.yml](.github/FUNDING.yml): GitHub Sponsors, Liberapay, Ko-fi and PayPal.
 
 ## Credits
 
-|**Maven Central**|
-|     :---:      |
-|[![Maven Central](https://img.shields.io/maven-central/v/io.github.astrapi69/silly-io?style=for-the-badge)](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io)|
-|Special thanks to [sonatype repository](https://www.sonatype.com) for providing a free maven repository service for open source projects|
-|     <img width=1000/>     |
+| | |
+|---|---|
+| [Maven Central](https://central.sonatype.com/artifact/io.github.astrapi69/silly-io) | for hosting the artifacts of this open source project |
+| [codecov.io](https://codecov.io) | for free code coverage reporting |
+| [javadoc.io](https://www.javadoc.io) | for free javadoc hosting |
+| [PIT](https://pitest.org/) | for mutation testing |
 
-|**codecov.io**|
-|     :---:      |
-|[![Coverage Status](https://codecov.io/gh/astrapi69/silly-io/branch/develop/graph/badge.svg)](https://codecov.io/gh/astrapi69/silly-io)|
-|Special thanks to [codecov.io](https://codecov.io) for providing a free code coverage for open source projects|
-|     <img width=1000/>     |
-
-|**javadoc.io**|
-|     :---:      |
-|[![Javadocs](http://www.javadoc.io/badge/io.github.astrapi69/silly-io.svg)](http://www.javadoc.io/doc/io.github.astrapi69/silly-io)|
-|Special thanks to [javadoc.io](http://www.javadoc.io) for providing a free javadoc documentation for open source projects|
-|     <img width=1000/>     |
+No animals were harmed in the making of this library.
