@@ -189,6 +189,26 @@ public class OSTest
 	}
 
 	/**
+	 * How the case of the name counts: Mac OS and the Unix systems match in any case, Linux and
+	 * Windows only with their first letter in either case and the rest in lower case, and the
+	 * {@code |} that the character classes {@code [L|l]} and {@code [W|w]} hold stands for that
+	 * first letter (#57)
+	 *
+	 * @param osName
+	 *            the name
+	 * @param expected
+	 *            the operating system it names
+	 */
+	@ParameterizedTest(name = "{0}: {1}")
+	@CsvSource({ "Linux, LINUX", "linux, LINUX", "LINUX, OTHER", "GNU/Linux, LINUX", "|inux, LINUX",
+			"Windows 11, WINDOWS", "windows 11, WINDOWS", "WINDOWS 11, OTHER", "|indows, WINDOWS",
+			"Mac OS X, MAC", "MAC OS X, MAC", "SunOS, UNIX", "SUNOS, UNIX" })
+	void getOperatingSystem_andTheCaseOfTheName(final String osName, final OS expected)
+	{
+		assertEquals(expected, OS.getOperatingSystem(osName));
+	}
+
+	/**
 	 * The Unix systems besides Linux and macOS, by the names their JDKs give them, as Apache
 	 * Commons Lang's {@code SystemUtils.IS_OS_UNIX} counts them, and a name that says Unix; in
 	 * either case
