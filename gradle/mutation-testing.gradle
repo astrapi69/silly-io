@@ -1,6 +1,12 @@
 pitest {
     junit5PluginVersion = libs.versions.pitest.junit5.plugin.version.get()
     pitestVersion = libs.versions.pitest.version.get()
+    // junit-platform-launcher is declared in testRuntimeOnly (gradle/libs.versions.toml, bundle
+    // test-runtime-only). Left on, the plugin resolves a detached copy of testImplementation to find
+    // the JUnit Platform version. That copy lacks the jobj-copy constraint of
+    // gradle/dependencies.gradle, and the dependency submission reports what it resolves: jobj-copy 4.2
+    // with jackson-databind 2.16.0-rc1, the 15 Dependabot alerts the constraint was meant to fix (#79)
+    addJUnitPlatformLauncher = false
     targetClasses = ["io.github.astrapi69.io.*"]
     threads = 4
     outputFormats = ["HTML", "XML"]
