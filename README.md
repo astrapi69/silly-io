@@ -260,9 +260,10 @@ What a release consists of, in the order it is run:
 4. **Verify on Central**: the jar, pom, `.module`, `-sources.jar` and `-javadoc.jar`, their sha1, and
    `gpg --verify` on the `.asc`.
 5. **GitHub release** from the CHANGELOG entry.
-6. **`master` follows the release**: a fast-forward onto the tag where possible, otherwise
-   `git merge --no-ff "RELEASE-X.Y^{commit}"` on `master`, never a force push. Afterwards
-   `git diff RELEASE-X.Y master` is empty: `master` is always the latest release, nothing else.
+6. **`master` follows the release** by a merge of the tag: on `master`,
+   `git merge --no-ff "RELEASE-X.Y^{commit}" -m "Merge tag RELEASE-X.Y into master"`. Before
+   `master` is pushed, `git diff RELEASE-X.Y master` has to be empty; if it is not, nothing is
+   pushed. Never a force push: `master` is always the latest release, nothing else.
 7. **Open the next cycle**: `projectVersion` to the next `-SNAPSHOT`.
 
 ## Contributing
