@@ -4,6 +4,9 @@
 
 ## Version 5.1-SNAPSHOT
 
+### Changed
+- The PIT plugin no longer adds `junit-platform-launcher` itself (`addJUnitPlatformLauncher = false`; it is declared in `testRuntimeOnly`). To find its version the plugin resolved a copy of `testImplementation` without the jobj-copy constraint, and the dependency submission reported what that copy held: jobj-copy 4.2 with jackson 2.16.0-rc1, the 15 Dependabot alerts for a version no class path of the build uses (#79).
+
 ---
 
 ## Version 5.0
