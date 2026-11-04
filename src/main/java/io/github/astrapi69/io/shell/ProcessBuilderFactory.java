@@ -34,6 +34,9 @@ import java.nio.file.Paths;
  */
 public class ProcessBuilderFactory
 {
+	private ProcessBuilderFactory()
+	{
+	}
 
 	/**
 	 * Creates a new {@link ProcessBuilder} configured to run a specified command in a given shell

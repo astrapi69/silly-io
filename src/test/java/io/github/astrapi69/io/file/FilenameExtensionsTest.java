@@ -262,7 +262,8 @@ public class FilenameExtensionsTest
 
 	@ParameterizedTest
 	@CsvSource({ "test.txt,.jpg,test.jpg", "document.pdf,.doc,document.doc",
-			"archive.zip,.tar,archive.tar", "image.png,.jpeg,image.jpeg" })
+			"archive.zip,.tar,archive.tar", "image.png,.jpeg,image.jpeg", "notes,.txt,notes.txt",
+			"archive.tar.gz,.zip,archive.tar.zip", "test.txt,'',test" })
 	void testGetFilenameWithNewExtension_String(String inputFilename, String newExtension,
 		String expectedOutput)
 	{
@@ -273,7 +274,8 @@ public class FilenameExtensionsTest
 
 	@ParameterizedTest
 	@CsvSource({ "test.txt,.jpg,test.jpg", "document.pdf,.doc,document.doc",
-			"archive.zip,.tar,archive.tar", "image.png,.jpeg,image.jpeg" })
+			"archive.zip,.tar,archive.tar", "image.png,.jpeg,image.jpeg", "notes,.txt,notes.txt",
+			"archive.tar.gz,.zip,archive.tar.zip" })
 	void testGetFilenameWithNewExtension_FileExtension(String inputFilename, String newExtension,
 		String expectedOutput)
 	{

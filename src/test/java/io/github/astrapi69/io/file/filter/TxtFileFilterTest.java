@@ -32,9 +32,11 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import io.github.astrapi69.evaluate.object.evaluator.ToStringEvaluator;
 import io.github.astrapi69.lang.ClassExtensions;
@@ -44,6 +46,9 @@ import io.github.astrapi69.lang.ClassExtensions;
  */
 public class TxtFileFilterTest
 {
+
+	@TempDir
+	Path directory;
 
 	/**
 	 * Test method for {@link TxtFileFilter#accept(File)}
@@ -82,19 +87,11 @@ public class TxtFileFilterTest
 		expected = true;
 		assertEquals(expected, actual);
 
-		file = new File(".", "TestFind.txt");
+		file = new File(directory.toFile(), "TestFind.txt");
 		FileUtils.writeStringToFile(file, "", Charset.defaultCharset());
 
 		actual = fileFilter.accept(file);
 		assertEquals(expected, actual);
-		try
-		{
-			file.deleteOnExit();
-		}
-		catch (final Exception e)
-		{
-			// ignore...
-		}
 	}
 
 	/**

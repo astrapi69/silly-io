@@ -26,13 +26,21 @@ package io.github.astrapi69.io.file.filter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
+import io.github.astrapi69.io.file.CaseSensitivity;
 import io.github.astrapi69.lang.ClassExtensions;
 
 /**
@@ -40,6 +48,74 @@ import io.github.astrapi69.lang.ClassExtensions;
  */
 public class PrefixFileFilterTest
 {
+
+	@TempDir
+	Path directory;
+
+	/**
+	 * Without a case sensitivity, and with {@link CaseSensitivity#SENSITIVE}, the name has to start
+	 * with the prefix in the same case
+	 *
+	 * @param prefix
+	 *            the prefix of the filter
+	 * @param name
+	 *            the name of the file
+	 * @param expected
+	 *            whether the filter accepts the file
+	 * @throws IOException
+	 *             if the file cannot be created
+	 */
+	@ParameterizedTest(name = "prefix {0}, file {1}: {2}")
+	@CsvSource({ "report, report-1.txt, true", "report, Report-1.txt, false",
+			"REPORT, report-1.txt, false", "report, 1-report.txt, false",
+			"report, summary.txt, false" })
+	void accept_takesThePrefixAtTheStartOfTheName_inTheSameCase(final String prefix,
+		final String name, final boolean expected) throws IOException
+	{
+		final File file = Files.createFile(directory.resolve(name)).toFile();
+
+		assertEquals(expected, new PrefixFileFilter(prefix).accept(file));
+		assertEquals(expected, new PrefixFileFilter(prefix, false).accept(file));
+		assertEquals(expected,
+			new PrefixFileFilter(prefix, false, CaseSensitivity.SENSITIVE).accept(file));
+		assertEquals(expected, PrefixFileFilter.of(prefix).accept(file));
+		assertEquals(expected,
+			PrefixFileFilter.of(prefix, true, CaseSensitivity.SENSITIVE).accept(file));
+	}
+
+	/**
+	 * With {@link CaseSensitivity#INSENSITIVE} the name has to start with the prefix, in any case
+	 *
+	 * @param prefix
+	 *            the prefix of the filter
+	 * @param name
+	 *            the name of the file
+	 * @param expected
+	 *            whether the filter accepts the file
+	 * @throws IOException
+	 *             if the file cannot be created
+	 */
+	@ParameterizedTest(name = "prefix {0}, file {1}: {2}")
+	@CsvSource({ "report, report-1.txt, true", "report, Report-1.txt, true",
+			"REPORT, report-1.txt, true", "rePort, REPORT-1.TXT, true",
+			"report, 1-report.txt, false", "report, summary.txt, false" })
+	void accept_takesThePrefixAtTheStartOfTheName_inAnyCase_whenInsensitive(final String prefix,
+		final String name, final boolean expected) throws IOException
+	{
+		final File file = Files.createFile(directory.resolve(name)).toFile();
+
+		assertEquals(expected,
+			new PrefixFileFilter(prefix, false, CaseSensitivity.INSENSITIVE).accept(file));
+		assertEquals(expected,
+			PrefixFileFilter.of(prefix, true, CaseSensitivity.INSENSITIVE).accept(file));
+	}
+
+	@Test
+	void new_refusesNoCaseSensitivity()
+	{
+		assertThrows(NullPointerException.class, () -> new PrefixFileFilter("report", true, null));
+		assertThrows(NullPointerException.class, () -> PrefixFileFilter.of("report", false, null));
+	}
 
 	@Test
 	public void testAccept() throws URISyntaxException

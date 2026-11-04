@@ -95,19 +95,24 @@ public final class Serializer
 	}
 
 	/**
-	 * Writes the given object to the given File
+	 * Writes the given object to the given File. It returns once the object is written, and throws
+	 * if it cannot be written
 	 *
 	 * @param obj
 	 *            The object to write to the File
 	 * @param file
 	 *            In this file will be the object saved
-	 * @return true if the object was written to the file otherwise false
+	 * @throws RuntimeException
+	 *             with the {@link java.io.IOException} of
+	 *             {@link SerializedObjectExtensions#writeSerializedObjectToFile(Object, File)} as
+	 *             its cause, if the file cannot be opened or written or the object is not
+	 *             serializable
 	 */
-	public static boolean writeSerializedObjectToFile(final Object obj, final File file)
+	public static void writeSerializedObjectToFile(final Object obj, final File file)
 	{
 		try
 		{
-			return SerializedObjectExtensions.writeSerializedObjectToFile(obj, file);
+			SerializedObjectExtensions.writeSerializedObjectToFile(obj, file);
 		}
 		catch (Exception exception)
 		{

@@ -40,6 +40,9 @@ import io.github.astrapi69.io.file.filter.ClassFileFilter;
  */
 public final class ScanClassExtensions
 {
+	private ScanClassExtensions()
+	{
+	}
 
 	/**
 	 * Equal the given class objects by they qualified class names.
@@ -88,14 +91,16 @@ public final class ScanClassExtensions
 		String result = className;
 		if (className.endsWith(FileExtension.CLASS.getExtension()))
 		{
-			result = replaceLast(className, FileExtension.CLASS.getExtension(), "");
+			result = className
+				.substring(0, className.length() - FileExtension.CLASS.getExtension().length())
+				.trim();
 		}
 		final int lastIndexOf$ = result.lastIndexOf("$");
 		if (lastIndexOf$ != -1)
 		{
 			final String prefix = result.substring(0, lastIndexOf$);
 			final String compilerClassName = result.substring(lastIndexOf$ + 1, result.length());
-			if (isNumeric(compilerClassName))
+			if (isDigits(compilerClassName))
 			{
 				return prefix;
 			}
@@ -103,39 +108,18 @@ public final class ScanClassExtensions
 		return result;
 	}
 
-	private static final String replaceLast(String original, String findString, String replacement)
+	/**
+	 * Tells whether the given name is one or more digits, as the compiler names anonymous classes:
+	 * {@code 1} in {@code Foo$1}. Each char counts by itself, as {@link Character#isDigit(char)}
+	 * sees it
+	 *
+	 * @param name
+	 *            the part of a class name after its last {@code $}
+	 * @return true if the name is not empty and holds digits only
+	 */
+	private static boolean isDigits(final String name)
 	{
-		int index = original.lastIndexOf(findString);
-		if (index == -1)
-		{
-			return original;
-		}
-		else
-		{
-			StringBuffer originalFiltered = new StringBuffer();
-			originalFiltered.append(original.substring(0, index));
-			originalFiltered.append(replacement);
-			originalFiltered.append(original.substring(index + findString.length()));
-			String result = originalFiltered.toString().trim();
-			return result;
-		}
-	}
-
-	private static boolean isNumeric(final CharSequence cs)
-	{
-		if (cs == null || cs.length() == 0)
-		{
-			return false;
-		}
-		final int sz = cs.length();
-		for (int i = 0; i < sz; i++)
-		{
-			if (!Character.isDigit(cs.charAt(i)))
-			{
-				return false;
-			}
-		}
-		return true;
+		return !name.isEmpty() && name.chars().allMatch(Character::isDigit);
 	}
 
 	/**

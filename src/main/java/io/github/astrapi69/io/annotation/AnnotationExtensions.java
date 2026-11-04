@@ -30,6 +30,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +53,9 @@ import io.github.astrapi69.io.file.filter.ClassFileFilter;
  */
 public final class AnnotationExtensions
 {
+	private AnnotationExtensions()
+	{
+	}
 
 	/**
 	 * Gets all annotated classes that belongs from the given package path and the given annotation
@@ -285,7 +292,10 @@ public final class AnnotationExtensions
 
 	/**
 	 * Search for the given annotationClass in the given componentClass and return it if search was
-	 * successful.
+	 * successful. The search goes depth first and returns the first annotation it meets: the
+	 * component class itself, the annotations it inherits included; then each of its interfaces
+	 * with everything above it; then the types of its annotations, unless it is an annotation or
+	 * implements one; then its superclass with everything above it, up to {@link Object}
 	 *
 	 * @param <T>
 	 *            the generic type
@@ -293,41 +303,60 @@ public final class AnnotationExtensions
 	 *            the component class
 	 * @param annotationClass
 	 *            the annotation class
-	 * @return the annotation
+	 * @return the annotation, or null if the search does not meet it
+	 * @throws NullPointerException
+	 *             if the component class or the annotation class is null
 	 */
 	public static <T extends Annotation> T getAnnotation(final Class<?> componentClass,
 		final Class<T> annotationClass)
 	{
-		T annotation = componentClass.getAnnotation(annotationClass);
-		if (annotation != null)
+		// the types still to search, the next one on top
+		final Deque<Class<?>> pending = new ArrayDeque<>();
+		pending.push(componentClass);
+		while (!pending.isEmpty())
 		{
-			return annotation;
-		}
-		for (final Class<?> ifc : componentClass.getInterfaces())
-		{
-			annotation = getAnnotation(ifc, annotationClass);
-			if (annotation != null)
+			final Class<?> type = pending.pop();
+			final T found = type.getAnnotation(annotationClass);
+			if (found != null)
 			{
-				return annotation;
+				return found;
+			}
+			final List<Class<?>> next = typesToSearchAfter(type);
+			// pushed last first, so that the first of them is searched next, with all above it
+			for (int index = next.size() - 1; index >= 0; index--)
+			{
+				pending.push(next.get(index));
 			}
 		}
-		if (!Annotation.class.isAssignableFrom(componentClass))
+		return null;
+	}
+
+	/**
+	 * The types {@link #getAnnotation(Class, Class)} searches after the given one, in their order:
+	 * its interfaces, the types of its annotations unless it is an annotation or implements one,
+	 * and its superclass unless that is {@link Object}
+	 *
+	 * @param type
+	 *            the type just searched
+	 * @return the types to search after it
+	 */
+	private static List<Class<?>> typesToSearchAfter(final Class<?> type)
+	{
+		final List<Class<?>> next = new ArrayList<>(Arrays.asList(type.getInterfaces()));
+		// an annotation's own annotations would lead from meta-annotation to meta-annotation
+		if (!Annotation.class.isAssignableFrom(type))
 		{
-			for (final Annotation ann : componentClass.getAnnotations())
+			for (final Annotation annotation : type.getAnnotations())
 			{
-				annotation = getAnnotation(ann.annotationType(), annotationClass);
-				if (annotation != null)
-				{
-					return annotation;
-				}
+				next.add(annotation.annotationType());
 			}
 		}
-		final Class<?> superClass = componentClass.getSuperclass();
-		if (superClass == null || superClass.equals(Object.class))
+		final Class<?> superclass = type.getSuperclass();
+		if (superclass != null && superclass != Object.class)
 		{
-			return null;
+			next.add(superclass);
 		}
-		return getAnnotation(superClass, annotationClass);
+		return next;
 	}
 
 	/**

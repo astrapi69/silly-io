@@ -31,9 +31,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * The unit test class for the class {@link StringOutputStream}
@@ -43,6 +45,9 @@ import org.junit.jupiter.api.Test;
  */
 public class StringOutputStreamTest
 {
+
+	@TempDir
+	Path directory;
 
 	/**
 	 * Test method for {@link StringOutputStream#toString()}
@@ -54,22 +59,22 @@ public class StringOutputStreamTest
 	public void testToString() throws IOException
 	{
 		final String expected = "Thu Apr 19 00:00:00 CEST 2012";
-		final File writeInMe = new File(".", "testToString.log");
+		final File writeInMe = new File(directory.toFile(), "testToString.log");
 		FileUtils.writeStringToFile(writeInMe, expected, Charset.defaultCharset());
-		final InputStream inputStream = writeInMe.toURI().toURL().openStream();
 		final StringOutputStream stringOutput = new StringOutputStream();
-
-		final byte[] buffer = new byte[8192];
-		int readLength;
-		while ((readLength = inputStream.read(buffer, 0, buffer.length)) != -1)
+		try (InputStream inputStream = writeInMe.toURI().toURL().openStream())
 		{
-			stringOutput.write(buffer, 0, readLength);
+			final byte[] buffer = new byte[8192];
+			int readLength;
+			while ((readLength = inputStream.read(buffer, 0, buffer.length)) != -1)
+			{
+				stringOutput.write(buffer, 0, readLength);
+			}
 		}
 
 		final String actual = stringOutput.toString();
 		stringOutput.close();
 		assertTrue(actual.startsWith(expected));
-		FileUtils.deleteQuietly(writeInMe);
 	}
 
 	/**
@@ -82,21 +87,21 @@ public class StringOutputStreamTest
 	public void testWriteByteArray() throws IOException
 	{
 		final String expected = "Thu Apr 19 00:00:00 CEST 2012";
-		final File writeInMe = new File(".", "testWriteByteArray.log");
+		final File writeInMe = new File(directory.toFile(), "testWriteByteArray.log");
 		FileUtils.writeStringToFile(writeInMe, expected, Charset.defaultCharset());
-		final InputStream inputStream = writeInMe.toURI().toURL().openStream();
 		final StringOutputStream stringOutput = new StringOutputStream();
-
-		final byte[] buffer = new byte[8192];
-		while ((inputStream.read(buffer)) != -1)
+		try (InputStream inputStream = writeInMe.toURI().toURL().openStream())
 		{
-			stringOutput.write(buffer);
+			final byte[] buffer = new byte[8192];
+			while ((inputStream.read(buffer)) != -1)
+			{
+				stringOutput.write(buffer);
+			}
 		}
 
 		final String actual = stringOutput.toString();
 		stringOutput.close();
 		assertTrue(actual.startsWith(expected));
-		FileUtils.deleteQuietly(writeInMe);
 	}
 
 	/**
@@ -109,21 +114,22 @@ public class StringOutputStreamTest
 	public void testWriteInt() throws IOException
 	{
 		final String expected = "Thu Apr 19 00:00:00 CEST 2012";
-		final File writeInMe = new File(".", "testWriteInt.log");
+		final File writeInMe = new File(directory.toFile(), "testWriteInt.log");
 		FileUtils.writeStringToFile(writeInMe, expected, StandardCharsets.UTF_8);
-		final InputStream inputStream = writeInMe.toURI().toURL().openStream();
 		final StringOutputStream stringOutput = new StringOutputStream();
 		stringOutput.setCharset(StandardCharsets.UTF_8);
-		int readLength;
-		while ((readLength = inputStream.read()) != -1)
+		try (InputStream inputStream = writeInMe.toURI().toURL().openStream())
 		{
-			stringOutput.write(readLength);
+			int readLength;
+			while ((readLength = inputStream.read()) != -1)
+			{
+				stringOutput.write(readLength);
+			}
 		}
 
 		final String actual = stringOutput.toString();
 		stringOutput.close();
 		assertTrue(actual.startsWith(expected));
-		FileUtils.deleteQuietly(writeInMe);
 	}
 
 	/**
@@ -136,22 +142,22 @@ public class StringOutputStreamTest
 	public void testWriteString() throws IOException
 	{
 		final String expected = "Thu Apr 19 00:00:00 CEST 2012";
-		final File writeInMe = new File(".", "testWriteString.log");
+		final File writeInMe = new File(directory.toFile(), "testWriteString.log");
 		FileUtils.writeStringToFile(writeInMe, expected, StandardCharsets.UTF_8);
-		final InputStream inputStream = writeInMe.toURI().toURL().openStream();
 		final StringOutputStream stringOutput = new StringOutputStream();
 		stringOutput.setCharset(StandardCharsets.UTF_8);
-
-		final byte[] buffer = new byte[8192];
-		while ((inputStream.read(buffer, 0, buffer.length)) != -1)
+		try (InputStream inputStream = writeInMe.toURI().toURL().openStream())
 		{
-			stringOutput.write(new String(buffer, StandardCharsets.UTF_8));
+			final byte[] buffer = new byte[8192];
+			while ((inputStream.read(buffer, 0, buffer.length)) != -1)
+			{
+				stringOutput.write(new String(buffer, StandardCharsets.UTF_8));
+			}
 		}
 
 		final String actual = stringOutput.toString();
 		stringOutput.close();
 		assertTrue(actual.startsWith(expected));
-		FileUtils.deleteQuietly(writeInMe);
 	}
 
 }

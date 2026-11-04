@@ -42,6 +42,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -58,7 +59,7 @@ public final class StreamExtensions
 	}
 
 	/**
-	 * Returns the given file as a byte array
+	 * Returns the given file as a byte array, and closes the stream it reads the file through
 	 *
 	 * @param file
 	 *            the file
@@ -68,7 +69,10 @@ public final class StreamExtensions
 	 */
 	public static byte[] getByteArray(final File file) throws IOException
 	{
-		return getByteArray(getInputStream(file));
+		try (InputStream in = getInputStream(file))
+		{
+			return getByteArray(in);
+		}
 	}
 
 	/**
@@ -113,6 +117,8 @@ public final class StreamExtensions
 	 * @param file
 	 *            the file
 	 * @return the input stream.
+	 * @throws FileNotFoundException
+	 *             if the file does not exist
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -129,6 +135,8 @@ public final class StreamExtensions
 	 * @param createFile
 	 *            If true and the file does not exist it will be create a new file.
 	 * @return the input stream
+	 * @throws FileNotFoundException
+	 *             if the file does not exist and createFile is false
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -161,6 +169,8 @@ public final class StreamExtensions
 	 * @param fullpathWithFilename
 	 *            the full path with filename
 	 * @return the input stream.
+	 * @throws FileNotFoundException
+	 *             if the file does not exist, as for {@link #getInputStream(File)}
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -175,20 +185,33 @@ public final class StreamExtensions
 	 * @param path
 	 *            the {@link Path} object
 	 * @return the input stream.
+	 * @throws FileNotFoundException
+	 *             if the file does not exist, as for {@link #getInputStream(File)}, with the
+	 *             {@link NoSuchFileException} of {@link Files#newInputStream} as its cause
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static InputStream getInputStream(final Path path) throws IOException
 	{
-		return Files.newInputStream(path);
+		try
+		{
+			return Files.newInputStream(path);
+		}
+		catch (final NoSuchFileException exception)
+		{
+			throw fileNotFound(exception);
+		}
 	}
 
 	/**
-	 * Gets the output stream from the given filename with the full path
+	 * Gets the output stream from the given filename with the full path. A file that does not exist
+	 * is created, one that exists is truncated
 	 *
 	 * @param fullPathWithFilename
 	 *            the full path with filename
 	 * @return the output stream
+	 * @throws FileNotFoundException
+	 *             if the parent directory of the file does not exist
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -198,31 +221,46 @@ public final class StreamExtensions
 	}
 
 	/**
-	 * Gets the input stream from the given filename with the full path
+	 * Gets the output stream from the given {@link Path}. A file that does not exist is created,
+	 * one that exists is truncated
 	 *
 	 * @param path
 	 *            the {@link Path} object
-	 * @return the input stream.
+	 * @return the output stream
+	 * @throws FileNotFoundException
+	 *             if the parent directory of the file does not exist, with the
+	 *             {@link NoSuchFileException} of {@link Files#newOutputStream} as its cause
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static OutputStream getOutputStream(final Path path) throws IOException
 	{
-		return Files.newOutputStream(path);
+		try
+		{
+			return Files.newOutputStream(path);
+		}
+		catch (final NoSuchFileException exception)
+		{
+			throw fileNotFound(exception);
+		}
 	}
 
 	/**
-	 * Gets the output stream from a File object.
+	 * Gets a {@link BufferedOutputStream} from the given {@link File} object, as a
+	 * {@link FileOutputStream} opens it: a file that does not exist is created, one that exists is
+	 * truncated
 	 *
 	 * @param file
 	 *            the file.
 	 * @return the output stream.
+	 * @throws FileNotFoundException
+	 *             if the parent directory of the file does not exist, or the file is a directory
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static OutputStream getOutputStream(final File file) throws IOException
 	{
-		return getOutputStream(file, false);
+		return new BufferedOutputStream(new FileOutputStream(file));
 	}
 
 	/**
@@ -233,8 +271,11 @@ public final class StreamExtensions
 	 * @param createFile
 	 *            If true and the file does not exist it will be create a new file.
 	 * @return the output stream
+	 * @throws FileNotFoundException
+	 *             if the file does not exist and createFile is false
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred, for instance as the file is to be
+	 *             created and its parent directory does not exist
 	 */
 	public static OutputStream getOutputStream(final File file, final boolean createFile)
 		throws IOException
@@ -267,6 +308,8 @@ public final class StreamExtensions
 	 * @param inputFile
 	 *            the input file.
 	 * @return the reader.
+	 * @throws FileNotFoundException
+	 *             if the file does not exist
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -285,6 +328,8 @@ public final class StreamExtensions
 	 * @param createFile
 	 *            If true and the file does not exist, a new file will be created
 	 * @return the reader
+	 * @throws FileNotFoundException
+	 *             if the file does not exist and createFile is false
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred
 	 */
@@ -337,17 +382,20 @@ public final class StreamExtensions
 	}
 
 	/**
-	 * Gets a Writer from the given file object.
+	 * Gets a Writer from the given file object, as a {@link FileOutputStream} opens it: a file that
+	 * does not exist is created, one that exists is truncated
 	 *
 	 * @param file
 	 *            the file.
 	 * @return the Writer.
+	 * @throws FileNotFoundException
+	 *             if the parent directory of the file does not exist, or the file is a directory
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Writer getWriter(final File file) throws IOException
 	{
-		return getWriter(file, null, false);
+		return writerOf(new FileOutputStream(file), null);
 	}
 
 	/**
@@ -358,18 +406,18 @@ public final class StreamExtensions
 	 * @param encoding
 	 *            The encoding from the file.
 	 * @param createFile
-	 *            the create file
+	 *            If true and the file does not exist, a new file will be created
 	 * @return the Writer.
+	 * @throws FileNotFoundException
+	 *             if the file does not exist and createFile is false
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *             Signals that an I/O exception has occurred, for instance as the file is to be
+	 *             created and its parent directory does not exist
 	 */
 	public static Writer getWriter(final File file, final String encoding, final boolean createFile)
 		throws IOException
 	{
-		PrintWriter printWriter;
-		BufferedOutputStream bos;
 		FileOutputStream fos;
-		OutputStreamWriter osw;
 		if (file.exists())
 		{
 			fos = new FileOutputStream(file);
@@ -383,22 +431,46 @@ public final class StreamExtensions
 			}
 			else
 			{
-				throw new FileNotFoundException("File " + file.getName() + "does not exist.");
+				throw new FileNotFoundException("File " + file.getName() + " does not exist.");
 			}
 		}
-		bos = new BufferedOutputStream(fos);
-		if (null == encoding)
-		{
-			osw = new OutputStreamWriter(bos);
-		}
-		else
-		{
-			osw = new OutputStreamWriter(bos, encoding);
-		}
-		printWriter = new PrintWriter(osw);
+		return writerOf(fos, encoding);
+	}
 
-		return printWriter;
+	/**
+	 * A buffered {@link PrintWriter} on the given stream
+	 *
+	 * @param fos
+	 *            the stream
+	 * @param encoding
+	 *            the encoding, or null for the default one
+	 * @return the writer
+	 * @throws IOException
+	 *             if the encoding is not supported
+	 */
+	private static Writer writerOf(final FileOutputStream fos, final String encoding)
+		throws IOException
+	{
+		final BufferedOutputStream bos = new BufferedOutputStream(fos);
+		final OutputStreamWriter osw = null == encoding
+			? new OutputStreamWriter(bos)
+			: new OutputStreamWriter(bos, encoding);
+		return new PrintWriter(osw);
+	}
 
+	/**
+	 * The {@link FileNotFoundException} the {@link File} overloads throw, for the
+	 * {@link NoSuchFileException} of {@link Files}, which it carries as its cause
+	 *
+	 * @param exception
+	 *            the exception of {@link Files}
+	 * @return the exception to throw
+	 */
+	private static FileNotFoundException fileNotFound(final NoSuchFileException exception)
+	{
+		final FileNotFoundException notFound = new FileNotFoundException(exception.getMessage());
+		notFound.initCause(exception);
+		return notFound;
 	}
 
 	/**

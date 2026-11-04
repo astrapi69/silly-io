@@ -98,6 +98,7 @@ class ClassloaderExtensionsTest
 		return Stream.of(arguments(named("the same class loader", SYSTEM), SYSTEM, true),
 			arguments(named("the system class loader and null", SYSTEM), null, false),
 			arguments(named("the bootstrap class loader and any other", null), SYSTEM, true),
+			arguments(named("the bootstrap class loader and itself", null), null, true),
 			arguments(named("a parent and its child", SYSTEM), CHILD, true),
 			arguments(named("a grandparent and its grandchild", PLATFORM), CHILD, true),
 			arguments(named("a child and its parent", CHILD), SYSTEM, false),

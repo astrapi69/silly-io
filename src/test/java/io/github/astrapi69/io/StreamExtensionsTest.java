@@ -26,6 +26,7 @@ package io.github.astrapi69.io;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,8 +51,9 @@ import java.nio.file.Path;
 import java.util.Date;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -87,17 +89,17 @@ public class StreamExtensionsTest extends BaseTestCase
 	public void testGetByteArrayInputStream() throws IOException, ClassNotFoundException
 	{
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
-		final File writeInMe = new File(".", "testGetByteArrayInputStream.dat");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
-			writeInMe);
-		assertTrue(actual);
-		final InputStream is = writeInMe.toURI().toURL().openStream();
-		final byte[] ba = StreamExtensions.getByteArray(is);
+		final File writeInMe = new File(directory.toFile(), "testGetByteArrayInputStream.dat");
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo, writeInMe);
+		final byte[] ba;
+		try (InputStream is = writeInMe.toURI().toURL().openStream())
+		{
+			ba = StreamExtensions.getByteArray(is);
+		}
 		assertTrue(ba.length > 0);
 		final Object obj = SerializedObjectExtensions.toObject(ba);
 		final Date readedObj = (Date)obj;
 		assertEquals(birthdayFromLeonardo, readedObj);
-		FileUtils.deleteQuietly(writeInMe);
 	}
 
 	/**
@@ -113,19 +115,18 @@ public class StreamExtensionsTest extends BaseTestCase
 		throws IOException, ClassNotFoundException
 	{
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
-		final File writeInMe = new File(".",
+		final File writeInMe = new File(directory.toFile(),
 			"testGetByteArrayInputStreamByteArrayOutputStream.dat");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
-			writeInMe);
-		assertTrue(actual);
-		final InputStream is = writeInMe.toURI().toURL().openStream();
-		final byte[] ba = StreamExtensions.getByteArray(is,
-			new ByteArrayOutputStream(is.available()));
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo, writeInMe);
+		final byte[] ba;
+		try (InputStream is = writeInMe.toURI().toURL().openStream())
+		{
+			ba = StreamExtensions.getByteArray(is, new ByteArrayOutputStream(is.available()));
+		}
 		assertTrue(ba.length > 0);
 		final Object obj = SerializedObjectExtensions.toObject(ba);
 		final Date readedObj = (Date)obj;
 		assertEquals(birthdayFromLeonardo, readedObj);
-		FileUtils.deleteQuietly(writeInMe);
 	}
 
 	/**
@@ -138,13 +139,12 @@ public class StreamExtensionsTest extends BaseTestCase
 	public void testGetInputStreamFile() throws IOException
 	{
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
-		final File writeInMe = new File(".", "testGetInputStreamFile.dat");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
-			writeInMe);
-		assertTrue(actual);
-		InputStream inputStream = StreamExtensions.getInputStream(writeInMe);
-		assertNotNull(inputStream);
-		FileUtils.deleteQuietly(writeInMe);
+		final File writeInMe = new File(directory.toFile(), "testGetInputStreamFile.dat");
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo, writeInMe);
+		try (InputStream inputStream = StreamExtensions.getInputStream(writeInMe))
+		{
+			assertNotNull(inputStream);
+		}
 	}
 
 	/**
@@ -156,11 +156,12 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetInputStreamFileBoolean() throws IOException
 	{
-		final File writeInMe = new File(".", "testGetInputStreamFileBoolean.dat");
+		final File writeInMe = new File(directory.toFile(), "testGetInputStreamFileBoolean.dat");
 
-		InputStream inputStream = StreamExtensions.getInputStream(writeInMe, true);
-		assertNotNull(inputStream);
-		FileUtils.deleteQuietly(writeInMe);
+		try (InputStream inputStream = StreamExtensions.getInputStream(writeInMe, true))
+		{
+			assertNotNull(inputStream);
+		}
 	}
 
 
@@ -174,8 +175,8 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetInputStreamFileBooleanFalse() throws IOException
 	{
-		assertThrows(FileNotFoundException.class, () -> StreamExtensions
-			.getInputStream(new File(".", "testGetInputStreamFileBooleanFalse.dat"), false));
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions.getInputStream(
+			new File(directory.toFile(), "testGetInputStreamFileBooleanFalse.dat"), false));
 	}
 
 	/**
@@ -187,11 +188,11 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetOutputStreamFile() throws IOException
 	{
-		File fileout = new File(".", "testGetOutputStreamFile.out");
-		OutputStream outputStream = StreamExtensions.getOutputStream(fileout, true);
-		assertNotNull(outputStream);
-
-		FileUtils.deleteQuietly(fileout);
+		File fileout = new File(directory.toFile(), "testGetOutputStreamFile.out");
+		try (OutputStream outputStream = StreamExtensions.getOutputStream(fileout, true))
+		{
+			assertNotNull(outputStream);
+		}
 	}
 
 	/**
@@ -203,8 +204,8 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetOutputStreamFileBooleanFalse() throws IOException
 	{
-		assertThrows(FileNotFoundException.class, () -> StreamExtensions
-			.getOutputStream(new File(".", "testGetOutputStreamFileBooleanFalse.dat"), false));
+		assertThrows(FileNotFoundException.class, () -> StreamExtensions.getOutputStream(
+			new File(directory.toFile(), "testGetOutputStreamFileBooleanFalse.dat"), false));
 	}
 
 	/**
@@ -216,14 +217,15 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetReaderFile() throws IOException
 	{
-		File inputFile = new File(".", "testGetReaderFile.in");
-		Reader reader = StreamExtensions.getReader(inputFile, null, true);
-		assertNotNull(reader);
-
-		reader = StreamExtensions.getReader(inputFile, "UTF-8", true);
-		assertNotNull(reader);
-
-		FileUtils.deleteQuietly(inputFile);
+		File inputFile = new File(directory.toFile(), "testGetReaderFile.in");
+		try (Reader reader = StreamExtensions.getReader(inputFile, null, true))
+		{
+			assertNotNull(reader);
+		}
+		try (Reader reader = StreamExtensions.getReader(inputFile, "UTF-8", true))
+		{
+			assertNotNull(reader);
+		}
 	}
 
 	/**
@@ -235,8 +237,10 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetReaderFileStringBooleanFalse() throws IOException
 	{
-		assertThrows(FileNotFoundException.class, () -> StreamExtensions
-			.getReader(new File(".", "testGetReaderFileStringBooleanFalse.out"), null, false));
+		assertThrows(FileNotFoundException.class,
+			() -> StreamExtensions.getReader(
+				new File(directory.toFile(), "testGetReaderFileStringBooleanFalse.out"), null,
+				false));
 	}
 
 	/**
@@ -265,13 +269,19 @@ public class StreamExtensionsTest extends BaseTestCase
 	public void testGetWriterFile() throws IOException, URISyntaxException
 	{
 		final URL url = ClassExtensions.getResource(propertiesFilename);
-		Writer writer = StreamExtensions.getWriter(new File(url.toURI()));
-		assertNotNull(writer);
+		// a copy: a writer truncates its file, and this one is on the class path
+		final File properties = Files
+			.copy(Path.of(url.toURI()), directory.resolve("resources.properties")).toFile();
+		try (Writer writer = StreamExtensions.getWriter(properties))
+		{
+			assertNotNull(writer);
+		}
 
-		File inputFile = new File(".", "testGetWriterFile.in");
-		writer = StreamExtensions.getWriter(inputFile, "UTF-8", true);
-		assertNotNull(writer);
-		FileUtils.deleteQuietly(inputFile);
+		final File inputFile = new File(directory.toFile(), "testGetWriterFile.in");
+		try (Writer writer = StreamExtensions.getWriter(inputFile, "UTF-8", true))
+		{
+			assertNotNull(writer);
+		}
 	}
 
 	/**
@@ -283,8 +293,10 @@ public class StreamExtensionsTest extends BaseTestCase
 	@Test
 	public void testGetWriterFileStringBooleanFalse() throws IOException
 	{
-		assertThrows(FileNotFoundException.class, () -> StreamExtensions
-			.getWriter(new File(".", "testGetWriterFileStringBooleanFalse.out"), null, false));
+		assertThrows(FileNotFoundException.class,
+			() -> StreamExtensions.getWriter(
+				new File(directory.toFile(), "testGetWriterFileStringBooleanFalse.out"), null,
+				false));
 	}
 
 
@@ -313,15 +325,13 @@ public class StreamExtensionsTest extends BaseTestCase
 		throws IOException, ClassNotFoundException
 	{
 		final Date birthdayFromLeonardo = CreateDateExtensions.newDate(2012, 4, 19);
-		final File writeInMe = new File(".",
+		final File writeInMe = new File(directory.toFile(),
 			"testWriteInputStreamToOutputStreamInputStreamOutputStream.in");
-		actual = SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo,
-			writeInMe);
-		InputStream inputStream = StreamExtensions.getInputStream(writeInMe, true);
-
-		File fileout = new File(".",
+		SerializedObjectExtensions.writeSerializedObjectToFile(birthdayFromLeonardo, writeInMe);
+		File fileout = new File(directory.toFile(),
 			"testWriteInputStreamToOutputStreamInputStreamOutputStream.out");
-		try (final OutputStream outputStream = StreamExtensions.getOutputStream(fileout, true);)
+		try (InputStream inputStream = StreamExtensions.getInputStream(writeInMe, true);
+			OutputStream outputStream = StreamExtensions.getOutputStream(fileout, true))
 		{
 			StreamExtensions.writeInputStreamToOutputStream(inputStream, outputStream);
 		}
@@ -329,8 +339,6 @@ public class StreamExtensionsTest extends BaseTestCase
 		final Object readedObjectFromFile = SerializedObjectExtensions
 			.readSerializedObjectFromFile(fileout);
 		assertEquals(readedObjectFromFile, birthdayFromLeonardo);
-		FileUtils.deleteQuietly(fileout);
-		FileUtils.deleteQuietly(writeInMe);
 	}
 
 	/**
@@ -366,7 +374,24 @@ public class StreamExtensionsTest extends BaseTestCase
 				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toFile()))),
 			arguments(named("a path name",
 				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toString()))),
-			arguments(named("a Path", (OutputStreamOpener)StreamExtensions::getOutputStream)));
+			arguments(named("a Path", (OutputStreamOpener)StreamExtensions::getOutputStream)),
+			arguments(named("an existing File, createFile false",
+				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toFile(),
+					false))),
+			arguments(named("an existing File, createFile true",
+				(OutputStreamOpener)file -> StreamExtensions.getOutputStream(file.toFile(),
+					true))));
+	}
+
+	static Stream<Arguments> writerOpeners()
+	{
+		return Stream.of(
+			arguments(named("getWriter(File)",
+				(WriterOpener)file -> StreamExtensions.getWriter(file.toFile()))),
+			arguments(named("getWriter(File, null, false)",
+				(WriterOpener)file -> StreamExtensions.getWriter(file.toFile(), null, false))),
+			arguments(named("getWriter(File, UTF-8, true)",
+				(WriterOpener)file -> StreamExtensions.getWriter(file.toFile(), "UTF-8", true))));
 	}
 
 	@ParameterizedTest(name = "{0}")
@@ -379,6 +404,16 @@ public class StreamExtensionsTest extends BaseTestCase
 		{
 			assertArrayEquals(new byte[] { 0, 1, -2, 127 }, inputStream.readAllBytes());
 		}
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("inputStreamOpeners")
+	void getInputStream_throwsAnIOException_forAFileThatDoesNotExist(final InputStreamOpener opener)
+	{
+		final Path missing = directory.resolve("missing.bin");
+
+		assertThrows(IOException.class, () -> opener.open(missing).close());
+		assertFalse(Files.exists(missing));
 	}
 
 	@ParameterizedTest(name = "{0}")
@@ -397,12 +432,66 @@ public class StreamExtensionsTest extends BaseTestCase
 		assertEquals("new", Files.readString(file));
 	}
 
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("writerOpeners")
+	void getWriter_replacesTheContentOfAnExistingFile(final WriterOpener opener) throws IOException
+	{
+		final Path file = Files.writeString(directory.resolve("output.txt"),
+			"an older and longer content");
+
+		try (Writer writer = opener.open(file))
+		{
+			writer.write("neu");
+		}
+
+		assertEquals("neu", Files.readString(file));
+	}
+
 	@Test
 	void getByteArray_readsTheBytesOfAFile() throws IOException
 	{
 		final Path file = Files.write(directory.resolve("bytes.bin"), new byte[] { 9, 8, 7 });
 
 		assertArrayEquals(new byte[] { 9, 8, 7 }, StreamExtensions.getByteArray(file.toFile()));
+	}
+
+	/**
+	 * {@code getByteArray(File)} opens the stream itself, so it has to close it: once it returns,
+	 * no file descriptor of this process points at the file any more. Linux lists the descriptors
+	 * of the process under {@code /proc/self/fd}, so the test runs on Linux only
+	 *
+	 * @throws IOException
+	 *             if the file cannot be written or the descriptors cannot be listed
+	 */
+	@Test
+	@EnabledOnOs(OS.LINUX)
+	void getByteArray_closesTheStreamItOpens() throws IOException
+	{
+		final Path descriptors = Path.of("/proc/self/fd");
+		final Path file = Files.write(directory.resolve("bytes.bin"), new byte[] { 9, 8, 7 })
+			.toRealPath();
+
+		StreamExtensions.getByteArray(file.toFile());
+
+		assertEquals(0, descriptorsOf(descriptors, file));
+	}
+
+	private static long descriptorsOf(final Path descriptors, final Path file) throws IOException
+	{
+		try (Stream<Path> links = Files.list(descriptors))
+		{
+			return links.filter(link -> {
+				try
+				{
+					return Files.readSymbolicLink(link).equals(file);
+				}
+				catch (final IOException exception)
+				{
+					// the descriptor of the listing itself is gone once it is read
+					return false;
+				}
+			}).count();
+		}
 	}
 
 	@Test
@@ -442,5 +531,13 @@ public class StreamExtensionsTest extends BaseTestCase
 	interface OutputStreamOpener
 	{
 		OutputStream open(Path file) throws IOException;
+	}
+
+	/**
+	 * Opens a writer on a file
+	 */
+	interface WriterOpener
+	{
+		Writer open(Path file) throws IOException;
 	}
 }

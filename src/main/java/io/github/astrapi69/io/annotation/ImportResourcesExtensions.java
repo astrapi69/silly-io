@@ -25,7 +25,6 @@
 package io.github.astrapi69.io.annotation;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -112,9 +111,8 @@ public final class ImportResourcesExtensions
 	 * @return a new array containing all elements of {@code array1} and {@code array2}, or one of
 	 *         the arrays if the other is {@code null}
 	 * @throws IllegalArgumentException
-	 *             if the component types of the two arrays are incompatible
-	 * @throws ArrayStoreException
-	 *             if an incompatible element is found when copying the arrays
+	 *             if an element of {@code array2} is no instance of the component type of
+	 *             {@code array1}, with the {@link ArrayStoreException} as its cause
 	 */
 	@SafeVarargs
 	public static <T> T[] join(final T[] array1, final T... array2)
@@ -123,32 +121,23 @@ public final class ImportResourcesExtensions
 		{
 			return array2;
 		}
-		else if (array2 == null)
+		if (array2 == null)
 		{
 			return array1;
 		}
-		final Class<?> type1 = array1.getClass().getComponentType();
-		@SuppressWarnings("unchecked") // OK, because array is of type T
-		final T[] joinedArray = (T[])Array.newInstance(type1, array1.length + array2.length);
-		System.arraycopy(array1, 0, joinedArray, 0, array1.length);
+		// Arrays.copyOf keeps the runtime component type of array1
+		final T[] joinedArray = Arrays.copyOf(array1, array1.length + array2.length);
 		try
 		{
 			System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
 		}
-		catch (final ArrayStoreException ase)
+		catch (final ArrayStoreException exception)
 		{
-			// Check if the problem was due to incompatible types
-			/*
-			 * We do this here, rather than before the copy because: - it would be a wasted check
-			 * most of the time - safer, in case check turns out to be too strict
-			 */
-			final Class<?> type2 = array2.getClass().getComponentType();
-			if (!type1.isAssignableFrom(type2))
-			{
-				throw new IllegalArgumentException(
-					"Cannot store " + type2.getName() + " in an array of " + type1.getName(), ase);
-			}
-			throw ase; // No, so rethrow original
+			// an element of array2 is no instance of the component type of array1
+			throw new IllegalArgumentException(
+				"Cannot store " + array2.getClass().getComponentType().getName()
+					+ " in an array of " + array1.getClass().getComponentType().getName(),
+				exception);
 		}
 		return joinedArray;
 	}
