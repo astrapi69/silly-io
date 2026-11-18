@@ -1,6 +1,6 @@
 [versions]
 commons-io-version = "2.22.0"
-file-worker-version = "19.1"
+file-worker-version = "21.1"
 gradle-plugin-nmcp-version = "1.6.2"
 gradle-plugin-pitest-version = "1.19.0"
 gradle-plugin-spotless-version = "8.10.4"
